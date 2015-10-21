@@ -1,0 +1,27 @@
+{
+  "name": "webix-jet-core",
+  "version": "0.1.0",
+  "homepage": "https://github.com/webix-hub/jet-core",
+  "authors": [
+    "Maksim Kozhukh <mkozhukh@ya.ru>"
+  ],
+  "description": "Webix Jet micro framework",
+  "main": "core.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "webix",
+    "mvc",
+    "app",
+    "framework"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
