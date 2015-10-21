@@ -87,8 +87,12 @@ define([
 		};
 	}
 
-	function crud_model(data, fields){
-		webix.message(_("Crud.NotImplementedMessage"));
+	function crud_model(model, fields, name, params){
+		var ui = crud_collection(null, fields, name, params);
+		var table = ui.$ui.rows[1];
+		table.url = model.find;
+		table.save = model.save;
+		return ui;
 	}
 
 	return {
