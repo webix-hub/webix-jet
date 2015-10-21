@@ -1,7 +1,6 @@
-"use strict";
 define([
 	"libs/polyglot/build/polyglot"
-], function(){
+], function(Polyglot){
 
 	var defaultlang = "en";
 	var key = "--:app:lang";
@@ -18,8 +17,7 @@ define([
 
 	function create_locale(lang){
 		define("locale", [
-			"locales/"+lang,
-			"libs/webix/locales/"+lang
+			"locales/"+lang
 		], function(data){
 			var poly = new Polyglot({ phrases:data });
 				poly.locale(lang);
