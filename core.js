@@ -317,7 +317,10 @@ define([
 			render_stack(app.$layout, parts);
 		},
 		show:function(name, options){
-			routie.navigate("!"+name, options);
+			if (window.location.hash != "#!"+name)
+				routie.navigate("!"+name, options);
+			else
+				app.router(name);
 		},
 		start:function(name){
 			//init routing
