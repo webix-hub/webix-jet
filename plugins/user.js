@@ -1,6 +1,6 @@
 define([
 	"models/user",
-	"libs/routie"
+	"libs/routie/dist/routie"
 ], function(users){
 
 	var config = {
