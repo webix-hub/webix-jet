@@ -1,0 +1,26 @@
+{
+  "name": "webix-jet",
+  "version": "0.1.4",
+  "description": "Webix Jet microframework",
+  "main": "core.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webix-hub/jet-core.git"
+  },
+  "keywords": [
+    "webix",
+    "jet",
+    "framework",
+    "rich",
+    "ui"
+  ],
+  "author": "Maksim Kozhukh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webix-hub/jet-core/issues"
+  },
+  "homepage": "https://github.com/webix-hub/jet-core#readme"
+}
