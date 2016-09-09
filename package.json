@@ -1,6 +1,6 @@
 {
   "name": "webix-jet",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Webix Jet microframework",
   "main": "core.js",
   "scripts": {

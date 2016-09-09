@@ -23,6 +23,8 @@ define([
 			//route to page
 			var parsed = parse_parts(path);
 			scope.path = scope.path.slice(0, index).concat(parsed);
+			if (config)
+				webix.extend(scope.path[index].params, config, true);
 		} else {
 			//set parameters
 			webix.extend(scope.path[index].params, path, true);
