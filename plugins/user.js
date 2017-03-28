@@ -34,10 +34,11 @@ define([
 
 	//reaction on logout link
 	function try_to_logout(){
-		if (users.getCurrentUser())
+		if (users.getCurrentUser()) {
 			users.setCurrentUser(null);
-		else
-			show(config.afterLogout);
+		}
+		
+		show(config.afterLogout);
 	}
 
 	//reaction on login link
@@ -69,17 +70,7 @@ define([
 				return false;
 			}
 		},
-
-		byName:function(name, pass){
-			return session.login(name, pass);
-		},
 		login:try_to_login,
-		logout:try_to_logout,
-		afterLogin:function(response){
-			users.setCurrentUser(response, true);
-			webix.delay(function(){
-				show(config.afterLogin)
-			});
-		}
+		logout:try_to_logout
 	};
 });
