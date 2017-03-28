@@ -192,7 +192,7 @@ define([
 	
 		target = target || (webix.isArray(obj)?[]:{});
 		for (var method in obj){
-			if(obj[method] && typeof obj[method] == "object" && !webix.isDate(obj[method])){
+			if(obj[method] && typeof obj[method] == "object" && !webix.isDate(obj[method]) && !(obj[method] instanceof RegExp)){
 				target[method] = copy(obj[method], (webix.isArray(obj[method])?[]:{}), config);
 			} else {
 				target[method] = obj[method];
