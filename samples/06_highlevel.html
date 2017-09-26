@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jet Core - Base Usage</title>
+</head>
+<body>
+
+<link rel="stylesheet" type="text/css" href="//cdn.webix.com/5.0/webix.css">
+<script type="text/javascript" src="//cdn.webix.com/5.0/webix.js"></script>
+<script type="text/javascript" src="../codebase/jet.js"></script>
+
+<script>
+
+class FormView extends JetView{
+	config(){
+		return { 
+			view:"form", elements:[
+				{ view:"text", name:"email", required:true, label:"Email" },
+				{ view:"button", value:"save", click:() => this.show("Details") }
+			]
+		};
+	}
+	
+	init(ui, config, url){
+		this.use(JetApp.plugins.UnloadGuard, () => {
+			if (this.getRoot().validate())
+				return true;
+
+			return new Promise((res, rej) => {
+				webix.confirm({
+					text: "Are you sure ?",
+					callback: answer => answer ? res() : rej()
+				})
+			});
+		});
+	}
+}
+
+
+const DetailsView = () => ({ template:"Data saved" });
+
+
+var app1 = new JetApp({
+	start:"/Form",
+	router:JetApp.routers.EmptyRouter,
+	views:{
+		"Form":FormView,
+		"Details":DetailsView
+	}
+});
+
+const PageView = () => ({ rows:[ app1 ]});
+
+var app2 = new JetApp({
+	start:"/Page",
+	router: JetApp.routers.HashRouter,
+	views:{
+		"Page" : PageView
+	}
+}).render();
+
+</script>
+
+</body>
+</html>

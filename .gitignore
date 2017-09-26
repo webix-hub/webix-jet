@@ -1,0 +1,9 @@
+node_modules
+sources/**/*.js
+codebase/**/*.js
+*.zip
+dist/
+.Ds_store
+*.tgz
+*.log
+.vscode

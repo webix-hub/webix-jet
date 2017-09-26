@@ -1,0 +1,38 @@
+{
+	"extends": "tslint:latest",
+	"rules": {
+		"indent" : [true, "tabs"],
+		"import-spacing":false,
+		"typedef-whitespace" : [false],
+		"whitespace" : [false],
+		"semicolon" : [true, "always"],
+		"quotemark" : [true, "double"],
+		"no-var-keyword" : true,
+		"no-unused-variable" :[ true, "check-parameters", {"ignore-pattern": "^_\\$"}],
+		"no-trailing-whitespace":true,
+		"no-consecutive-blank-lines":false,
+		"object-literal-sort-keys": false,
+		"no-bitwise":true,
+		"max-line-length":[true, 80],
+		"eofline" : false,
+		"trailing-comma" : [ true, "never"],
+		"curly":true,
+		"array-type":false,
+		"forin":false,
+		"one-line":[true,
+			"check-catch",
+			"check-else",
+			"check-finally",
+			"check-open-brace"
+		],
+		"prefer-conditional-expression":false,
+		"arrow-parens":[true, "ban-single-arg-parens"],
+		"variable-name":[true,
+			"check-format",
+			"allow-leading-underscore",
+			"ban-keywords"
+		],
+		"member-access":false
+	},
+	"rulesDirectory": []
+}

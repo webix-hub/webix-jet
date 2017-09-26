@@ -1,10 +1,14 @@
 {
   "name": "webix-jet",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "description": "Webix Jet microframework",
-  "main": "core.js",
+  "main": "sources/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "test": "yarn build && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
+    "server": "webpack-dev-server",
+    "lint": "tslint sources/*.ts",
+    "dist": "tsc -p ./tsconfig.es6.json && cp -f ./package.dist.json dist/package.json && sed -i 's/\\/\\/return require/return require/' ./dist/JetApp.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +21,27 @@
     "rich",
     "ui"
   ],
+  "devDependencies": {
+    "@types/chai": "^4.0.3",
+    "@types/mocha": "^2.2.41",
+    "@types/webix": "^4.2.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "chai": "^3.5.0",
+    "graceful-fs": "^4.1.11",
+    "mocha": "^3.5.0",
+    "mocha-phantomjs-core": "^2.1.2",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.0.0",
+    "webpack": "^3.5.4",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-livereload-plugin": "^0.11.0",
+    "webpack-shell-plugin": "^0.5.0"
+  },
+  "dependencies": {
+    "node-polyglot": "^2.2.2",
+    "tslint": "^5.7.0",
+    "webix-routie": "^0.3.3"
+  },
   "author": "Maksim Kozhukh",
   "license": "MIT",
   "bugs": {

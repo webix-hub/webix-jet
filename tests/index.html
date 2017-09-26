@@ -1,0 +1,28 @@
+
+<html>
+    <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="../node_modules/mocha/mocha.css"/>
+    </head>
+    <body>
+      <div id="mocha"></div>
+      <script src="../node_modules/mocha/mocha.js"></script>
+      <script>
+        mocha.ui('bdd')
+      </script>
+      <script type="text/javascript" src="http://cdn.webix.com/5.0/webix.js"></script>
+      <script>
+        if (!window.Promise){
+          window.Promise = webix.promise;
+        }
+      </script>
+      <script src="../codebase/tests.js"></script>
+  
+      <div id='sandbox'></div>
+  
+      <script>
+        mocha.run()
+      </script>
+    </body>
+  </html>
+  

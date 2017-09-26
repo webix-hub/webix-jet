@@ -2,8 +2,6 @@ Webix Jet
 =========
 
 [![npm version](https://badge.fury.io/js/webix-jet.svg)](https://badge.fury.io/js/webix-jet)
-[![Join the chat at https://gitter.im/webix-hub/webix](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/webix-hub/webix) 
-
 
 Micro-framework for Webix UI
 
@@ -18,6 +16,20 @@ cd myapp
 wjet init
 ```
 
+### Working with sources
+
+Those commands are usefull only if you want to work with typescript sources of webix-jet
+
+```
+//run local dev server
+npm run server
+
+//compile to es6
+npm run dist
+
+//run lint and test
+npm run lint && npm run test
+```
 
 ### License terms
 

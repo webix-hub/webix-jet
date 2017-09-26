@@ -1,0 +1,24 @@
+{
+  "name": "webix-jet",
+  "version": "1.0.0",
+  "description": "Webix Jet for Webix UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.webix.com"
+  },
+  "keywords": [
+    "webix",
+    "ui",
+    "framework",
+    "mvc"
+  ],
+  "author": "Maksim Kozhukh",
+  "license": "MIT",
+  "dependencies": {
+    "node-polyglot": "^2.2.2",
+    "webix-routie": "^0.3.3"
+  }
+}
