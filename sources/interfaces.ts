@@ -20,6 +20,7 @@ export interface IJetApp{
 	attachEvent(name:string, handler:any):void;
 	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
 	show(path:string);
+	refresh();
 	copyConfig(source:any, target:any, config?:IViewConfig);
 	getRouter(): IJetRouter;
 }

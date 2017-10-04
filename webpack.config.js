@@ -22,7 +22,7 @@ var config = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
-    modules: ["./sources", "node_modules"],
+    modules: ["./sources", "./node_modules"],
     alias:{
       "jet-views":path.resolve(__dirname, 'samples/views'),
       "jet-locales":path.resolve(__dirname, 'samples/locales')

@@ -1,6 +1,6 @@
 {
-  "name": "webix-jet",
-  "version": "1.0.1",
+  "name": "webix-jet-ts",
+  "version": "1.0.2",
   "description": "Webix Jet microframework",
   "main": "sources/index.ts",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "yarn build && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
     "server": "webpack-dev-server",
     "lint": "tslint sources/*.ts",
-    "dist": "tsc -p ./tsconfig.es6.json && cp -f ./package.dist.json dist/package.json"
+    "dist": "tsc --moduleResolution Node -p ./tsconfig.es6.json"
   },
   "repository": {
     "type": "git",

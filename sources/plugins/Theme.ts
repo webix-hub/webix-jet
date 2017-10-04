@@ -1,20 +1,24 @@
 import {IJetApp, IJetURL, IJetView} from "../interfaces";
 
 export function Theme(app: IJetApp, view: IJetView, config: any){
-	let theme = config.theme || "webix:siberia";
+	config = config || {};
+	const storage = config.storage;
+	let theme = storage ? storage.get("theme") : (config.theme || "flat");
 
 	const service = {
 		getTheme(){ return theme; },
-		setTheme(name:string){
+		setTheme(name:string, silent?:boolean){
 			// document.location.reload();
 			theme = name;
+			if (storage){
+				storage.put("theme", name);
+			}
+			if (!silent){
+				app.refresh();
+			}
 		}
 	};
 
 	app.setService("theme", service);
-	view.on(app, `user:settings`, function(settings: any){
-		if (settings.theme && settings.theme !== theme){
-			service.setTheme(settings.theme)
-		}
-	});
+	service.setTheme(theme, true);
 }

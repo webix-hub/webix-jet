@@ -10,7 +10,7 @@ import {
 
 import { HashRouter } from "./routers/HashRouter";
 
-import { parse } from "./helpers";
+import { parse, url2str } from "./helpers";
 
 // webpack require
 declare function require(_$url: string): any;
@@ -117,6 +117,13 @@ export class JetApp extends JetBase implements IJetApp {
 				}
 			}
 		}
+	}
+
+	refresh(){
+		const temp = this._container;
+		this._view.destructor();
+		this._view = this._container = null;
+		this.render(temp, parse(this.getRouter().get()), this._parent);
 	}
 
 	loadView(url): Promise<any> {
@@ -243,7 +250,8 @@ export class JetApp extends JetBase implements IJetApp {
 			url = this._first_start(url);
 		}
 
-		return this.canNavigate(url as string).then(newurl => {
+		const strUrl = typeof url === "string" ? url : url2str(url);
+		return this.canNavigate(strUrl).then(newurl => {
 			this.$router.set(newurl, { silent:true });
 			return this._render_stage(newurl);
 		});

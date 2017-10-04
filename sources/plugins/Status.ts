@@ -3,7 +3,7 @@ import {IJetApp, IJetView} from "../interfaces";
 const baseicons = {
 	"good":	"check",
 	"error": "warning",
-	"saving": ""
+	"saving": "refresh fa-spin"
 };
 
 const basetext = {
@@ -17,14 +17,15 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	let status = "good";
 	let count = 0;
 	let iserror = false;
-	let expireDelay = config.delay || 2000;
+	let expireDelay = config.expire;
+	if (!expireDelay && expireDelay !== false)  expireDelay = 2000;
 	let texts = config.texts || basetext;
 	let icons = config.icons || baseicons;
 
 	if (typeof config === "string")
 		config = { target:config };
 
-	function refresh(content = " ") {
+	function refresh(content? : string) {
 		const area = view.$$(config.target);
 		if (area) {
 			if (!content)
@@ -52,7 +53,7 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	}
 	function hideStatus(){
 		if (count == 0){
-			refresh();
+			refresh(" ");
 		}
 	}
 	function setStatus(mode, err?){
@@ -84,7 +85,7 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 		const dp = webix.dp(data);
 		if (dp){
 			view.on(dp, "onAfterDataSend", start);
-			view.on(dp, "onAfterSaveError", fail);
+			view.on(dp, "onAfterSaveError", (id, obj, response) => fail(response));
 			view.on(dp, "onAfterSave", success);
 		}
 	}
@@ -97,6 +98,12 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 
 	if (config.remote){
 		view.on(webix, "onRemoteCall", start);
+	}
+
+	if (config.ajax){
+		view.on(webix, "onBeforeAjax", (mode, url, data, request, headers, files, promise) => {
+			start(promise);
+		});
 	}
 
 	if (config.data){
