@@ -24,8 +24,8 @@ var config = {
     extensions: ['.ts', '.js'],
     modules: ["./sources", "node_modules"],
     alias:{
-      "jet-views":path.resolve(__dirname, 'sources/views'),
-      "jet-locales":path.resolve(__dirname, 'sources/locales')
+      "jet-views":path.resolve(__dirname, 'samples/views'),
+      "jet-locales":path.resolve(__dirname, 'samples/locales')
     }
   },
   plugins: [

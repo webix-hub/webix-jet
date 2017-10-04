@@ -1,15 +1,15 @@
 import {IJetApp, IJetView} from "../interfaces";
 
-const icons = {
+const baseicons = {
 	"good":	"check",
 	"error": "warning",
 	"saving": ""
 };
 
-const texts = {
-	"good":	"Status.Good",
-	"error": "Status.Error",
-	"saving": "Status.Saving"
+const basetext = {
+	"good":	"Ok",
+	"error": "Error",
+	"saving": "Connecting..."
 };
 
 export function Status(app: IJetApp, view: IJetView, config: any){
@@ -17,11 +17,19 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	let status = "good";
 	let count = 0;
 	let iserror = false;
+	let expireDelay = config.delay || 2000;
+	let texts = config.texts || basetext;
+	let icons = config.icons || baseicons;
 
-	function refresh(){
+	if (typeof config === "string")
+		config = { target:config };
+
+	function refresh(content = " ") {
 		const area = view.$$(config.target);
-		if (area){
-			(area as webix.ui.template).setHTML("<div class='status_"+status+"'><span class='webix_icon fa-"+icons[status]+"'></span> "+texts[status]+"</div>");
+		if (area) {
+			if (!content)
+				content = "<div class='status_" + status + "'><span class='webix_icon fa-" + icons[status] + "'></span> " + texts[status] + "</div>";
+			(area as webix.ui.template).setHTML(content);
 		}
 	}
 	function success(){
@@ -33,15 +41,19 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 		setStatus("error", err);
 	}
 	function start(promise){
-		if (promise){
-			count++;
-			setStatus("saving");
-			promise = promise.then ? promise : promise[0][2];
+		count++;
+		setStatus("saving");
+		if (promise && promise.then){
 			promise.then( success, fail );
 		}
 	}
 	function getStatus(){
 		return status;
+	}
+	function hideStatus(){
+		if (count == 0){
+			refresh();
+		}
 	}
 	function setStatus(mode, err?){
 		if (count < 0){
@@ -56,21 +68,16 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 			if (count === 0){
 				status = iserror ? "error" : "good";
 				if (iserror && app.callEvent("app:error:server",[err])){
-					error(err);
+					if (err){
+						console.error(err.responseText || err);
+					}
+				} else {
+					if (expireDelay)
+						setTimeout(hideStatus, expireDelay)
 				}
 
 				refresh();
 			}
-		}
-	}
-	function error(err){
-		(webix.alert as any)({
-			title:"Status.ServerErrorTitle",
-			text:"Status.ServerErrorText",
-			width:"550px"
-		});
-		if (err){
-			console.error(err.responseText || err);
 		}
 	}
 	function track(data){

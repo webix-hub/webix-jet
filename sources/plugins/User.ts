@@ -19,7 +19,7 @@ export function User(app: IJetApp, view: IJetView, config: any){
 			if (!server)
 				return user !== null;
 
-			return model.status().then(data => {
+			return model.status().catch(() => null).then(data => {
 				user = data;
 			});
 		},
@@ -40,7 +40,7 @@ export function User(app: IJetApp, view: IJetView, config: any){
 	function canNavigate(url, obj){
 		if (url === logout){
 			service.logout();
-			obj.url = afterLogout();
+			obj.redirect = afterLogout;
 		} else if (url !== login && !service.getStatus()){
 			obj.redirect = login;
 		}
@@ -50,7 +50,7 @@ export function User(app: IJetApp, view: IJetView, config: any){
 
 	app.attachEvent(`app:guard`, function(url: string, _$root: any, obj:any){
 		if (typeof user === "undefined")
-			return this.getStatus(true).then(any => canNavigate(url, obj));
+			obj.confirm = service.getStatus(true).then(any => canNavigate(url, obj));
 
 		return canNavigate(url, obj);
 	});

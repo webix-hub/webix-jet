@@ -241,12 +241,15 @@ export class JetApp extends JetBase implements IJetApp {
 		const firstInit = !this.$router;
 		if (firstInit){
 			url = this._first_start(url);
-			return this.canNavigate(url as string).then(newurl => {
-				this.$router.set(newurl, { silent:true });
-				return this._render(newurl);
-			});
 		}
 
+		return this.canNavigate(url as string).then(newurl => {
+			this.$router.set(newurl, { silent:true });
+			return this._render_stage(newurl);
+		});
+	}
+
+	protected _render_stage(url){
 		// not documented property
 		// block resizing while rendering parts of UI
 		(webix.ui as any).$freeze = true;
