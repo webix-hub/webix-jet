@@ -1,6 +1,6 @@
 {
   "name": "webix-jet-ts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Webix Jet microframework",
   "main": "sources/index.ts",
   "scripts": {
