@@ -9,13 +9,13 @@ export class UrlRouter implements IJetRouter{
 		this.prefix = config.routerPrefix || "";
 	}
 	set(path:string, config?:IJetRouterOptions){
-		window.history.pushState(null, null, path);
+		window.history.pushState(null, null, this.prefix + path);
 		if (!config || !config.silent){
 			setTimeout(() => this.cb(path), 1);
 		}
 	}
 	get(){
-		const path = window.location.pathname;
-		return path !== "/" ? path.replace(this.prefix, "") : "";
+		const path = window.location.pathname.replace(this.prefix, "");
+		return path !== "/" ? path : "";
 	}
 }
