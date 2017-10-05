@@ -9,7 +9,7 @@ export class UrlRouter implements IJetRouter{
 		this.prefix = config.routerPrefix || "";
 	}
 	set(path:string, config?:IJetRouterOptions){
-		window.history.pushState(null, path);
+		window.history.pushState(null, null, path);
 		if (!config || !config.silent){
 			setTimeout(() => this.cb(path), 1);
 		}
