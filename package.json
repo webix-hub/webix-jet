@@ -8,7 +8,8 @@
     "test": "yarn build && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
     "server": "webpack-dev-server",
     "lint": "tslint sources/*.ts",
-    "dist": "tsc --moduleResolution Node -p ./tsconfig.es6.json"
+    "dist": "tsc --moduleResolution Node -p ./tsconfig.es6.json",
+    "watch": "watch \"yarn dist\" ./sources/"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "mocha-phantomjs-core": "^2.1.2",
     "source-map-loader": "^0.2.1",
     "typescript": "^2.0.0",
+    "watch": "^1.0.2",
     "webpack": "^3.5.4",
     "webpack-dev-server": "^2.7.1",
     "webpack-livereload-plugin": "^0.11.0",
