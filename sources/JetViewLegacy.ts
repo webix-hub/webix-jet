@@ -39,10 +39,23 @@ export class JetViewLegacy extends JetView{
 
 		super.destructor();
 	}
-
-	$ready(a,b){
-		super._init(a,b);
-
+	show(path:string, config:any){
+		if (path.indexOf("/") === 0 || path.indexOf("./") === 0){
+			return super.show(path, config);
+		}
+		super.show("../"+path, config);
+	}
+	init(a,b){
+		if ((this.app.config as any).legacyEarlyInit){
+			this._realInitHandler(a,b);
+		}
+	}
+	ready(a,b){
+		if (!(this.app.config as any).legacyEarlyInit){
+			this._realInitHandler(a,b);
+		}
+	}
+	protected _realInitHandler(a,b){
 		const init = this._ui.$oninit;
 		if (init){
 			const root = this.getRoot();

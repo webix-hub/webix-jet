@@ -31,12 +31,23 @@ export class JetView extends JetBase{
 		// if (config && config.target)
 		// 	target = this._subs[path];
 		if (typeof path === "string"){
-			// child page
+			// root path
 			if (path.substr(0,1) === "/"){
 				return this.app.show(path);
 			}
+			// local path, do nothing
 			if (path.indexOf("./") === 0){
 				path = path.substr(2);
+			}
+			// parent path, call parent view
+			if (path.indexOf("../") === 0){
+				const parent = this.getParentView();
+				if (parent){
+					parent.show("./"+path.substr(3));
+				} else {
+					this.app.show("/"+path.substr(3));
+				}
+				return;
 			}
 
 			const sub = this.getSubView();
