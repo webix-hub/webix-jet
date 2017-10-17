@@ -191,9 +191,7 @@ export class JetView extends JetBase{
 	}
 
 	private _initError(view: any, err: any){
-		if (this.app.callEvent("app:error:initview", [view, err])){
-			window.console.error(err);
-		}
+		this.app.error("app:error:initview", [err, view]);
 		return true;
 	}
 

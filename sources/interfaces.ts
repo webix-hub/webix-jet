@@ -21,6 +21,7 @@ export interface IJetApp{
 	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
 	show(path:string);
 	refresh();
+	error(name:string, data:any[]);
 	copyConfig(source:any, target:any, config?:IViewConfig);
 	getRouter(): IJetRouter;
 }

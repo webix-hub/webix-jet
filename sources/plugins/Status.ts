@@ -68,10 +68,8 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 			iserror = (mode === "error");
 			if (count === 0){
 				status = iserror ? "error" : "good";
-				if (iserror && app.callEvent("app:error:server",[err])){
-					if (err){
-						console.error(err.responseText || err);
-					}
+				if (iserror){
+					app.error("app:error:server", [err.responseText || err]);
 				} else {
 					if (expireDelay)
 						setTimeout(hideStatus, expireDelay)

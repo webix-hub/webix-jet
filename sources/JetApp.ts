@@ -1,4 +1,4 @@
-import {JetBase} from "./JetBase";
+import { JetBase } from "./JetBase";
 import { JetView } from "./JetView";
 import { JetViewLegacy } from "./JetViewLegacy";
 import { JetViewRaw } from "./JetViewRaw";
@@ -11,6 +11,7 @@ import {
 import { HashRouter } from "./routers/HashRouter";
 
 import { parse, url2str } from "./helpers";
+import "./patch";
 
 // webpack require
 declare function require(_$url: string): any;
@@ -243,6 +244,18 @@ export class JetApp extends JetBase implements IJetApp {
 		plugin(this, null, config);
 	}
 
+	error(name:string, er:any[]){
+		this.callEvent(name, er);
+		this.callEvent("app:error", er);
+
+		if (this.config.debug){
+			if (er[0]){
+				console.error(er[0]);
+			}
+			debugger;
+		}
+	}
+
 	// renders top view
 	protected _render(url: string | IJetURL): Promise<IJetView> {
 		const firstInit = !this.$router;
@@ -258,37 +271,35 @@ export class JetApp extends JetBase implements IJetApp {
 	}
 
 	protected _render_stage(url){
-		// not documented property
-		// block resizing while rendering parts of UI
-		(webix.ui as any).$freeze = true;
-
 		const parsed = (typeof url === "string") ? parse(url) : url;
 
-		return this.createFromURL(parsed, this._view).then(view => {
-			// save reference for old and new views
-			const oldview = this._view;
-			this._view = view;
+		// block resizing while rendering parts of UI
+		return (webix.ui as any).freeze(() => 
+			this.createFromURL(parsed, this._view).then(view => {
+				// save reference for old and new views
+				const oldview = this._view;
+				this._view = view;
 
-			// render url state for the root
-			return view.render(this._container, parsed, this._parent).then(root => {
+				// render url state for the root
+				return view.render(this._container, parsed, this._parent).then(root => {
 
-				// destroy and detack old view
-				if (oldview && oldview !== this._view) {
-					oldview.destructor();
-				}
-				if (this._view.getRoot().getParentView()){
-					this._container = root;
-				}
+					// destroy and detack old view
+					if (oldview && oldview !== this._view) {
+						oldview.destructor();
+					}
+					if (this._view.getRoot().getParentView()){
+						this._container = root;
+					}
 
-				this._root = root;
-				// ok, we are finished, render final UI
-				(webix.ui as any).$freeze = false;
-				webix.ui.resize();
-
-				this.callEvent("app:route", [parsed]);
-				return view;
-			});
-		});
+					this._root = root;
+					
+					this.callEvent("app:route", [parsed]);
+					return view;
+				})
+			}).catch(function(er){
+		        this.error("app:error:render", [er]);
+		    })
+		);
 	}
 
 	protected _urlChange(_$url:IJetURL):Promise<any>{
@@ -322,7 +333,7 @@ export class JetApp extends JetBase implements IJetApp {
 
 	// error during view resolving
 	private _loadError(url: string, err: Error):any{
-		this.callEvent("app:error:resolve", [url, err]);
+		this.error("app:error:resolve", [err, url]);
 		return { template:" " };
 	}
 
