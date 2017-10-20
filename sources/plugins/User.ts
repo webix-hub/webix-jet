@@ -16,17 +16,20 @@ export function User(app: IJetApp, view: IJetView, config: any){
 			return user;
 		},
 		getStatus(server? : boolean){
-			if (!server)
+			if (!server){
 				return user !== null;
+			}
 
 			return model.status().catch(() => null).then(data => {
 				user = data;
 			});
 		},
 		login(name:string, pass:string){
-			return model.login(name, pass).then((data) => {
+			return model.login(name, pass).then(data => {
 				user = data;
-				if (!data) throw("Access denied");
+				if (!data){
+					throw("Access denied");
+				}
 
 				app.show(afterLogin);
 			});
@@ -49,13 +52,14 @@ export function User(app: IJetApp, view: IJetView, config: any){
 	app.setService("user", service);
 
 	app.attachEvent(`app:guard`, function(url: string, _$root: any, obj:any){
-		if (typeof user === "undefined")
-			obj.confirm = service.getStatus(true).then(any => canNavigate(url, obj));
+		if (typeof user === "undefined"){
+			obj.confirm = service.getStatus(true).then(some => canNavigate(url, obj));
+		}
 
 		return canNavigate(url, obj);
 	});
 
-	if (ping)
+	if (ping){
 		setInterval(() => service.getStatus(true), ping);
-	
+	}
 }

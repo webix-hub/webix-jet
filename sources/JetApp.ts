@@ -248,12 +248,14 @@ export class JetApp extends JetBase implements IJetApp {
 		this.callEvent(name, er);
 		this.callEvent("app:error", er);
 
+		/* tslint:disable */
 		if (this.config.debug){
 			if (er[0]){
 				console.error(er[0]);
 			}
 			debugger;
 		}
+		/* tslint:enable */
 	}
 
 	// renders top view
@@ -274,7 +276,7 @@ export class JetApp extends JetBase implements IJetApp {
 		const parsed = (typeof url === "string") ? parse(url) : url;
 
 		// block resizing while rendering parts of UI
-		return (webix.ui as any).freeze(() => 
+		return (webix.ui as any).freeze(() =>
 			this.createFromURL(parsed, this._view).then(view => {
 				// save reference for old and new views
 				const oldview = this._view;
@@ -292,13 +294,13 @@ export class JetApp extends JetBase implements IJetApp {
 					}
 
 					this._root = root;
-					
+
 					this.callEvent("app:route", [parsed]);
 					return view;
-				})
+				});
 			}).catch(function(er){
-		        this.error("app:error:render", [er]);
-		    })
+				this.error("app:error:render", [er]);
+			})
 		);
 	}
 

@@ -32,7 +32,8 @@
 			"allow-leading-underscore",
 			"ban-keywords"
 		],
-		"member-access":false
+		"member-access":false,
+		"only-arrow-functions": false
 	},
 	"rulesDirectory": []
 }
