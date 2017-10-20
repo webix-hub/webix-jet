@@ -1,7 +1,9 @@
 import {JetBase} from "./JetBase";
 
 import {parse, url2str} from "./helpers";
-import {IJetApp, IJetURL, IJetView, ISubView} from "./interfaces";
+import {
+	IJetApp, IJetURL,
+	IJetView, IJetViewFactory, ISubView} from "./interfaces";
 
 interface IDestructable{
 	destructor():void;
@@ -20,10 +22,20 @@ export class JetView extends JetBase{
 		this._children = [];
 	}
 
-	ui(ui:webix.ui.viewConfig) : webix.ui.baseview{
-		const view = this.app.webix.ui(ui);
-		this._children.push(view);
-		return view;
+	ui(
+		ui:webix.ui.viewConfig|IJetViewFactory,
+		name? : string
+	) : webix.ui.baseview | JetView{
+		if (typeof ui === "function"){
+			const jetview = new ui(this.app, name);
+			this._children.push(jetview);
+			jetview.render();
+			return jetview;
+		} else {
+			const view = this.app.webix.ui(ui);
+			this._children.push(view);
+			return view;
+		}
 	}
 
 	show(path:any, config:any){
