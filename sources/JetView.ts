@@ -83,8 +83,14 @@ export class JetView extends JetBase{
 
 				const urlstr = url2str(url);
 
-				this.app.canNavigate(urlstr, this).then(redirect =>
-					this._finishShow(sub.subview, url, redirect)).catch(() => false);
+				this.app.canNavigate(urlstr, this).then(redirect => {
+					if (urlstr !== redirect){
+						// url was blocked and redirected
+						this.app.show(redirect);
+					} else {
+						this._finishShow(sub.subview, url, redirect);
+					}
+				}).catch(() => false);
 			} else {
 				this._finishShow(sub.subview, newChunk, "");
 			}

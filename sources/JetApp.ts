@@ -216,7 +216,11 @@ export class JetApp extends JetBase implements IJetApp {
 			confirm: Promise.resolve(true)
 		};
 
-		this.callEvent("app:guard", [url, (view || this._view), obj]);
+		const res = this.callEvent("app:guard", [url, (view || this._view), obj]);
+		if (!res){
+			return Promise.reject("");
+		}
+
 		return obj.confirm.then(() => obj.redirect);
 	}
 
