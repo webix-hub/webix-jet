@@ -4,9 +4,7 @@
   "description": "Webix Jet microframework",
   "main": "sources/index.ts",
   "scripts": {
-    "build": "webpack",
-    "test": "yarn build && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
-    "server": "webpack-dev-server",
+    "test": "webpack && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
     "lint": "tslint sources/*.ts",
     "dist": "tsc --moduleResolution Node -p ./tsconfig.es6.json",
     "watch": "watch \"yarn dist\" ./sources/"

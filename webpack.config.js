@@ -1,10 +1,10 @@
+var webpack = require("webpack");
 var path = require('path');
 var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 var config = {
   entry: {
-    "tests" : "./tests/suite.ts",
-    "jet":'./jet.es5.ts'
+    "tests" : "./tests/suite.ts"
   },
   output: {
     path: path.join(__dirname, 'codebase'),
@@ -22,14 +22,11 @@ var config = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
-    modules: ["./sources", "./node_modules"],
-    alias:{
-      "jet-views":path.resolve(__dirname, 'samples/views'),
-      "jet-locales":path.resolve(__dirname, 'samples/locales')
-    }
+    modules: ["./sources", "./node_modules"]
   },
   plugins: [
-    new LiveReloadPlugin()
+    new LiveReloadPlugin(),
+    new webpack.IgnorePlugin(/^jet-views/, /^jet-locales/)
   ]
 };
 

@@ -7,6 +7,11 @@ Micro-framework for Webix UI
 
 http://webix.com
 
+### Useful links
+
+- demos - https://github.com/webix-hub/jet-demos
+- es6 package - https://github.com/webix-hub/webix-jet
+
 ### How to start
 
 ```
