@@ -177,20 +177,23 @@ export class JetApp extends JetBase implements IJetApp {
 					if (typeof ui === "function") {
 						if (ui.prototype && ui.prototype.show) {
 							// UI class
-							obj = new ui(this, name);
+							return new ui(this, name);
 						} else {
 							// UI factory functions
-							obj = new JetViewRaw(this, name, ui());
+							ui = ui();
 						}
+					}
+
+					if (ui instanceof JetApp || ui instanceof JetView){
+						obj = ui;
 					} else {
 						// UI object
-						if (ui.$ui){
+						if (ui.$ui) {
 							obj = new JetViewLegacy(this, name, ui);
 						} else {
 							obj = new JetViewRaw(this, name, ui);
 						}
 					}
-
 					return obj;
 				});
 		}
