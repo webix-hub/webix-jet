@@ -150,14 +150,14 @@ export class JetView extends JetBase{
 	protected _render(url:IJetURL):Promise<any>{
 		let response:Promise<any>;
 
-		const result:any = {};
-		this.app.copyConfig(this.config(), result, this._subs);
-		result.$scope = this;
-
+		// using wrapper object, so ui can be changed from app:render event
+		const result:any = { ui: {} };
+		this.app.copyConfig(this.config(), result.ui, this._subs);
 		this.app.callEvent("app:render", [this, url, result]);
+		result.ui.$scope = this;
 
 		try {
-			this._root = this.app.webix.ui(result, this._container);
+			this._root = this.app.webix.ui(result.ui, this._container);
 			if (this._root.getParentView()){
 				this._container = this._root;
 			}
