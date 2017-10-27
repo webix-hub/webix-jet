@@ -302,7 +302,7 @@ export class JetApp extends JetBase implements IJetApp {
 					this.callEvent("app:route", [parsed]);
 					return view;
 				});
-			}).catch(function(er){
+			}).catch(er => {
 				this.error("app:error:render", [er]);
 			})
 		);
