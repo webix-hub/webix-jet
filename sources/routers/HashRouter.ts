@@ -1,4 +1,4 @@
-import * as routie from "webix-routie/lib/routie";
+import routie from "webix-routie/lib/routie";
 
 import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
