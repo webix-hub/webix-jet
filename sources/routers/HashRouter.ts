@@ -6,11 +6,15 @@ import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
 export class HashRouter implements IJetRouter{
 	private config:any;
+	private _lastUrl:string;
 	constructor(cb: IJetRouterCallback, config:any){
 		this.config = config || {};
 
 		let rcb = function(_$a){ /* stub */ };
-		routie("!*", url => rcb(this.get()));
+		routie("!*", url => {
+			this._lastUrl = "";
+			return rcb(this.get());
+		});
 		rcb = cb;
 	}
 	set(path:string, config?:IJetRouterOptions){
@@ -24,10 +28,11 @@ export class HashRouter implements IJetRouter{
 			}
 		}
 
+		this._lastUrl = path;
 		(routie as any).navigate("!"+path, config);
 	}
 	get(){
-		let path = (window.location.hash || "").replace("#!","");
+		let path = this._lastUrl || (window.location.hash || "").replace("#!","");
 		if (this.config.routes){
 			const compare = path.split("?",2);
 			const key = this.config.routes[compare[0]];
