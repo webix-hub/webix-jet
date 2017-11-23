@@ -140,7 +140,13 @@ export class JetApp extends JetBase implements IJetApp {
 					// predefined hash
 					result = views[url];
 				}
-			} else {
+				if (typeof result === "string"){
+					url = result;
+					result = null;
+				}
+			}
+
+			if (!result){
 				url = url.replace(/\./g, "/");
 				let view = require("jet-views/"+url);
 				if (view.__esModule) {
