@@ -5,15 +5,36 @@ import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
 
 export class HashRouter implements IJetRouter{
-	constructor(cb: IJetRouterCallback, _$config:any){
+	private config:any;
+	constructor(cb: IJetRouterCallback, config:any){
+		this.config = config || {};
+
 		let rcb = function(_$a){ /* stub */ };
-		routie("!*", function(a){ return rcb(a); });
+		routie("!*", url => rcb(this.get()));
 		rcb = cb;
 	}
 	set(path:string, config?:IJetRouterOptions){
-		(<any>routie).navigate("!"+path, config);
+		if (this.config.routes){
+			const compare = path.split("?",2);
+			for (const key in this.config.routes){
+				if (this.config.routes[key] === compare[0]){
+					path = key+(compare.length > 1 ? "?"+compare[1] : "");
+					break;
+				}
+			}
+		}
+
+		(routie as any).navigate("!"+path, config);
 	}
 	get(){
-		return (window.location.hash || "").replace("#!","");
+		let path = (window.location.hash || "").replace("#!","");
+		if (this.config.routes){
+			const compare = path.split("?",2);
+			const key = this.config.routes[compare[0]];
+			if (key){
+				path = key+(compare.length > 1 ? "?"+compare[1] : "");
+			}
+		}
+		return path;
 	}
 }
