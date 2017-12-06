@@ -113,7 +113,7 @@ export class JetView extends JetBase{
 	ready(_$view:webix.ui.baseview, _$url: IJetURL){
 		// stub
 	}
-	config(){
+	config() : any {
 		this.app.webix.message("View:Config is not implemented");
 	}
 	urlChange(_$view: webix.ui.baseview, _$url : IJetURL){
@@ -148,11 +148,20 @@ export class JetView extends JetBase{
 	}
 
 	protected _render(url:IJetURL):Promise<any>{
+		const config = this.config();
+		if (config.then){
+			return config.then(cfg => this._render_final(cfg, url));
+		} else {
+			return this._render_final(config, url);
+		}
+	}
+
+	protected _render_final(config:any, url:IJetURL):Promise<any>{
 		let response:Promise<any>;
 
 		// using wrapper object, so ui can be changed from app:render event
 		const result:any = { ui: {} };
-		this.app.copyConfig(this.config(), result.ui, this._subs);
+		this.app.copyConfig(config, result.ui, this._subs);
 		this.app.callEvent("app:render", [this, url, result]);
 		result.ui.$scope = this;
 
