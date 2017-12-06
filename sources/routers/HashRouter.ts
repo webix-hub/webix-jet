@@ -7,11 +7,19 @@ import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 export class HashRouter implements IJetRouter{
 	private config:any;
 	private _lastUrl:string;
+	private _prefix:string;
+
 	constructor(cb: IJetRouterCallback, config:any){
 		this.config = config || {};
+		this._prefix = this.config.routerPrefix;
+
+		// use "#!" for backward compatibility
+		if (typeof this._prefix === "undefined"){
+			this._prefix = "!";
+		}
 
 		let rcb = function(_$a){ /* stub */ };
-		routie("!*", url => {
+		routie(this._prefix+"*", url => {
 			this._lastUrl = "";
 			return rcb(this.get());
 		});
@@ -29,10 +37,12 @@ export class HashRouter implements IJetRouter{
 		}
 
 		this._lastUrl = path;
-		(routie as any).navigate("!"+path, config);
+		(routie as any).navigate(this._prefix+path, config);
 	}
 	get(){
-		let path = this._lastUrl || (window.location.hash || "").replace("#!","");
+		let path =  this._lastUrl ||
+					(window.location.hash || "").replace("#"+this._prefix,"");
+
 		if (this.config.routes){
 			const compare = path.split("?",2);
 			const key = this.config.routes[compare[0]];
