@@ -10,6 +10,10 @@ export interface IWebixFacade{
 	extend(a: any, b: any, force:boolean):any;
 }
 
+export interface IUIConfig{
+	container? : string|HTMLElement;
+}
+
 export interface IJetApp{
 	webix: IWebixFacade;
 	config: IJetConfig;
@@ -20,6 +24,7 @@ export interface IJetApp{
 	attachEvent(name:string, handler:any):void;
 	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
 	show(path:string);
+	createView(obj:any, name?:string):IJetView;
 	refresh();
 	error(name:string, data:any[]);
 	copyConfig(source:any, target:any, config?:IViewConfig);
@@ -40,7 +45,8 @@ export interface IJetView{
 	getName():string;
 	getIndex():number;
 	getId():number;
-	getSubView(name?:string):ISubViewInfo;
+	getSubView(name?:string):IJetView;
+	getSubViewInfo(name?:string):ISubViewInfo;
 	getRoot() : webix.ui.baseview;
 	getParentView() : IJetView;
 	render(

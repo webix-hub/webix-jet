@@ -178,43 +178,46 @@ export class JetApp extends JetBase implements IJetApp {
 			view = Promise.resolve(now);
 		} else {
 			view = this.loadView(chunk.page)
-				.then(ui => {
-					let obj;
-					if (typeof ui === "function") {
-						if (ui.prototype && ui.prototype.show) {
-							// UI class
-							return new ui(this, name);
-						} else {
-							// UI factory functions
-							ui = ui();
-						}
-					}
-
-					if (ui instanceof JetApp || ui instanceof JetView){
-						obj = ui;
-					} else {
-						// UI object
-						if (ui.$ui) {
-							obj = new JetViewLegacy(this, name, ui);
-						} else {
-							obj = new JetViewRaw(this, name, ui);
-						}
-					}
-					return obj;
-				});
+				.then(ui => this.createView(ui, name));
 		}
 
 		return view;
 	}
 
+	createView(ui:any, name?:string){
+		let obj;
+		if (typeof ui === "function") {
+			if (ui.prototype && ui.prototype.show) {
+				// UI class
+				return new ui(this, name);
+			} else {
+				// UI factory functions
+				ui = ui();
+			}
+		}
+
+		if (ui instanceof JetApp || ui instanceof JetView){
+			obj = ui;
+		} else {
+			// UI object
+			if (ui.$ui) {
+				obj = new JetViewLegacy(this, name, ui);
+			} else {
+				obj = new JetViewRaw(this, name, ui);
+			}
+		}
+		return obj;
+	}
 
 	// show view path
-	show(name: string) {
+	show(name: string) : Promise<any> {
 		if (this.$router.get() !== name) {
-			this.canNavigate(name).then(url => {
+			return this.canNavigate(name).then(url => {
 				this.$router.set(url, { silent:true });
-				this._render(url);
+				return this._render(url);
 			}).catch(() => false);
+		} else {
+			return Promise.resolve(true);
 		}
 	}
 

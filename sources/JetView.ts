@@ -2,8 +2,8 @@ import {JetBase} from "./JetBase";
 
 import {parse, url2str} from "./helpers";
 import {
-	IJetApp, IJetURL,
-	IJetView, IJetViewFactory, ISubView} from "./interfaces";
+	IJetApp, IJetURL, IJetURLChunk,
+	IJetView, IJetViewFactory, ISubView, IUIConfig} from "./interfaces";
 
 interface IDestructable{
 	destructor():void;
@@ -24,24 +24,35 @@ export class JetView extends JetBase{
 
 	ui(
 		ui:webix.ui.viewConfig|IJetViewFactory,
-		name? : string
-	) : webix.ui.baseview | JetView{
-		if (typeof ui === "function"){
-			const jetview = new ui(this.app, name);
-			this._children.push(jetview);
-			jetview.render();
+		config: IUIConfig
+	) : webix.ui.baseview | IJetView{
+		config = config || {};
+		const container = config.container || (ui as webix.ui.viewConfig).container;
+
+		const jetview = this.app.createView(ui);
+		this._children.push(jetview);
+
+		jetview.render(container, null, this);
+
+		if (typeof ui !== "object" || (ui instanceof JetBase)){
+			// raw webix UI
 			return jetview;
 		} else {
-			const view = this.app.webix.ui(ui);
-			this._children.push(view);
-			return view;
+			return jetview.getRoot();
 		}
 	}
 
-	show(path:any, config:any){
-		// var target = this.subs[0];
-		// if (config && config.target)
-		// 	target = this._subs[path];
+	$$(id:any) : webix.ui.baseview {
+		if (typeof id === "string"){
+			id = { jetId: id };
+		}
+
+		return (this.getRoot() as any).queryView(id, "self");
+	}
+
+	show(path:any, config:any):Promise<any>{
+		config = config || {};
+
 		if (typeof path === "string"){
 			// root path
 			if (path.substr(0,1) === "/"){
@@ -62,7 +73,7 @@ export class JetView extends JetBase{
 				return;
 			}
 
-			const sub = this.getSubView();
+			const sub = this.getSubViewInfo(config.target);
 
 			if (!sub){
 				return this.app.show("/"+path);
@@ -83,28 +94,18 @@ export class JetView extends JetBase{
 
 				const urlstr = url2str(url);
 
-				this.app.canNavigate(urlstr, this).then(redirect => {
+				return this.app.canNavigate(urlstr, this).then(redirect => {
 					if (urlstr !== redirect){
 						// url was blocked and redirected
-						this.app.show(redirect);
+						return this.app.show(redirect);
 					} else {
-						this._finishShow(sub.subview, url, redirect);
+						return this._finishShow(sub.subview, url, redirect);
 					}
 				}).catch(() => false);
 			} else {
-				this._finishShow(sub.subview, newChunk, "");
+				return this._finishShow(sub.subview, newChunk, "");
 			}
-
-			// route to page
-			// var parsed = parse(path);
-			// var path this.path.slice(0, index).concat(parsed);
-			// if (config)
-			// 	webix.extend(scope.path[index].params, config, true);
-		} else {
-			// set parameters
-			// webix.extend(scope.path[index].params, path, true);
 		}
-		// scope.show(url_string(scope.path), -1);
 	}
 
 	init(_$view:webix.ui.baseview, _$url: IJetURL){
@@ -194,6 +195,7 @@ export class JetView extends JetBase{
 				// we have fixed subview url
 				if (typeof frame.url === "string"){
 					const parsed = parse(frame.url);
+					parsed.map(a => { a.index = 0; });
 					waits.push(this._createSubView(frame, parsed));
 				} else {
 					let view = frame.view;
@@ -248,13 +250,16 @@ export class JetView extends JetBase{
 		});
 	}
 
-	private _finishShow(sub:ISubView, url:IJetURL, path:string){
+	private _finishShow(sub:ISubView, url:IJetURL, path:string) : Promise<any>{
+		let next;
 		if (this._index){
-			this._urlChange(url.slice(this._index-1));
+			next = this._urlChange(url.slice(this._index-1));
 			this.app.getRouter().set(path, { silent: true });
 			this.app.callEvent("app:route", [url]);
 		} else {
-			this._createSubView(sub, url);
+			url.map(a => a.index = 0);
+			next = this._urlChange([null, ...url]);
 		}
+		return next;
 	}
 }

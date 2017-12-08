@@ -115,7 +115,14 @@ export abstract class JetBase implements IJetView{
 		return false;
 	}
 
-	getSubView(name?:string):ISubViewInfo{
+	getSubView(name?:string):IJetView{
+		const sub = this.getSubViewInfo(name);
+		if (sub){
+			return sub.subview.view;
+		}
+	}
+
+	getSubViewInfo(name?:string):ISubViewInfo{
 		const sub = this._subs[name || "default"];
 		if (sub){
 			return { subview:sub, parent:this };
@@ -123,7 +130,7 @@ export abstract class JetBase implements IJetView{
 
 		// when called from a child view, searches for nearest parent with subview
 		if (this._parent){
-			return this._parent.getSubView(name);
+			return this._parent.getSubViewInfo(name);
 		}
 		return null;
 	}
