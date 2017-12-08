@@ -51,7 +51,7 @@ export function parse(url:string):IJetURLChunk[]{
 			// create hash of named params
 			for (const param of params) {
 				const dchunk = param.split("=");
-				result[dchunk[0]] = dchunk[1];
+				result[dchunk[0]] = decodeURIComponent(dchunk[1]);
 			}
 		}
 
@@ -73,7 +73,7 @@ export function url2str(stack:IJetURLChunk[]):string{
 		url.push("/"+chunk.page);
 		const params = obj2str(chunk.params);
 		if (params){
-			url.push(":"+params);
+			url.push("?"+params);
 		}
 	}
 
@@ -84,9 +84,9 @@ function obj2str(obj){
 	const str = [];
 	for (const key in obj){
 		if (str.length){
-			str.push(":");
+			str.push("&");
 		}
-		str.push(key+"="+obj[key]);
+		str.push(key+"="+encodeURIComponent(obj[key]));
 	}
 
 	return str.join("");
