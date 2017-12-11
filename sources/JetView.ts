@@ -24,7 +24,7 @@ export class JetView extends JetBase{
 
 	ui(
 		ui:webix.ui.viewConfig|IJetViewFactory,
-		config: IUIConfig
+		config?: IUIConfig
 	) : webix.ui.baseview | IJetView{
 		config = config || {};
 		const container = config.container || (ui as webix.ui.viewConfig).container;
