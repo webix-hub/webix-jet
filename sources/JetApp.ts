@@ -131,6 +131,12 @@ export class JetApp extends JetBase implements IJetApp {
 		const views = this.config.views;
 		let result = null;
 
+		if (url === ""){
+			return Promise.resolve(
+				this._loadError("", new Error("Webix Jet: Empty url segment"))
+			);
+		}
+
 		try {
 			if (views) {
 				if (typeof views === "function") {
@@ -266,8 +272,19 @@ export class JetApp extends JetBase implements IJetApp {
 
 		/* tslint:disable */
 		if (this.config.debug){
-			if (er[0]){
-				console.error(er[0]);
+			for (var i=0; i<er.length; i++){
+				console.error(er[i]);
+				if (er[i] instanceof Error){
+					let text = er[i].message;
+					if (text.indexOf("Module build failed") === 0){
+						text = text.replace(/\x1b\[[0-9;]*m/g,"");
+						document.body.innerHTML = `<pre style='font-size:16px; background-color: #ec6873; color: #000; padding:10px;'>${text}</pre>`;
+					} else {
+						text += "<br><br>Check console for more details";
+						webix.message({ type:"error", text:text, expire:-1 });
+					}
+						
+				}
 			}
 			debugger;
 		}
