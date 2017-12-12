@@ -2,22 +2,6 @@ import { IJetURL, IJetView, ISubView, ISubViewInfo } from "./interfaces";
 import { JetApp } from "./JetApp";
 
 
-function locate(ui, id){
-	const cells = ui.getChildViews();
-	for (const cell of cells) {
-		let kid = cell;
-		if (kid.config.localId === id){
-			return kid;
-		} else {
-			kid = locate(kid, id);
-		}
-		if (kid){
-			return kid;
-		}
-	}
-	return null;
-}
-
 export abstract class JetBase implements IJetView{
 	protected _parent: IJetView;
 	protected _index: number;
@@ -91,12 +75,14 @@ export abstract class JetBase implements IJetView{
 		return this._parent;
 	}
 
-	$$(id:string):webix.ui.baseview{
-		let view = webix.$$(id);
-		if (!view){
-			view = locate(this.getRoot(), id);
+	$$(id:string | webix.ui.baseview):webix.ui.baseview{
+		if (typeof id === "string"){
+			return (this.getRoot() as any).queryView(
+				(obj => obj.config.id === id || obj.config.localId === id),
+				"self");
+		} else {
+			return id;
 		}
-		return view;
 	}
 
 	on(obj, name, code){

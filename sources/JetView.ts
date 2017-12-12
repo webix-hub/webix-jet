@@ -42,14 +42,6 @@ export class JetView extends JetBase{
 		}
 	}
 
-	$$(id:any) : webix.ui.baseview {
-		if (typeof id === "string"){
-			id = { jetId: id };
-		}
-
-		return (this.getRoot() as any).queryView(id, "self");
-	}
-
 	show(path:any, config:any):Promise<any>{
 		config = config || {};
 
