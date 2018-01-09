@@ -6,6 +6,7 @@
         "outDir" : "../webix-jet/"
     },
     "include":[
-        "sources/**/*.ts"
+        "sources/**/*.ts",
+        "node_modules/webix"
     ]
 }

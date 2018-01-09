@@ -48,6 +48,9 @@ export interface IJetView{
 	getSubView(name?:string):IJetView;
 	getSubViewInfo(name?:string):ISubViewInfo;
 	getRoot() : webix.ui.baseview;
+	setVar(id:string, value:any);
+	getVar(id:string, parent:boolean):any;
+	getUrl():IJetURL;
 	getParentView() : IJetView;
 	render(
 		area: webix.ui.baseview|string|HTMLElement,

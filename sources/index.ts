@@ -11,11 +11,11 @@ import {Locale} 		from "./plugins/Locale";
 import {Menu} 			from "./plugins/Menu";
 import {Status} 		from "./plugins/Status";
 import {Theme} 			from "./plugins/Theme";
+import {UrlVar}			from "./plugins/UrlVar";
 import {User} 			from "./plugins/User";
 
-
 export const plugins = {
-	UnloadGuard, Locale, Menu, Theme, User, Status
+	UnloadGuard, Locale, Menu, Theme, User, Status, UrlVar
 };
 
 if (!(window as any).Promise){

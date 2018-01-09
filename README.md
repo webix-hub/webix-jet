@@ -1,5 +1,5 @@
-Webix Jet
-=========
+Webix Jet - typescript version
+==============================
 
 [![npm version](https://badge.fury.io/js/webix-jet.svg)](https://badge.fury.io/js/webix-jet)
 
@@ -12,15 +12,6 @@ http://webix.com
 - demos - https://github.com/webix-hub/jet-demos
 - es6 package - https://github.com/webix-hub/webix-jet
 
-### How to start
-
-```
-npm install -g wjet
-mkdir myapp
-cd myapp
-wjet init
-```
-
 ### Working with sources
 
 Those commands are usefull only if you want to work with typescript sources of webix-jet
@@ -31,6 +22,9 @@ npm run server
 
 //compile to es6
 npm run dist
+
+//compile to es5
+npm run es5
 
 //run lint and test
 npm run lint && npm run test

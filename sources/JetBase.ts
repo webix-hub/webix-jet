@@ -12,6 +12,8 @@ export abstract class JetBase implements IJetView{
 	protected _name: string;
 	protected _events:{ id:string, obj: any }[];
 	protected _subs:{[name:string]:ISubView};
+	private _data:{[name:string]:any};
+	private _url:IJetURL;
 
 
 	constructor(){
@@ -19,6 +21,7 @@ export abstract class JetBase implements IJetView{
 
 		this._events = [];
 		this._subs = {};
+		this._data = {};
 	}
 
 	getRoot(): webix.ui.baseview {
@@ -43,15 +46,32 @@ export abstract class JetBase implements IJetView{
 
 		this._events = this._container = this._app = this._parent = null;
 	}
+	setVar(id:string, value:any){
+		this._data[id] = value;
+	}
+	getVar(id:string, parent:boolean):any{
+		const value = this._data[id];
+		if (typeof value !== "undefined" || !parent){
+			return value;
+		}
 
+		const view = this.getParentView();
+		if (view){
+			return view.getVar(id, parent);
+		}
+	}
+	getUrl():IJetURL{
+		return this._url;
+	}
 	render(
-		root: string | HTMLElement | webix.ui.baseview,
+		root?: string | HTMLElement | webix.ui.baseview,
 		url?: IJetURL, parent?: IJetView): Promise<webix.ui.baseview> {
 
 		this._parent = parent;
 		if (url) {
 			this._index = url[0].index;
 		}
+		this._init_url_data(url);
 
 		root = root || document.body;
 		const _container = (typeof root === "string") ? webix.toNode(root) : root;
@@ -128,4 +148,11 @@ export abstract class JetBase implements IJetView{
 	public abstract show(path:string, target?:any);
 	protected abstract _render(url: IJetURL) : Promise<any>;
 	protected abstract _urlChange(url: IJetURL) : Promise<any>;
+	protected _init_url_data(url:IJetURL){
+		if (url && url[0]){
+			this._data = {};
+			Object.assign(this._data, url[0].params);
+		}
+		this._url = url;
+	}
 }

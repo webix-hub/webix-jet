@@ -42,13 +42,21 @@ export class JetView extends JetBase{
 		}
 	}
 
-	show(path:any, config:any):Promise<any>{
+	show(path:any, config?:any):Promise<any>{
 		config = config || {};
+		const currentUrl = parse(this.app.getRouter().get());
 
 		if (typeof path === "string"){
 			// root path
 			if (path.substr(0,1) === "/"){
 				return this.app.show(path);
+			}
+			// parameters only
+			if (path.substr(0, 1) === "?") {
+				const next = path.indexOf("/");
+				const chunk = parse(path.substr(0, next));
+				Object.assign(currentUrl[this._index-1].params, chunk[0].params);
+				path = next > -1 ? path.substr(next+1) : "";
 			}
 			// local path, do nothing
 			if (path.indexOf("./") === 0){
@@ -77,9 +85,8 @@ export class JetView extends JetBase{
 			const newChunk = parse(path);
 
 			let url: IJetURL = null;
-			const currentUrl = this.app.getRouter().get();
 			if (this._index){
-				url = parse(currentUrl).slice(0, this._index).concat(newChunk);
+				url = currentUrl.slice(0, this._index).concat(newChunk);
 				for	(let i=0; i<url.length; i++){
 					url[i].index = i+1;
 				}
@@ -180,6 +187,8 @@ export class JetView extends JetBase{
 	}
 
 	protected _urlChange(url:IJetURL):Promise<any>{
+		this.app.callEvent("app:urlchange", [this, url]);
+
 		const waits = [];
 		for (const key in this._subs){
 			const frame = this._subs[key];
@@ -245,13 +254,18 @@ export class JetView extends JetBase{
 	private _finishShow(sub:ISubView, url:IJetURL, path:string) : Promise<any>{
 		let next;
 		if (this._index){
-			next = this._urlChange(url.slice(this._index-1));
+			next = this._renderPartial(url.slice(this._index-1));
 			this.app.getRouter().set(path, { silent: true });
 			this.app.callEvent("app:route", [url]);
 		} else {
 			url.map(a => a.index = 0);
-			next = this._urlChange([null, ...url]);
+			next = this._renderPartial([null, ...url]);
 		}
 		return next;
+	}
+
+	private _renderPartial(url:IJetURL){
+		this._init_url_data(url);
+		return this._urlChange(url);
 	}
 }

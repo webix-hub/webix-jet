@@ -1,6 +1,6 @@
 {
   "name": "webix-jet-ts",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Webix Jet microframework",
   "main": "sources/index.ts",
   "scripts": {
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/chai": "^4.0.3",
     "@types/mocha": "^2.2.41",
-    "@types/webix": "^4.2.0",
+    "webix": "^5.1.0",
     "awesome-typescript-loader": "^3.2.3",
     "chai": "^3.5.0",
     "graceful-fs": "^4.1.11",
@@ -32,15 +32,13 @@
     "mocha-phantomjs-core": "^2.1.2",
     "source-map-loader": "^0.2.1",
     "typescript": "^2.0.0",
+    "tslint": "^5.7.0",
     "watch": "^1.0.2",
     "webpack": "^3.5.4",
-    "webpack-dev-server": "^2.7.1",
-    "webpack-livereload-plugin": "^0.11.0",
-    "webpack-shell-plugin": "^0.5.0"
+    "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
     "node-polyglot": "^2.2.2",
-    "tslint": "^5.7.0",
     "webix-routie": "^0.4.0"
   },
   "author": "Maksim Kozhukh",

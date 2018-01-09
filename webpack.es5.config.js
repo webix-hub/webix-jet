@@ -1,6 +1,5 @@
 var webpack = require("webpack");
 var path = require('path');
-var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 var config = {
   entry: {
@@ -15,7 +14,7 @@ var config = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader'
+        loader: 'ts-loader'
       }
     ]
   },
@@ -24,7 +23,6 @@ var config = {
     modules: ["./sources", "./node_modules"]
   },
   plugins: [
-    new LiveReloadPlugin(),
     new webpack.IgnorePlugin(/^jet-views/, /^jet-locales/)
   ]
 };
