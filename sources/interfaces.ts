@@ -23,7 +23,7 @@ export interface IJetApp{
 	callEvent(name:string, parameters:any[]):boolean;
 	attachEvent(name:string, handler:any):void;
 	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
-	show(path:string);
+	show(path:any);
 	createView(obj:any, name?:string):IJetView;
 	refresh();
 	error(name:string, data:any[]);
@@ -48,8 +48,8 @@ export interface IJetView{
 	getSubView(name?:string):IJetView;
 	getSubViewInfo(name?:string):ISubViewInfo;
 	getRoot() : webix.ui.baseview;
-	setVar(id:string, value:any);
-	getVar(id:string, parent:boolean):any;
+	setParam(id:string, value:any, url?:boolean);
+	getParam(id:string, parent:boolean):any;
 	getUrl():IJetURL;
 	getParentView() : IJetView;
 	render(
@@ -58,7 +58,7 @@ export interface IJetView{
 		parent?: IJetView) : Promise<webix.ui.baseview>;
 	destructor();
 	on(obj:any, name:string, code:any);
-	show(path:string, target?:any);
+	show(path:any, config?:any);
 }
 
 interface IHash{

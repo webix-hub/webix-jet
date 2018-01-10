@@ -1,11 +1,11 @@
-import { IJetURL, IJetView, ISubView, ISubViewInfo } from "./interfaces";
-import { JetApp } from "./JetApp";
+import { IJetApp, IJetURL, IJetView,
+	ISubView, ISubViewInfo } from "./interfaces";
 
 
 export abstract class JetBase implements IJetView{
+	public app: IJetApp;
 	protected _parent: IJetView;
 	protected _index: number;
-	protected _app: JetApp;
 	protected _container: HTMLElement | webix.ui.baseview;
 	protected _root: webix.ui.baseview;
 	protected _id: number;
@@ -44,12 +44,20 @@ export abstract class JetBase implements IJetView{
 			}
 		}
 
-		this._events = this._container = this._app = this._parent = null;
+		this._events = this._container = this.app = this._parent = null;
 	}
-	setVar(id:string, value:any){
-		this._data[id] = value;
+	setParam(id:string, value:any, url?:boolean){
+		if (this._data[id] !== value){
+			this._data[id] = value;
+			if (this.app.callEvent("app:paramchange", [this, id, value, url])){
+				if (url){
+					// changing in the url
+					this.show({[id]:value});
+				}
+			}
+		}
 	}
-	getVar(id:string, parent:boolean):any{
+	getParam(id:string, parent:boolean):any{
 		const value = this._data[id];
 		if (typeof value !== "undefined" || !parent){
 			return value;
@@ -57,7 +65,7 @@ export abstract class JetBase implements IJetView{
 
 		const view = this.getParentView();
 		if (view){
-			return view.getVar(id, parent);
+			return view.getParam(id, parent);
 		}
 	}
 	getUrl():IJetURL{
@@ -145,7 +153,7 @@ export abstract class JetBase implements IJetView{
 		return this._name;
 	}
 
-	public abstract show(path:string, target?:any);
+	public abstract show(path:any, config?:any);
 	protected abstract _render(url: IJetURL) : Promise<any>;
 	protected abstract _urlChange(url: IJetURL) : Promise<any>;
 	protected _init_url_data(url:IJetURL){

@@ -10,7 +10,6 @@ interface IDestructable{
 }
 
 export class JetView extends JetBase{
-	public app:IJetApp;
 	private _children:IDestructable[];
 
 	constructor(app : IJetApp, name : string){
@@ -44,46 +43,68 @@ export class JetView extends JetBase{
 
 	show(path:any, config?:any):Promise<any>{
 		config = config || {};
-		const currentUrl = parse(this.app.getRouter().get());
 
+		// detect the related view
 		if (typeof path === "string"){
 			// root path
 			if (path.substr(0,1) === "/"){
 				return this.app.show(path);
 			}
-			// parameters only
-			if (path.substr(0, 1) === "?") {
-				const next = path.indexOf("/");
-				const chunk = parse(path.substr(0, next));
-				Object.assign(currentUrl[this._index-1].params, chunk[0].params);
-				path = next > -1 ? path.substr(next+1) : "";
-			}
-			// local path, do nothing
-			if (path.indexOf("./") === 0){
-				path = path.substr(2);
-			}
 			// parent path, call parent view
 			if (path.indexOf("../") === 0){
 				const parent = this.getParentView();
 				if (parent){
-					parent.show("./"+path.substr(3));
+					parent.show("./"+path.substr(3), config);
 				} else {
 					this.app.show("/"+path.substr(3));
 				}
 				return;
 			}
+			// local path, do nothing
+			if (path.indexOf("./") === 0){
+				path = path.substr(2);
+			}
 
 			const sub = this.getSubViewInfo(config.target);
-
 			if (!sub){
 				return this.app.show("/"+path);
 			}
 			if (sub.parent !== this){
 				return sub.parent.show(path, config);
 			}
+		}
 
-			const newChunk = parse(path);
+		const currentUrl = parse(this.app.getRouter().get());
 
+		// convert parameters to url
+		if (typeof path === "object"){
+			if (webix.isArray(path)){
+				currentUrl[this._index+path[0]].page=path[1];
+				path = "";
+			} else {
+				const temp = [];
+				for (const key in path){
+					temp.push(encodeURIComponent(key)+"="+encodeURIComponent(path[key]));
+				}
+				path = "?"+temp.join("&");
+			}
+		}
+
+		// process url
+		if (typeof path === "string"){
+			// parameters only
+			if (path.substr(0, 1) === "?") {
+				const next = path.indexOf("/");
+				let params = path;
+				if (next > -1){
+					params = path.substr(0, next);
+				}
+				const chunk = parse(params);
+				Object.assign(currentUrl[this._index-1].params, chunk[0].params);
+				path = next > -1 ? path.substr(next+1) : "";
+			}
+
+			const newChunk = path === "" ? currentUrl.slice(this._index) : parse(path);
 			let url: IJetURL = null;
 			if (this._index){
 				url = currentUrl.slice(0, this._index).concat(newChunk);
@@ -187,7 +208,7 @@ export class JetView extends JetBase{
 	}
 
 	protected _urlChange(url:IJetURL):Promise<any>{
-		this.app.callEvent("app:urlchange", [this, url]);
+		this.app.callEvent("app:urlchange", [this, url, this._index]);
 
 		const waits = [];
 		for (const key in this._subs){
