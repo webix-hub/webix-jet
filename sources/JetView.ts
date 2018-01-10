@@ -2,7 +2,7 @@ import {JetBase} from "./JetBase";
 
 import {parse, url2str} from "./helpers";
 import {
-	IJetApp, IJetURL, IJetURLChunk,
+	IJetApp, IJetURL,
 	IJetView, IJetViewFactory, ISubView, IUIConfig} from "./interfaces";
 
 interface IDestructable{
@@ -98,11 +98,11 @@ export class JetView extends JetBase{
 						// url was blocked and redirected
 						return this.app.show(redirect);
 					} else {
-						return this._finishShow(sub.subview, url, redirect);
+						return this._finishShow(url, redirect);
 					}
 				}).catch(() => false);
 			} else {
-				return this._finishShow(sub.subview, newChunk, "");
+				return this._finishShow(newChunk, "");
 			}
 		}
 	}
@@ -251,7 +251,7 @@ export class JetView extends JetBase{
 		});
 	}
 
-	private _finishShow(sub:ISubView, url:IJetURL, path:string) : Promise<any>{
+	private _finishShow(url:IJetURL, path:string) : Promise<any>{
 		let next;
 		if (this._index){
 			next = this._renderPartial(url.slice(this._index-1));

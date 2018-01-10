@@ -42,9 +42,10 @@ describe("URL", ()=>{
 		});
 
 		it("must convert stack parameters back to str", () => {
-			const url = "/some:test1=1:test2=2/url:test3=3:test4=4/here";
-			const stack = parse(url);
-			expect( url2str(stack) ).to.equal(url);
+			const urlOld = "/some:test1=1:test2=2/url:test3=3:test4=4/here";
+			const urlNew = "/some?test1=1&test2=2/url?test3=3&test4=4/here";
+			expect( url2str(parse(urlOld)) ).to.equal(urlNew);
+			expect( url2str(parse(urlNew)) ).to.equal(urlNew);
 		});
 	});
 });

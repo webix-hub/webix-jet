@@ -1,4 +1,4 @@
-import {IJetApp,IJetURL} from "./interfaces";
+import {IJetApp} from "./interfaces";
 import {JetView} from "./JetView";
 
 

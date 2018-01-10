@@ -95,10 +95,6 @@ export interface IJetRouter{
 }
 export type IJetRouterCallback = (url?:string) => any;
 
-interface IJetEventHandler{
-	id:string;
-	handler:any;
-}
 export interface IViewConfig{
 	[name:string]:ISubView;
 }

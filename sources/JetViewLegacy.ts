@@ -45,17 +45,17 @@ export class JetViewLegacy extends JetView{
 		}
 		super.show("../"+path, config);
 	}
-	init(a,b){
+	init(){
 		if ((this.app.config as any).legacyEarlyInit){
-			this._realInitHandler(a,b);
+			this._realInitHandler();
 		}
 	}
-	ready(a,b){
+	ready(){
 		if (!(this.app.config as any).legacyEarlyInit){
-			this._realInitHandler(a,b);
+			this._realInitHandler();
 		}
 	}
-	protected _realInitHandler(a,b){
+	protected _realInitHandler(){
 		const init = this._ui.$oninit;
 		if (init){
 			const root = this.getRoot();
