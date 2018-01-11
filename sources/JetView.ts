@@ -100,7 +100,7 @@ export class JetView extends JetBase{
 					params = path.substr(0, next);
 				}
 				const chunk = parse(params);
-				Object.assign(currentUrl[this._index-1].params, chunk[0].params);
+				webix.extend(currentUrl[this._index-1].params, chunk[0].params, true);
 				path = next > -1 ? path.substr(next+1) : "";
 			}
 

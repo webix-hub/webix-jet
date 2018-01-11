@@ -159,7 +159,7 @@ export abstract class JetBase implements IJetView{
 	protected _init_url_data(url:IJetURL){
 		if (url && url[0]){
 			this._data = {};
-			Object.assign(this._data, url[0].params);
+			webix.extend(this._data, url[0].params, true);
 		}
 		this._url = url;
 	}

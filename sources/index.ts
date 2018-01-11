@@ -1,3 +1,6 @@
+import { IJetApp, IJetView } from "./interfaces";
+export { IJetApp, IJetView };
+
 export { JetApp } 		from "./JetApp";
 export { JetView } 		from "./JetView";
 

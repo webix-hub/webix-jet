@@ -23,7 +23,8 @@ var config = {
     modules: ["./sources", "./node_modules"]
   },
   plugins: [
-    new webpack.IgnorePlugin(/^jet-views/, /^jet-locales/)
+    new webpack.IgnorePlugin(/^jet-views/),
+    new webpack.IgnorePlugin(/^jet-locales/)
   ]
 };
 

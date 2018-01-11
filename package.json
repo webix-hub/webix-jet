@@ -1,18 +1,19 @@
 {
-  "name": "webix-jet-ts",
-  "version": "1.3.0",
+  "name": "webix-jet",
+  "version": "1.3.1",
   "description": "Webix Jet microframework",
-  "main": "sources/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "webpack && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
     "lint": "tslint --project tsconfig.json sources/*.ts",
-    "dist": "tsc --moduleResolution Node -p ./tsconfig.es6.json",
+    "dist": "tsc -p ./tsconfig.es5.json",
     "es5": "webpack --config ./webpack.es5.config.js",
     "watch": "watch \"yarn dist\" ./sources/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webix-hub/webix-jet-ts.git"
+    "url": "git+https://github.com/webix-hub/webix-jet.git"
   },
   "keywords": [
     "webix",
@@ -42,7 +43,7 @@
   "author": "Maksim Kozhukh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/webix-hub/webix-jet-ts/issues"
+    "url": "https://github.com/webix-hub/webix-jet/issues"
   },
-  "homepage": "https://github.com/webix-hub/webix-jet-ts#readme"
+  "homepage": "https://github.com/webix-hub/webix-jet#readme"
 }

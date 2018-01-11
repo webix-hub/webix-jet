@@ -1,30 +1,25 @@
-Webix Jet - typescript version
-==============================
+Webix Jet
+============
 
 [![npm version](https://badge.fury.io/js/webix-jet.svg)](https://badge.fury.io/js/webix-jet)
 
-Micro-framework for Webix UI
+Micro-framework for Webix UIMicro-framework for [Webix UI](https://webix.com)
 
-http://webix.com
 
 ### Useful links
 
-- demos - https://github.com/webix-hub/jet-demos
-- es6 package - https://github.com/webix-hub/webix-jet
-
+- Documentation: https://www.gitbook.com/book/webix/webix-jet/details
+- Support Forum: https://forum.webix.com
+- Demos
+	- Starter app - https://github.com/webix-hub/jet-start
+	- Functionality demos - https://github.com/webix-hub/jet-demos
+	- Interface demo - https://github.com/webix-hub/webix-adminapp-demo
+	
 ### Working with sources
 
-Those commands are usefull only if you want to work with typescript sources of webix-jet
-
 ```
-//run local dev server
-npm run server
-
-//compile to es6
-npm run dist
-
 //compile to es5
-npm run es5
+npm run dist
 
 //run lint and test
 npm run lint && npm run test

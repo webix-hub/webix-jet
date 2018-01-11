@@ -61,7 +61,7 @@ export interface IJetView{
 	show(path:any, config?:any);
 }
 
-interface IHash{
+export interface IHash{
 	[name:string]:any;
 }
 
