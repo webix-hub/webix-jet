@@ -6,6 +6,7 @@ declare function require(name:string):any;
 export function Locale(app: IJetApp, view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
+	const localesDir = config.localesDir||"jet-locales"
 	let lang = storage ? storage.get("lang") : ( config.lang || "en" );
 
 
@@ -14,7 +15,7 @@ export function Locale(app: IJetApp, view: IJetView, config: any){
 		polyglot: null,
 		getLang(){ return lang; },
 		setLang(name:string, silent? : boolean){
-			let data = require("jet-locales/"+name);
+			let data = require(localesDir+"/"+name);
 			if (data.__esModule) {
 				data = data.default;
 			}
