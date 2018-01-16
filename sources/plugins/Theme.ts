@@ -15,19 +15,18 @@ export function Theme(app: IJetApp, view: IJetView, config: any){
 				var lname = links[i].getAttribute("title");
 				if (lname){
 					if (lname === name || lname === parts[0]){
-						links[i].rel = "stylesheet";
 						links[i].disabled = false;
 					} else {
-						links[i].rel = "alternate stylesheet";
 						links[i].disabled = true;
 					}
-					(webix as any).skin.set(parts[0]);
 				}
-				//remove old css
-				webix.html.removeCss(document.body, "theme-"+theme);
-				//add new css
-				webix.html.addCss(document.body, "theme-"+name);
 			}
+
+			(webix as any).skin.set(parts[0]);
+			//remove old css
+			webix.html.removeCss(document.body, "theme-"+theme);
+			//add new css
+			webix.html.addCss(document.body, "theme-"+name);
 
 			theme = name;
 			if (storage){
