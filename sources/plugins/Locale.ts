@@ -14,7 +14,8 @@ export function Locale(app: IJetApp, view: IJetView, config: any){
 		polyglot: null,
 		getLang(){ return lang; },
 		setLang(name:string, silent? : boolean){
-			let data = require("jet-locales/"+name);
+			const path = (config.path ? config.path + "/" : "") + name;
+			let data = require("jet-locales/"+path);
 			if (data.__esModule) {
 				data = data.default;
 			}
