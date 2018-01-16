@@ -8,7 +8,8 @@ export function Locale(app, view, config) {
         polyglot: null,
         getLang: function () { return lang; },
         setLang: function (name, silent) {
-            var data = require("jet-locales/" + name);
+            var path = (config.path ? config.path + "/" : "") + name;
+            var data = require("jet-locales/" + path);
             if (data.__esModule) {
                 data = data.default;
             }
