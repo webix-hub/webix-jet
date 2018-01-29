@@ -187,6 +187,15 @@ export class JetView extends JetBase{
 		result.ui.$scope = this;
 
 		try {
+			const prev = this._container as webix.ui.baseview;
+			//special handling for adding inside of multiview - preserve old id
+			if (prev && prev.getParentView){
+				const parent = prev.getParentView();
+				if (parent && parent.name === "multiview"){
+					result.ui.id = prev.config.id;
+				}
+			}
+
 			this._root = this.app.webix.ui(result.ui, this._container);
 			if (this._root.getParentView()){
 				this._container = this._root;

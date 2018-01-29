@@ -168,6 +168,14 @@ var JetView = (function (_super) {
         this.app.callEvent("app:render", [this, url, result]);
         result.ui.$scope = this;
         try {
+            var prev = this._container;
+            //special handling for adding inside of multiview - preserve old id
+            if (prev && prev.getParentView) {
+                var parent_2 = prev.getParentView();
+                if (parent_2 && parent_2.name === "multiview") {
+                    result.ui.id = prev.config.id;
+                }
+            }
             this._root = this.app.webix.ui(result.ui, this._container);
             if (this._root.getParentView()) {
                 this._container = this._root;
