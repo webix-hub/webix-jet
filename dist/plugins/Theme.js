@@ -1,7 +1,7 @@
 export function Theme(app, view, config) {
     config = config || {};
     var storage = config.storage;
-    var theme = storage ? storage.get("theme") : (config.theme || "flat-default");
+    var theme = storage ? (storage.get("theme") || "flat-default") : (config.theme || "flat-default");
     var service = {
         getTheme: function () { return theme; },
         setTheme: function (name, silent) {

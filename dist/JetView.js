@@ -169,7 +169,7 @@ var JetView = (function (_super) {
         result.ui.$scope = this;
         try {
             var prev = this._container;
-            //special handling for adding inside of multiview - preserve old id
+            // special handling for adding inside of multiview - preserve old id
             if (prev && prev.getParentView) {
                 var parent_2 = prev.getParentView();
                 if (parent_2 && parent_2.name === "multiview") {

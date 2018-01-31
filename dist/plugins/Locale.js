@@ -2,7 +2,7 @@ import Polyglot from "node-polyglot/build/polyglot";
 export function Locale(app, view, config) {
     config = config || {};
     var storage = config.storage;
-    var lang = storage ? storage.get("lang") : (config.lang || "en");
+    var lang = storage ? (storage.get("lang") || "en") : (config.lang || "en");
     var service = {
         _: null,
         polyglot: null,
