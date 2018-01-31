@@ -6,7 +6,7 @@ declare function require(name:string):any;
 export function Locale(app: IJetApp, view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
-	let lang = storage ? storage.get("lang") : ( config.lang || "en" );
+	let lang = storage ? ( storage.get("lang") || "en" ) : ( config.lang || "en" );
 
 
 	const service = {

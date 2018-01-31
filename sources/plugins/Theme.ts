@@ -3,7 +3,7 @@ import {IJetApp, IJetURL, IJetView} from "../interfaces";
 export function Theme(app: IJetApp, view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
-	let theme = storage ? storage.get("theme") : (config.theme || "flat-default");
+	let theme = storage ? (storage.get("theme")||"flat-default") : (config.theme || "flat-default");
 
 	const service = {
 		getTheme(){ return theme; },
