@@ -29,7 +29,6 @@ var JetApp = (function (_super) {
         _this._name = _this.config.name;
         _this._services = {};
         webix.extend(_this, webix.EventSystem);
-        webix.attachEvent("onClick", function (e) { return _this.clickHandler(e); });
         return _this;
     }
     JetApp.prototype.getService = function (name) {
@@ -187,12 +186,8 @@ var JetApp = (function (_super) {
     };
     // show view path
     JetApp.prototype.show = function (name) {
-        var _this = this;
         if (this.$router.get() !== name) {
-            return this.canNavigate(name).then(function (url) {
-                _this.$router.set(url, { silent: true });
-                return _this._render(url);
-            }).catch(function () { return false; });
+            this._render(name);
         }
         else {
             return Promise.resolve(true);
@@ -267,13 +262,14 @@ var JetApp = (function (_super) {
         var _this = this;
         var firstInit = !this.$router;
         if (firstInit) {
+            webix.attachEvent("onClick", function (e) { return _this.clickHandler(e); });
             url = this._first_start(url);
         }
         var strUrl = typeof url === "string" ? url : url2str(url);
         return this.canNavigate(strUrl).then(function (newurl) {
             _this.$router.set(newurl, { silent: true });
             return _this._render_stage(newurl);
-        });
+        }).catch(function () { return false; });
     };
     JetApp.prototype._render_stage = function (url) {
         var _this = this;

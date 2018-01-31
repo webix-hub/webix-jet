@@ -43,7 +43,6 @@ export class JetApp extends JetBase implements IJetApp {
 		this._services = {};
 
 		webix.extend(this, webix.EventSystem);
-		webix.attachEvent("onClick", e => this.clickHandler(e));
 	}
 
 	getService(name: string) {
@@ -218,10 +217,7 @@ export class JetApp extends JetBase implements IJetApp {
 	// show view path
 	show(name: string) : Promise<any> {
 		if (this.$router.get() !== name) {
-			return this.canNavigate(name).then(url => {
-				this.$router.set(url, { silent:true });
-				return this._render(url);
-			}).catch(() => false);
+			this._render(name);
 		} else {
 			return Promise.resolve(true);
 		}
@@ -295,14 +291,16 @@ export class JetApp extends JetBase implements IJetApp {
 	protected _render(url: string | IJetURL): Promise<IJetView> {
 		const firstInit = !this.$router;
 		if (firstInit){
+			webix.attachEvent("onClick", e => this.clickHandler(e));
 			url = this._first_start(url);
 		}
 
 		const strUrl = typeof url === "string" ? url : url2str(url);
+
 		return this.canNavigate(strUrl).then(newurl => {
 			this.$router.set(newurl, { silent:true });
 			return this._render_stage(newurl);
-		});
+		}).catch(() => false);
 	}
 
 	protected _render_stage(url){
