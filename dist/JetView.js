@@ -172,7 +172,7 @@ var JetView = (function (_super) {
             // special handling for adding inside of multiview - preserve old id
             if (prev && prev.getParentView) {
                 var parent_2 = prev.getParentView();
-                if (parent_2 && parent_2.name === "multiview") {
+                if (parent_2 && parent_2.name === "multiview" && !result.ui.id) {
                     result.ui.id = prev.config.id;
                 }
             }

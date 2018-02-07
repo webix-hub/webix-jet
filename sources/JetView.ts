@@ -191,7 +191,7 @@ export class JetView extends JetBase{
 			// special handling for adding inside of multiview - preserve old id
 			if (prev && prev.getParentView){
 				const parent = prev.getParentView();
-				if (parent && parent.name === "multiview"){
+				if (parent && parent.name === "multiview" && !result.ui.id){
 					result.ui.id = prev.config.id;
 				}
 			}
