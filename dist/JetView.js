@@ -161,6 +161,10 @@ var JetView = (function (_super) {
     };
     JetView.prototype._render_final = function (config, url) {
         var _this = this;
+        var prev = this._container;
+        if (prev && prev.$destructed) {
+            return Promise.reject("Container destroyed");
+        }
         var response;
         // using wrapper object, so ui can be changed from app:render event
         var result = { ui: {} };
@@ -168,7 +172,6 @@ var JetView = (function (_super) {
         this.app.callEvent("app:render", [this, url, result]);
         result.ui.$scope = this;
         try {
-            var prev = this._container;
             // special handling for adding inside of multiview - preserve old id
             if (prev && prev.getParentView) {
                 var parent_2 = prev.getParentView();

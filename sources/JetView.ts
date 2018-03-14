@@ -178,6 +178,11 @@ export class JetView extends JetBase{
 	}
 
 	protected _render_final(config:any, url:IJetURL):Promise<any>{
+		const prev = this._container as webix.ui.baseview;
+		if (prev && (prev as any).$destructed){
+			return Promise.reject("Container destroyed");
+		}
+
 		let response:Promise<any>;
 
 		// using wrapper object, so ui can be changed from app:render event
@@ -187,7 +192,6 @@ export class JetView extends JetBase{
 		result.ui.$scope = this;
 
 		try {
-			const prev = this._container as webix.ui.baseview;
 			// special handling for adding inside of multiview - preserve old id
 			if (prev && prev.getParentView){
 				const parent = prev.getParentView();
