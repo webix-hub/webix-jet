@@ -31,12 +31,16 @@ export function User(app: IJetApp, view: IJetView, config: any){
 					throw("Access denied");
 				}
 
+				app.callEvent("app:user:login", [ user ]);
 				app.show(afterLogin);
 			});
 		},
 		logout(){
 			user = null;
-			return model.logout();
+			return model.logout.then(res => { 
+				app.callEvent("app:user:logout",[]);
+				return res;
+			})
 		}
 	};
 
