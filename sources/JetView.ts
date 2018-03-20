@@ -298,4 +298,21 @@ export class JetView extends JetBase{
 		this._init_url_data(url);
 		return this._urlChange(url);
 	}
+
+	private _checkSubViews(mode:string, url:IJetURL){
+		const subs = this._subs;
+
+		for(const key in subs){
+			if(mode === "add" && !subs[key].view){
+				const frame = this._subs[key];
+				if (typeof frame.url === "function") {
+					const classView = new frame.url(this.app, "");
+					this._renderSubView(subs[key], classView, url);
+				}
+			} else if(mode === "delete" && !webix.$$(subs[key].id)){
+				delete subs[key];
+			}
+		}
+
+	}
 }

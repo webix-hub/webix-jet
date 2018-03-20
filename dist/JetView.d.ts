@@ -21,4 +21,5 @@ export declare class JetView extends JetBase {
     private _renderSubView(sub, view, suburl);
     private _finishShow(url, path);
     private _renderPartial(url);
+    private _checkSubViews(mode, url);
 }

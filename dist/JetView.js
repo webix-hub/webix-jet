@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { JetBase } from "./JetBase";
 import { parse, url2str } from "./helpers";
-var JetView = (function (_super) {
+var JetView = /** @class */ (function (_super) {
     __extends(JetView, _super);
     function JetView(app, name) {
         var _this = _super.call(this) || this;
@@ -266,6 +266,21 @@ var JetView = (function (_super) {
     JetView.prototype._renderPartial = function (url) {
         this._init_url_data(url);
         return this._urlChange(url);
+    };
+    JetView.prototype._checkSubViews = function (mode, url) {
+        var subs = this._subs;
+        for (var key in subs) {
+            if (mode === "add" && !subs[key].view) {
+                var frame = this._subs[key];
+                if (typeof frame.url === "function") {
+                    var classView = new frame.url(this.app, "");
+                    this._renderSubView(subs[key], classView, url);
+                }
+            }
+            else if (mode === "delete" && !webix.$$(subs[key].id)) {
+                delete subs[key];
+            }
+        }
     };
     return JetView;
 }(JetBase));

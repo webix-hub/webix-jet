@@ -1,5 +1,5 @@
 import routie from "webix-routie/lib/routie";
-var HashRouter = (function () {
+var HashRouter = /** @class */ (function () {
     function HashRouter(cb, config) {
         var _this = this;
         this.config = config || {};

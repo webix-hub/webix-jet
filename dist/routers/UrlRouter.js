@@ -1,4 +1,4 @@
-var UrlRouter = (function () {
+var UrlRouter = /** @class */ (function () {
     function UrlRouter(cb, config) {
         this.cb = cb;
         this.prefix = config.routerPrefix || "";

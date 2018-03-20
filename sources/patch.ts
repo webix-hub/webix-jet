@@ -20,3 +20,26 @@ if (version[0]*10+version[1]*1 < 52) {
 		return res;
 	};
 }
+
+// adding views as classes
+const baseAdd = w.ui.baselayout.prototype.addView as any;
+const baseRemove = w.ui.baselayout.prototype.removeView as any;
+
+const config = {
+	addView(view, index){
+		view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
+		baseAdd.apply(this, [view, index]);
+
+		w.delay(()=>{
+			this.$scope._checkSubViews("add", this.$scope._url);
+		});
+		return view.id;
+	},
+	removeView(){
+		baseRemove.apply(this, arguments);
+		this.$scope._checkSubViews("delete");
+	}
+};
+
+w.extend(w.ui.layout.prototype, config, true);
+w.extend(w.ui.baselayout.prototype, config, true);

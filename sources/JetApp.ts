@@ -61,8 +61,14 @@ export class JetApp extends JetBase implements IJetApp {
 		// raw ui config
 		if (obj.$ui) {
 			obj = { $subview: new JetViewLegacy(this, "", obj) };
-		} else if (obj instanceof JetApp){
+		} else if (obj instanceof JetApp ||
+			(typeof obj === "function" && obj.prototype && obj.prototype.config)){
 			obj = { $subview: obj };
+
+			// jet view for Tabview body
+			if (obj.$subview.id){
+				obj.id = obj.$subview.id;
+			}
 		}
 
 		// subview placeholder

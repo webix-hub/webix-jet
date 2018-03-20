@@ -15,7 +15,7 @@ import { JetViewRaw } from "./JetViewRaw";
 import { HashRouter } from "./routers/HashRouter";
 import { parse, url2str } from "./helpers";
 import "./patch";
-var JetApp = (function (_super) {
+var JetApp = /** @class */ (function (_super) {
     __extends(JetApp, _super);
     function JetApp(config) {
         var _this = _super.call(this) || this;
@@ -47,8 +47,13 @@ var JetApp = (function (_super) {
         if (obj.$ui) {
             obj = { $subview: new JetViewLegacy(this, "", obj) };
         }
-        else if (obj instanceof JetApp) {
+        else if (obj instanceof JetApp ||
+            (typeof obj === "function" && obj.prototype && obj.prototype.config)) {
             obj = { $subview: obj };
+            // jet view for Tabview body
+            if (obj.$subview.id) {
+                obj.id = obj.$subview.id;
+            }
         }
         // subview placeholder
         if (obj.$subview) {

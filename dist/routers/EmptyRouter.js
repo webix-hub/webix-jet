@@ -1,4 +1,4 @@
-var EmptyRouter = (function () {
+var EmptyRouter = /** @class */ (function () {
     function EmptyRouter(cb, _$config) {
         this.path = "";
         this.cb = cb;
