@@ -1,4 +1,4 @@
-var UrlRouter = /** @class */ (function () {
+var UrlRouter = (function () {
     function UrlRouter(cb, config) {
         var _this = this;
         this.cb = cb;

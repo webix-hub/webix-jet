@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { JetBase } from "./JetBase";
 import { parse, url2str } from "./helpers";
-var JetView = /** @class */ (function (_super) {
+var JetView = (function (_super) {
     __extends(JetView, _super);
     function JetView(app, name) {
         var _this = _super.call(this) || this;

@@ -15,7 +15,7 @@ import { JetViewRaw } from "./JetViewRaw";
 import { HashRouter } from "./routers/HashRouter";
 import { parse, url2str } from "./helpers";
 import "./patch";
-var JetApp = /** @class */ (function (_super) {
+var JetApp = (function (_super) {
     __extends(JetApp, _super);
     function JetApp(config) {
         var _this = _super.call(this) || this;

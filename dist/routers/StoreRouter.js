@@ -1,4 +1,4 @@
-var StoreRouter = /** @class */ (function () {
+var StoreRouter = (function () {
     function StoreRouter(cb, config) {
         this.name = (config.storeName || config.id + ":route");
         this.cb = cb;

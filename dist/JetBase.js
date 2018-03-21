@@ -1,4 +1,4 @@
-var JetBase = /** @class */ (function () {
+var JetBase = (function () {
     function JetBase() {
         this._id = webix.uid();
         this._events = [];

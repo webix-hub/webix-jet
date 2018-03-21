@@ -25,12 +25,16 @@ export function User(app, view, config) {
                 if (!data) {
                     throw ("Access denied");
                 }
+                app.callEvent("app:user:login", [user]);
                 app.show(afterLogin);
             });
         },
         logout: function () {
             user = null;
-            return model.logout();
+            return model.logout.then(function (res) {
+                app.callEvent("app:user:logout", []);
+                return res;
+            });
         }
     };
     function canNavigate(url, obj) {

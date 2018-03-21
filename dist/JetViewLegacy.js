@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { JetView } from "./JetView";
 // wrapper for raw objects and Jet 1.x structs
-var JetViewLegacy = /** @class */ (function (_super) {
+var JetViewLegacy = (function (_super) {
     __extends(JetViewLegacy, _super);
     function JetViewLegacy(app, name, ui) {
         var _this = _super.call(this, app, name) || this;
