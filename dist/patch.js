@@ -26,16 +26,23 @@ var baseRemove = w.ui.baselayout.prototype.removeView;
 var config = {
     addView: function (view, index) {
         var _this = this;
-        view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
-        baseAdd.apply(this, [view, index]);
-        w.delay(function () {
-            _this.$scope._checkSubViews("add", _this.$scope._url);
-        });
-        return view.id;
+        if (this.$scope && this.$scope.webixJet) {
+            view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
+            baseAdd.apply(this, [view, index]);
+            w.delay(function () {
+                _this.$scope._checkSubViews("add", _this.$scope._url);
+            });
+            return view.id;
+        }
+        else {
+            return baseAdd.apply(this, arguments);
+        }
     },
     removeView: function () {
         baseRemove.apply(this, arguments);
-        this.$scope._checkSubViews("delete");
+        if (this.$scope && this.$scope.webixJet) {
+            this.$scope._checkSubViews("delete");
+        }
     }
 };
 w.extend(w.ui.layout.prototype, config, true);

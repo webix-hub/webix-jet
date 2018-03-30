@@ -1,6 +1,7 @@
 import { IJetApp, IJetURL, IJetView, ISubView, ISubViewInfo } from "./interfaces";
 export declare abstract class JetBase implements IJetView {
     app: IJetApp;
+    webixJet: boolean;
     protected _parent: IJetView;
     protected _index: number;
     protected _container: HTMLElement | webix.ui.baseview;

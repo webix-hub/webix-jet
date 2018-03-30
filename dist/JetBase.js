@@ -1,5 +1,6 @@
 var JetBase = (function () {
     function JetBase() {
+        this.webixJet = true;
         this._id = webix.uid();
         this._events = [];
         this._subs = {};

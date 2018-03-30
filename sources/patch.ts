@@ -27,17 +27,23 @@ const baseRemove = w.ui.baselayout.prototype.removeView as any;
 
 const config = {
 	addView(view, index){
-		view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
-		baseAdd.apply(this, [view, index]);
+		if (this.$scope && this.$scope.webixJet){
+			view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
+			baseAdd.apply(this, [view, index]);
 
-		w.delay(()=>{
-			this.$scope._checkSubViews("add", this.$scope._url);
-		});
-		return view.id;
+			w.delay(()=>{
+				this.$scope._checkSubViews("add", this.$scope._url);
+			});
+			return view.id;
+		} else {
+			return baseAdd.apply(this, arguments);
+		}
 	},
 	removeView(){
 		baseRemove.apply(this, arguments);
-		this.$scope._checkSubViews("delete");
+		if (this.$scope && this.$scope.webixJet){
+			this.$scope._checkSubViews("delete");
+		}
 	}
 };
 
