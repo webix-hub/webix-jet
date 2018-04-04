@@ -55,20 +55,14 @@ export class JetApp extends JetBase implements IJetApp {
 	setService(name: string, handler: any) {
 		this._services[name] = handler;
 	}
-
 	// copy object and collect extra handlers
 	copyConfig(obj: any, target: any, config: IViewConfig) {
 		// raw ui config
 		if (obj.$ui) {
 			obj = { $subview: new JetViewLegacy(this, "", obj) };
-		} else if (obj instanceof JetApp ||
-			(typeof obj === "function" && obj.prototype && obj.prototype.config)){
+		} else if (obj instanceof JetApp || 
+					(typeof obj === "function" && obj.prototype instanceof JetBase)){
 			obj = { $subview: obj };
-
-			// jet view for Tabview body
-			if (obj.$subview.id){
-				obj.id = obj.$subview.id;
-			}
 		}
 
 		// subview placeholder
@@ -82,9 +76,8 @@ export class JetApp extends JetBase implements IJetApp {
 			let point = obj[method];
 
 			// view class
-			if (typeof point === "function" &&
-				point.prototype && point.prototype.config) {
-				point = { $subview: point };
+			if (typeof point === "function" && point.prototype instanceof JetBase) {
+				point = { $subview : point };
 			}
 
 			if (point && typeof point === "object" &&
@@ -198,7 +191,7 @@ export class JetApp extends JetBase implements IJetApp {
 	createView(ui:any, name?:string){
 		let obj;
 		if (typeof ui === "function") {
-			if (ui.prototype && ui.prototype.show) {
+			if (ui.prototype instanceof JetBase) {
 				// UI class
 				return new ui(this, name);
 			} else {

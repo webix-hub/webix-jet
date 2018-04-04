@@ -201,34 +201,39 @@ var JetView = (function (_super) {
         this.app.callEvent("app:urlchange", [this, url, this._index]);
         var waits = [];
         for (var key in this._subs) {
-            var frame = this._subs[key];
-            if (frame.url) {
-                // we have fixed subview url
-                if (typeof frame.url === "string") {
-                    var parsed = parse(frame.url);
-                    parsed.map(function (a) { a.index = 0; });
-                    waits.push(this._createSubView(frame, parsed));
-                }
-                else {
-                    var view = frame.view;
-                    if (typeof frame.url === "function" && !(view instanceof frame.url)) {
-                        view = new frame.url(this.app, "");
-                    }
-                    if (!view) {
-                        view = frame.url;
-                    }
-                    waits.push(this._renderSubView(frame, view, url));
-                }
-            }
-            else if (key === "default" && url && url.length > 1) {
-                // we have an url and subview for it
-                var suburl = url.slice(1);
-                waits.push(this._createSubView(frame, suburl));
+            var wait = this._renderFrame(key, this._subs[key], url);
+            if (wait) {
+                waits.push(wait);
             }
         }
         return Promise.all(waits).then(function () {
             _this.urlChange(_this._root, url);
         });
+    };
+    JetView.prototype._renderFrame = function (key, frame, url) {
+        if (frame.url) {
+            // we have fixed subview url
+            if (typeof frame.url === "string") {
+                var parsed = parse(frame.url);
+                parsed.map(function (a) { a.index = 0; });
+                return this._createSubView(frame, parsed);
+            }
+            else {
+                var view = frame.view;
+                if (typeof frame.url === "function" && !(view instanceof frame.url)) {
+                    view = new frame.url(this.app, "");
+                }
+                if (!view) {
+                    view = frame.url;
+                }
+                return this._renderSubView(frame, view, url);
+            }
+        }
+        else if (key === "default" && url && url.length > 1) {
+            // we have an url and subview for it
+            var suburl = url.slice(1);
+            return this._createSubView(frame, suburl);
+        }
     };
     JetView.prototype._initError = function (view, err) {
         this.app.error("app:error:initview", [err, view]);
@@ -269,21 +274,6 @@ var JetView = (function (_super) {
     JetView.prototype._renderPartial = function (url) {
         this._init_url_data(url);
         return this._urlChange(url);
-    };
-    JetView.prototype._checkSubViews = function (mode, url) {
-        var subs = this._subs;
-        for (var key in subs) {
-            if (mode === "add" && !subs[key].view) {
-                var frame = this._subs[key];
-                if (typeof frame.url === "function") {
-                    var classView = new frame.url(this.app, "");
-                    this._renderSubView(subs[key], classView, url);
-                }
-            }
-            else if (mode === "delete" && !webix.$$(subs[key].id)) {
-                delete subs[key];
-            }
-        }
     };
     return JetView;
 }(JetBase));

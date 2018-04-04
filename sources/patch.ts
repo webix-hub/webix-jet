@@ -1,3 +1,5 @@
+import {IJetView} from "./interfaces";
+
 const w = webix as any;
 const version = webix.version.split(".") as any[];
 
@@ -28,12 +30,17 @@ const baseRemove = w.ui.baselayout.prototype.removeView as any;
 const config = {
 	addView(view, index){
 		if (this.$scope && this.$scope.webixJet){
-			view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
+			const jview = this.$scope;
+			const subs = {};
+
+			view = jview.app.copyConfig(view, {}, subs);
 			baseAdd.apply(this, [view, index]);
 
-			w.delay(()=>{
-				this.$scope._checkSubViews("add", this.$scope._url);
-			});
+			for (const key in subs){
+				jview._subs[key] = subs[key];
+				jview._renderFrame(key, subs[key], jview.getUrl());
+			}
+
 			return view.id;
 		} else {
 			return baseAdd.apply(this, arguments);
@@ -42,7 +49,12 @@ const config = {
 	removeView(){
 		baseRemove.apply(this, arguments);
 		if (this.$scope && this.$scope.webixJet){
-			this.$scope._checkSubViews("delete");
+			const subs = this.$scope._subs;
+			for(const key in subs){
+				if (!webix.$$(subs[key].id)){
+					delete subs[key];
+				}
+			}
 		}
 	}
 };

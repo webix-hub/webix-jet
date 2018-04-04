@@ -225,33 +225,39 @@ export class JetView extends JetBase{
 
 		const waits = [];
 		for (const key in this._subs){
-			const frame = this._subs[key];
-			if (frame.url){
-				// we have fixed subview url
-				if (typeof frame.url === "string"){
-					const parsed = parse(frame.url);
-					parsed.map(a => { a.index = 0; });
-					waits.push(this._createSubView(frame, parsed));
-				} else {
-					let view = frame.view;
-					if (typeof frame.url === "function" && !(view instanceof frame.url)){
-						view = new frame.url(this.app, "");
-					}
-					if (!view){
-						view = frame.url as any;
-					}
-					waits.push(this._renderSubView(frame, view, url));
-				}
-			} else if (key === "default" && url && url.length > 1){
-				// we have an url and subview for it
-				const suburl = url.slice(1);
-				waits.push(this._createSubView(frame, suburl));
+			const wait = this._renderFrame(key, this._subs[key], url);
+			if (wait){
+				waits.push(wait);
 			}
 		}
 
 		return Promise.all(waits).then(() => {
 			this.urlChange(this._root, url);
 		});
+	}
+
+	protected _renderFrame(key:string, frame:ISubView, url:IJetURL):Promise<any>{
+		if (frame.url){
+			// we have fixed subview url
+			if (typeof frame.url === "string"){
+				const parsed = parse(frame.url);
+				parsed.map(a => { a.index = 0; });
+				return this._createSubView(frame, parsed);
+			} else {
+				let view = frame.view;
+				if (typeof frame.url === "function" && !(view instanceof frame.url)){
+					view = new frame.url(this.app, "");
+				}
+				if (!view){
+					view = frame.url as any;
+				}
+				return this._renderSubView(frame, view, url);
+			}
+		} else if (key === "default" && url && url.length > 1){
+			// we have an url and subview for it
+			const suburl = url.slice(1);
+			return this._createSubView(frame, suburl);
+		}
 	}
 
 	private _initError(view: any, err: any){
@@ -301,22 +307,5 @@ export class JetView extends JetBase{
 	private _renderPartial(url:IJetURL){
 		this._init_url_data(url);
 		return this._urlChange(url);
-	}
-
-	private _checkSubViews(mode:string, url:IJetURL){
-		const subs = this._subs;
-
-		for(const key in subs){
-			if(mode === "add" && !subs[key].view){
-				const frame = this._subs[key];
-				if (typeof frame.url === "function") {
-					const classView = new frame.url(this.app, "");
-					this._renderSubView(subs[key], classView, url);
-				}
-			} else if(mode === "delete" && !webix.$$(subs[key].id)){
-				delete subs[key];
-			}
-		}
-
 	}
 }

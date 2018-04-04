@@ -4,7 +4,7 @@ var version = webix.version.split(".");
 if (version[0] * 10 + version[1] * 1 < 52) {
     w.ui.freeze = function (handler) {
         // disabled because webix jet 5.0 can't handle resize of scrollview correctly
-        // w.ui.$freeze = true;
+        // w.ui.$freeze = true;this.$scope
         var res = handler();
         if (res && res.then) {
             res.then(function (some) {
@@ -25,13 +25,15 @@ var baseAdd = w.ui.baselayout.prototype.addView;
 var baseRemove = w.ui.baselayout.prototype.removeView;
 var config = {
     addView: function (view, index) {
-        var _this = this;
         if (this.$scope && this.$scope.webixJet) {
-            view = this.$scope.app.copyConfig(view, {}, this.$scope._subs);
+            var jview = this.$scope;
+            var subs = {};
+            view = jview.app.copyConfig(view, {}, subs);
             baseAdd.apply(this, [view, index]);
-            w.delay(function () {
-                _this.$scope._checkSubViews("add", _this.$scope._url);
-            });
+            for (var key in subs) {
+                jview._subs[key] = subs[key];
+                jview._renderFrame(key, subs[key], jview.getUrl());
+            }
             return view.id;
         }
         else {
@@ -41,7 +43,12 @@ var config = {
     removeView: function () {
         baseRemove.apply(this, arguments);
         if (this.$scope && this.$scope.webixJet) {
-            this.$scope._checkSubViews("delete");
+            var subs = this.$scope._subs;
+            for (var key in subs) {
+                if (!webix.$$(subs[key].id)) {
+                    delete subs[key];
+                }
+            }
         }
     }
 };

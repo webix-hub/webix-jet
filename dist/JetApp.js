@@ -48,12 +48,8 @@ var JetApp = (function (_super) {
             obj = { $subview: new JetViewLegacy(this, "", obj) };
         }
         else if (obj instanceof JetApp ||
-            (typeof obj === "function" && obj.prototype && obj.prototype.config)) {
+            (typeof obj === "function" && obj.prototype instanceof JetBase)) {
             obj = { $subview: obj };
-            // jet view for Tabview body
-            if (obj.$subview.id) {
-                obj.id = obj.$subview.id;
-            }
         }
         // subview placeholder
         if (obj.$subview) {
@@ -64,8 +60,7 @@ var JetApp = (function (_super) {
         for (var method in obj) {
             var point = obj[method];
             // view class
-            if (typeof point === "function" &&
-                point.prototype && point.prototype.config) {
+            if (typeof point === "function" && point.prototype instanceof JetBase) {
                 point = { $subview: point };
             }
             if (point && typeof point === "object" &&
@@ -166,7 +161,7 @@ var JetApp = (function (_super) {
     JetApp.prototype.createView = function (ui, name) {
         var obj;
         if (typeof ui === "function") {
-            if (ui.prototype && ui.prototype.show) {
+            if (ui.prototype instanceof JetBase) {
                 // UI class
                 return new ui(this, name);
             }
