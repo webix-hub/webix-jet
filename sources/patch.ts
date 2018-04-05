@@ -35,8 +35,9 @@ const config = {
 			baseAdd.apply(this, [view, index]);
 
 			for (const key in subs){
-				jview._subs[key] = subs[key];
-				jview._renderFrame(key, subs[key], jview.getUrl());
+				jview._renderFrame(key, subs[key], jview.getUrl()).then(() => {
+					jview._subs[key] = subs[key];
+				});
 			}
 
 			return view.id;

@@ -26,13 +26,17 @@ var baseRemove = w.ui.baselayout.prototype.removeView;
 var config = {
     addView: function (view, index) {
         if (this.$scope && this.$scope.webixJet) {
-            var jview = this.$scope;
-            var subs = {};
-            view = jview.app.copyConfig(view, {}, subs);
+            var jview_1 = this.$scope;
+            var subs_1 = {};
+            view = jview_1.app.copyConfig(view, {}, subs_1);
             baseAdd.apply(this, [view, index]);
-            for (var key in subs) {
-                jview._subs[key] = subs[key];
-                jview._renderFrame(key, subs[key], jview.getUrl());
+            var _loop_1 = function (key) {
+                jview_1._renderFrame(key, subs_1[key], jview_1.getUrl()).then(function () {
+                    jview_1._subs[key] = subs_1[key];
+                });
+            };
+            for (var key in subs_1) {
+                _loop_1(key);
             }
             return view.id;
         }
