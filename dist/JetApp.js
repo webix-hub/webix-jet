@@ -47,7 +47,7 @@ var JetApp = (function (_super) {
         if (obj.$ui) {
             obj = { $subview: new JetViewLegacy(this, "", obj) };
         }
-        else if (obj instanceof JetApp ||
+        else if (obj instanceof JetBase ||
             (typeof obj === "function" && obj.prototype instanceof JetBase)) {
             obj = { $subview: obj };
         }
