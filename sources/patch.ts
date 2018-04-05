@@ -1,5 +1,3 @@
-import {IJetView} from "./interfaces";
-
 const w = webix as any;
 const version = webix.version.split(".") as any[];
 

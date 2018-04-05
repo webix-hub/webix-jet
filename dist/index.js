@@ -1,6 +1,5 @@
-import { JetApp } from "./JetApp";
-import { JetView } from "./JetView";
-export { JetApp, JetView };
+export { JetApp } from "./JetApp";
+export { JetView } from "./JetView";
 export { HashRouter } from "./routers/HashRouter";
 export { StoreRouter } from "./routers/StoreRouter";
 export { UrlRouter } from "./routers/UrlRouter";
@@ -15,12 +14,6 @@ import { User } from "./plugins/User";
 export var plugins = {
     UnloadGuard: UnloadGuard, Locale: Locale, Menu: Menu, Theme: Theme, User: User, Status: Status, UrlParam: UrlParam
 };
-var w = window;
-if (!w.Promise) {
-    w.Promise = webix.promise;
-}
-if (w.webix) {
-    w.webix.jet = {
-        JetApp: JetApp, JetView: JetView
-    };
+if (!window.Promise) {
+    window.Promise = webix.promise;
 }

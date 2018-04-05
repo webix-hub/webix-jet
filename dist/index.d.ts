@@ -1,7 +1,7 @@
 import { IJetApp, IJetView } from "./interfaces";
-import { JetApp } from "./JetApp";
-import { JetView } from "./JetView";
-export { IJetApp, IJetView, JetApp, JetView };
+export { IJetApp, IJetView };
+export { JetApp } from "./JetApp";
+export { JetView } from "./JetView";
 export { HashRouter } from "./routers/HashRouter";
 export { StoreRouter } from "./routers/StoreRouter";
 export { UrlRouter } from "./routers/UrlRouter";

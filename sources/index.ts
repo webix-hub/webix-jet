@@ -1,5 +1,4 @@
-import { IJetApp, IJetView } from "./interfaces";
-export { IJetApp, IJetView };
+export { IJetApp, IJetView } from "./interfaces";
 
 export { JetApp } 		from "./JetApp";
 export { JetView } 		from "./JetView";

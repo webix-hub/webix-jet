@@ -7,17 +7,17 @@ export class UrlRouter implements IJetRouter{
 		this.cb = cb;
 
 		window.onpopstate = () => this.cb(this.get());
-		this.prefix = config.routerPrefix || "";		
+		this.prefix = config.routerPrefix || "";
 	}
 	set(path:string, config?:IJetRouterOptions){
-		if (this.get() != path){
+		if (this.get() !== path){
 			window.history.pushState(null, null, this.prefix + path);
 		}
 		if (!config || !config.silent){
 			setTimeout(() => this.cb(path), 1);
 		}
 	}
-	get(){
+	get():string{
 		const path = window.location.pathname.replace(this.prefix, "");
 		return path !== "/" ? path : "";
 	}

@@ -4,7 +4,7 @@ var version = webix.version.split(".");
 if (version[0] * 10 + version[1] * 1 < 52) {
     w.ui.freeze = function (handler) {
         // disabled because webix jet 5.0 can't handle resize of scrollview correctly
-        // w.ui.$freeze = true;this.$scope
+        // w.ui.$freeze = true;
         var res = handler();
         if (res && res.then) {
             res.then(function (some) {

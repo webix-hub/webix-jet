@@ -7,7 +7,7 @@ var UrlRouter = (function () {
     }
     UrlRouter.prototype.set = function (path, config) {
         var _this = this;
-        if (this.get() != path) {
+        if (this.get() !== path) {
             window.history.pushState(null, null, this.prefix + path);
         }
         if (!config || !config.silent) {
