@@ -299,10 +299,10 @@ export class JetApp extends JetBase implements IJetApp {
 		return this.canNavigate(strUrl).then(newurl => {
 			this.$router.set(newurl, { silent:true });
 			return this._render_stage(newurl);
-		}).catch(() => false);
+		}).catch(() => null);
 	}
 
-	protected _render_stage(url){
+	protected _render_stage(url): Promise<IJetView>{
 		const parsed = (typeof url === "string") ? parse(url) : url;
 
 		// block resizing while rendering parts of UI

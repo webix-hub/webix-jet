@@ -29,7 +29,7 @@ export declare class JetApp extends JetBase implements IJetApp {
     use(plugin: any, config: any): void;
     error(name: string, er: any[]): void;
     protected _render(url: string | IJetURL): Promise<IJetView>;
-    protected _render_stage(url: any): any;
+    protected _render_stage(url: any): Promise<IJetView>;
     protected _urlChange(_$url: IJetURL): Promise<any>;
     private _first_start(url);
     private _loadError(url, err);

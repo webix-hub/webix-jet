@@ -269,7 +269,7 @@ var JetApp = (function (_super) {
         return this.canNavigate(strUrl).then(function (newurl) {
             _this.$router.set(newurl, { silent: true });
             return _this._render_stage(newurl);
-        }).catch(function () { return false; });
+        }).catch(function () { return null; });
     };
     JetApp.prototype._render_stage = function (url) {
         var _this = this;
