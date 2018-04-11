@@ -1,12 +1,11 @@
 import { JetBase } from "./JetBase";
-import { JetView } from "./JetView";
 import { JetViewLegacy } from "./JetViewLegacy";
 import { JetViewRaw } from "./JetViewRaw";
 
 import {
 	IJetApp, IJetConfig, IJetRouter,
 	IJetURL, IJetURLChunk,
-	IJetView, IViewConfig, IWebixFacade } from "./interfaces";
+	IJetView, ISubView, IViewConfig, IWebixFacade } from "./interfaces";
 
 import { HashRouter } from "./routers/HashRouter";
 
@@ -200,7 +199,7 @@ export class JetApp extends JetBase implements IJetApp {
 			}
 		}
 
-		if (ui instanceof JetApp || ui instanceof JetView){
+		if (ui instanceof JetBase){
 			obj = ui;
 		} else {
 			// UI object
@@ -369,13 +368,13 @@ export class JetApp extends JetBase implements IJetApp {
 		return { template:" " };
 	}
 
-	private addSubView(obj, target, config:IViewConfig) {
+	private addSubView(obj, target, config:IViewConfig) : ISubView {
 		const url = obj.$subview !== true ? obj.$subview : null;
 		const name: string = obj.name || (url ? this.webix.uid() : "default");
 		target.id = obj.id || "s" + this.webix.uid();
-		const view = config[name] = { id: target.id, url };
-		if (view.url instanceof JetView) {
-			(view as any).view = view.url;
+		const view : ISubView = config[name] = { id: target.id, url };
+		if (view.url instanceof JetBase) {
+			view.view = view.url;
 		}
 
 		return target;

@@ -9,7 +9,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { JetBase } from "./JetBase";
-import { JetView } from "./JetView";
 import { JetViewLegacy } from "./JetViewLegacy";
 import { JetViewRaw } from "./JetViewRaw";
 import { HashRouter } from "./routers/HashRouter";
@@ -170,7 +169,7 @@ var JetApp = (function (_super) {
                 ui = ui();
             }
         }
-        if (ui instanceof JetApp || ui instanceof JetView) {
+        if (ui instanceof JetBase) {
             obj = ui;
         }
         else {
@@ -333,7 +332,7 @@ var JetApp = (function (_super) {
         var name = obj.name || (url ? this.webix.uid() : "default");
         target.id = obj.id || "s" + this.webix.uid();
         var view = config[name] = { id: target.id, url: url };
-        if (view.url instanceof JetView) {
+        if (view.url instanceof JetBase) {
             view.view = view.url;
         }
         return target;
