@@ -69,7 +69,11 @@ var JetView = (function (_super) {
         // convert parameters to url
         if (typeof path === "object") {
             if (webix.isArray(path)) {
-                currentUrl[this._index + path[0]].page = path[1];
+                var argIndex = this._index + path[0];
+                if (!currentUrl[argIndex]) {
+                    currentUrl[argIndex] = {};
+                }
+                currentUrl[argIndex].page = path[1];
                 path = "";
             }
             else {

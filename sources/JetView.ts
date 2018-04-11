@@ -79,10 +79,11 @@ export class JetView extends JetBase{
 		// convert parameters to url
 		if (typeof path === "object"){
 			if (webix.isArray(path)){
-				if(!currentUrl[this._index + path[0]]){
-					currentUrl[this._index + path[0]] = {}
+				const argIndex = this._index+path[0];
+				if (!currentUrl[argIndex]){
+					currentUrl[argIndex] = {} as any;
 				}
-				currentUrl[this._index+path[0]].page=path[1];
+				currentUrl[argIndex].page=path[1];
 				path = "";
 			} else {
 				const temp = [];
