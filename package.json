@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "webpack && phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js tests/index.html spec",
-    "lint": "tslint --project tsconfig.json sources/*.ts",
+    "lint": "tslint --project tsconfig.json sources/**/*.ts",
     "dist": "tsc -p ./tsconfig.es5.json",
     "es5": "webpack --config ./webpack.es5.config.js",
     "watch": "watch \"yarn dist\" ./sources/"

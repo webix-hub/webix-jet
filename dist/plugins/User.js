@@ -1,4 +1,4 @@
-export function User(app, view, config) {
+export function User(app, _view, config) {
     config = config || {};
     var login = config.login || "/login";
     var logout = config.logout || "/logout";
@@ -23,7 +23,7 @@ export function User(app, view, config) {
             return model.login(name, pass).then(function (data) {
                 user = data;
                 if (!data) {
-                    throw ("Access denied");
+                    throw new Error("Access denied");
                 }
                 app.callEvent("app:user:login", [user]);
                 app.show(afterLogin);
@@ -49,7 +49,7 @@ export function User(app, view, config) {
     app.setService("user", service);
     app.attachEvent("app:guard", function (url, _$root, obj) {
         if (typeof user === "undefined") {
-            obj.confirm = service.getStatus(true).then(function (some) { return canNavigate(url, obj); });
+            obj.confirm = service.getStatus(true).then(function () { return canNavigate(url, obj); });
         }
         return canNavigate(url, obj);
     });

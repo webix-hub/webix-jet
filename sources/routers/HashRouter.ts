@@ -19,7 +19,7 @@ export class HashRouter implements IJetRouter{
 		}
 
 		let rcb = function(_$a){ /* stub */ };
-		routie(this._prefix+"*", url => {
+		routie(this._prefix+"*", () => {
 			this._lastUrl = "";
 			return rcb(this.get());
 		});

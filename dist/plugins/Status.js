@@ -1,29 +1,35 @@
 var baseicons = {
-    "good": "check",
-    "error": "warning",
-    "saving": "refresh fa-spin"
+    good: "check",
+    error: "warning",
+    saving: "refresh fa-spin"
 };
 var basetext = {
-    "good": "Ok",
-    "error": "Error",
-    "saving": "Connecting..."
+    good: "Ok",
+    error: "Error",
+    saving: "Connecting..."
 };
 export function Status(app, view, config) {
     var status = "good";
     var count = 0;
     var iserror = false;
     var expireDelay = config.expire;
-    if (!expireDelay && expireDelay !== false)
+    if (!expireDelay && expireDelay !== false) {
         expireDelay = 2000;
+    }
     var texts = config.texts || basetext;
     var icons = config.icons || baseicons;
-    if (typeof config === "string")
+    if (typeof config === "string") {
         config = { target: config };
+    }
     function refresh(content) {
         var area = view.$$(config.target);
         if (area) {
-            if (!content)
-                content = "<div class='status_" + status + "'><span class='webix_icon fa-" + icons[status] + "'></span> " + texts[status] + "</div>";
+            if (!content) {
+                content = "<div class='status_" +
+                    status +
+                    "'><span class='webix_icon fa-" +
+                    icons[status] + "'></span> " + texts[status] + "</div>";
+            }
             area.setHTML(content);
         }
     }
@@ -46,7 +52,7 @@ export function Status(app, view, config) {
         return status;
     }
     function hideStatus() {
-        if (count == 0) {
+        if (count === 0) {
             refresh(" ");
         }
     }
@@ -66,8 +72,9 @@ export function Status(app, view, config) {
                     app.error("app:error:server", [err.responseText || err]);
                 }
                 else {
-                    if (expireDelay)
+                    if (expireDelay) {
                         setTimeout(hideStatus, expireDelay);
+                    }
                 }
                 refresh();
             }
@@ -77,7 +84,7 @@ export function Status(app, view, config) {
         var dp = webix.dp(data);
         if (dp) {
             view.on(dp, "onAfterDataSend", start);
-            view.on(dp, "onAfterSaveError", function (id, obj, response) { return fail(response); });
+            view.on(dp, "onAfterSaveError", function (_id, _obj, response) { return fail(response); });
             view.on(dp, "onAfterSave", success);
         }
     }
@@ -90,7 +97,7 @@ export function Status(app, view, config) {
         view.on(webix, "onRemoteCall", start);
     }
     if (config.ajax) {
-        view.on(webix, "onBeforeAjax", function (mode, url, data, request, headers, files, promise) {
+        view.on(webix, "onBeforeAjax", function (_mode, _url, _data, _request, _headers, _files, promise) {
             start(promise);
         });
     }

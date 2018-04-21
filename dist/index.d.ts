@@ -8,10 +8,10 @@ export { UrlRouter } from "./routers/UrlRouter";
 export { EmptyRouter } from "./routers/EmptyRouter";
 export declare const plugins: {
     UnloadGuard: (app: IJetApp, view: IJetView, config: any) => void;
-    Locale: (app: IJetApp, view: IJetView, config: any) => void;
+    Locale: (app: IJetApp, _view: IJetView, config: any) => void;
     Menu: (app: IJetApp, view: IJetView, config: any) => void;
-    Theme: (app: IJetApp, view: IJetView, config: any) => void;
-    User: (app: IJetApp, view: IJetView, config: any) => void;
+    Theme: (app: IJetApp, _view: IJetView, config: any) => void;
+    User: (app: IJetApp, _view: IJetView, config: any) => void;
     Status: (app: IJetApp, view: IJetView, config: any) => void;
     UrlParam: (app: IJetApp, view: IJetView, config: any) => void;
 };

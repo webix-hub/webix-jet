@@ -1,14 +1,10 @@
 import {IJetApp, IJetView} from "../interfaces";
-import Polyglot from "node-polyglot/build/polyglot";
-
-declare function require(name:string):any;
-
 
 function copyParams(view: IJetView, url, route){
-	for (var i = 0; i < route.length; i++){
+	for (let i = 0; i < route.length; i++){
 		view.setParam(route[i], url[i+1] ? url[i+1].page : "");
 	}
-	
+
 }
 export function UrlParam(app: IJetApp, view: IJetView, config: any){
 	const route = config.route || config;
@@ -20,10 +16,10 @@ export function UrlParam(app: IJetApp, view: IJetView, config: any){
 	});
 	view.on(app, "app:paramchange", function(subview, name, value, url){
 		if (view === subview && url){
-			for (var i=0; i<route.length; i++){
+			for (let i=0; i<route.length; i++){
 				if (route[i] === name){
-					//changing in the url
-					view.show([i, value])
+					// changing in the url
+					view.show([i, value]);
 					return false;
 				}
 			}

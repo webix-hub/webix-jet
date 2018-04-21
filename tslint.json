@@ -33,7 +33,9 @@
 			"ban-keywords"
 		],
 		"member-access":false,
-		"only-arrow-functions": false
+		"only-arrow-functions": false,
+		"no-submodule-imports": [true, "node-polyglot", "webix-routie"],
+		"prefer-for-of":false
 	},
 	"rulesDirectory": []
 }

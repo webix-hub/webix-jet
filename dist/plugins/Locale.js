@@ -1,5 +1,5 @@
 import Polyglot from "node-polyglot/build/polyglot";
-export function Locale(app, view, config) {
+export function Locale(app, _view, config) {
     config = config || {};
     var storage = config.storage;
     var lang = storage ? (storage.get("lang") || "en") : (config.lang || "en");

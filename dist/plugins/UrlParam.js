@@ -15,7 +15,7 @@ export function UrlParam(app, view, config) {
         if (view === subview && url) {
             for (var i = 0; i < route.length; i++) {
                 if (route[i] === name) {
-                    //changing in the url
+                    // changing in the url
                     view.show([i, value]);
                     return false;
                 }

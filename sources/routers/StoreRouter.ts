@@ -1,8 +1,5 @@
 import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
-// external lib
-declare var routie:(pattern:string, cb:IJetRouterCallback) => void;
-
 export class StoreRouter implements IJetRouter{
 	private name:string;
 	private cb: IJetRouterCallback;

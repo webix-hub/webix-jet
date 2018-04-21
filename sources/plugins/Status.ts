@@ -1,15 +1,15 @@
 import {IJetApp, IJetView} from "../interfaces";
 
 const baseicons = {
-	"good":	"check",
-	"error": "warning",
-	"saving": "refresh fa-spin"
+	good:	"check",
+	error: "warning",
+	saving: "refresh fa-spin"
 };
 
 const basetext = {
-	"good":	"Ok",
-	"error": "Error",
-	"saving": "Connecting..."
+	good:	"Ok",
+	error: "Error",
+	saving: "Connecting..."
 };
 
 export function Status(app: IJetApp, view: IJetView, config: any){
@@ -18,18 +18,25 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	let count = 0;
 	let iserror = false;
 	let expireDelay = config.expire;
-	if (!expireDelay && expireDelay !== false)  expireDelay = 2000;
-	let texts = config.texts || basetext;
-	let icons = config.icons || baseicons;
+	if (!expireDelay && expireDelay !== false){
+		expireDelay = 2000;
+	}
+	const texts = config.texts || basetext;
+	const icons = config.icons || baseicons;
 
-	if (typeof config === "string")
+	if (typeof config === "string"){
 		config = { target:config };
+	}
 
 	function refresh(content? : string) {
 		const area = view.$$(config.target);
 		if (area) {
-			if (!content)
-				content = "<div class='status_" + status + "'><span class='webix_icon fa-" + icons[status] + "'></span> " + texts[status] + "</div>";
+			if (!content){
+				content = "<div class='status_" +
+					status +
+					"'><span class='webix_icon fa-" +
+					icons[status] + "'></span> " + texts[status] + "</div>";
+			}
 			(area as webix.ui.template).setHTML(content);
 		}
 	}
@@ -45,14 +52,14 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 		count++;
 		setStatus("saving");
 		if (promise && promise.then){
-			promise.then( success, fail );
+			promise.then(success, fail);
 		}
 	}
 	function getStatus(){
 		return status;
 	}
 	function hideStatus(){
-		if (count == 0){
+		if (count === 0){
 			refresh(" ");
 		}
 	}
@@ -71,8 +78,9 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 				if (iserror){
 					app.error("app:error:server", [err.responseText || err]);
 				} else {
-					if (expireDelay)
-						setTimeout(hideStatus, expireDelay)
+					if (expireDelay){
+						setTimeout(hideStatus, expireDelay);
+					}
 				}
 
 				refresh();
@@ -83,7 +91,7 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 		const dp = webix.dp(data);
 		if (dp){
 			view.on(dp, "onAfterDataSend", start);
-			view.on(dp, "onAfterSaveError", (id, obj, response) => fail(response));
+			view.on(dp, "onAfterSaveError", (_id, _obj, response) => fail(response));
 			view.on(dp, "onAfterSave", success);
 		}
 	}
@@ -99,8 +107,9 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	}
 
 	if (config.ajax){
-		view.on(webix, "onBeforeAjax", (mode, url, data, request, headers, files, promise) => {
-			start(promise);
+		view.on(webix, "onBeforeAjax",
+			(_mode, _url, _data, _request, _headers, _files, promise) => {
+				start(promise);
 		});
 	}
 

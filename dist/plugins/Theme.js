@@ -1,7 +1,10 @@
-export function Theme(app, view, config) {
+export function Theme(app, _view, config) {
     config = config || {};
     var storage = config.storage;
-    var theme = storage ? (storage.get("theme") || "flat-default") : (config.theme || "flat-default");
+    var theme = storage ?
+        (storage.get("theme") || "flat-default")
+        :
+            (config.theme || "flat-default");
     var service = {
         getTheme: function () { return theme; },
         setTheme: function (name, silent) {
@@ -19,9 +22,9 @@ export function Theme(app, view, config) {
                 }
             }
             webix.skin.set(parts[0]);
-            //remove old css
+            // remove old css
             webix.html.removeCss(document.body, "theme-" + theme);
-            //add new css
+            // add new css
             webix.html.addCss(document.body, "theme-" + name);
             theme = name;
             if (storage) {

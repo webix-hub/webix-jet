@@ -1,6 +1,6 @@
 import {IJetApp, IJetView} from "../interfaces";
 
-export function User(app: IJetApp, view: IJetView, config: any){
+export function User(app: IJetApp, _view: IJetView, config: any){
 	config = config || {};
 
 	const login = config.login || "/login";
@@ -28,7 +28,7 @@ export function User(app: IJetApp, view: IJetView, config: any){
 			return model.login(name, pass).then(data => {
 				user = data;
 				if (!data){
-					throw("Access denied");
+					throw new Error("Access denied");
 				}
 
 				app.callEvent("app:user:login", [ user ]);
@@ -37,10 +37,10 @@ export function User(app: IJetApp, view: IJetView, config: any){
 		},
 		logout(){
 			user = null;
-			return model.logout.then(res => { 
+			return model.logout.then(res => {
 				app.callEvent("app:user:logout",[]);
 				return res;
-			})
+			});
 		}
 	};
 
@@ -57,7 +57,7 @@ export function User(app: IJetApp, view: IJetView, config: any){
 
 	app.attachEvent(`app:guard`, function(url: string, _$root: any, obj:any){
 		if (typeof user === "undefined"){
-			obj.confirm = service.getStatus(true).then(some => canNavigate(url, obj));
+			obj.confirm = service.getStatus(true).then(() => canNavigate(url, obj));
 		}
 
 		return canNavigate(url, obj);

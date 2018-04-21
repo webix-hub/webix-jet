@@ -9,7 +9,7 @@ var HashRouter = (function () {
             this._prefix = "!";
         }
         var rcb = function (_$a) { };
-        routie(this._prefix + "*", function (url) {
+        routie(this._prefix + "*", function () {
             _this._lastUrl = "";
             return rcb(_this.get());
         });

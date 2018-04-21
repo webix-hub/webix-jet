@@ -1,12 +1,12 @@
-import {IJetApp, IJetView} from "../interfaces";
 import Polyglot from "node-polyglot/build/polyglot";
+import {IJetApp, IJetView} from "../interfaces";
 
 declare function require(name:string):any;
 
-export function Locale(app: IJetApp, view: IJetView, config: any){
+export function Locale(app: IJetApp, _view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
-	let lang = storage ? ( storage.get("lang") || "en" ) : ( config.lang || "en" );
+	let lang = storage ? (storage.get("lang") || "en") : (config.lang || "en");
 
 
 	const service = {
