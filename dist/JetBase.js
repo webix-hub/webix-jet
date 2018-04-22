@@ -78,7 +78,9 @@ var JetBase = (function () {
     };
     JetBase.prototype.$$ = function (id) {
         if (typeof id === "string") {
-            return this.getRoot().queryView((function (obj) { return obj.config.id === id || obj.config.localId === id; }), "self");
+            var root_1 = this.getRoot();
+            return root_1.queryView((function (obj) { return (obj.config.id === id || obj.config.localId === id) &&
+                (obj.$scope === root_1.$scope); }), "self");
         }
         else {
             return id;

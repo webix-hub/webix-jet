@@ -106,8 +106,11 @@ export abstract class JetBase implements IJetView{
 
 	$$(id:string | webix.ui.baseview):webix.ui.baseview{
 		if (typeof id === "string"){
-			return (this.getRoot() as any).queryView(
-				(obj => obj.config.id === id || obj.config.localId === id),
+			const root = this.getRoot() as any;
+			return root.queryView(
+				(obj => (obj.config.id === id || obj.config.localId === id) &&
+						(obj.$scope === root.$scope)
+				),
 				"self");
 		} else {
 			return id;
