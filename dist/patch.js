@@ -1,7 +1,7 @@
 var w = webix;
 var version = webix.version.split(".");
-// will be fixed in webix 5.2
-if (version[0] * 10 + version[1] * 1 < 52) {
+// will be fixed in webix 5.3
+if (version[0] * 10 + version[1] * 1 < 53) {
     w.ui.freeze = function (handler) {
         // disabled because webix jet 5.0 can't handle resize of scrollview correctly
         // w.ui.$freeze = true;
@@ -58,3 +58,44 @@ var config = {
 };
 w.extend(w.ui.layout.prototype, config, true);
 w.extend(w.ui.baselayout.prototype, config, true);
+// wrapper for using Jet Apps as views
+webix.protoUI({
+    name: "jetapp",
+    $init: function (cfg) {
+        this.$app = new this.app(cfg);
+        var id = webix.uid().toString();
+        this.setBody({ id: id });
+        this.$ready.push(function () {
+            var _this = this;
+            this.$app.render(webix.$$(id)).then(function (view) {
+                _this.setBody(view);
+            });
+        });
+    },
+    getChildViews: function () {
+        return [this._body_cell];
+    },
+    getBody: function () {
+        return this._body_cell;
+    },
+    setBody: function (view) {
+        if (!view.config) {
+            view = webix.ui(view, this.$view);
+        }
+        this._body_cell = view;
+    },
+    $setSize: function (x, y) {
+        webix.ui.view.prototype.$setSize.call(this, x, y);
+        this._body_cell.$setSize(this.$width, this.$height);
+    },
+    $getSize: function (dx, dy) {
+        var selfSize = webix.ui.view.prototype.$getSize.call(this, dx, dy);
+        var size = this.getBody().$getSize(dx, dy);
+        size[0] = Math.max(selfSize[0], size[0]);
+        size[1] = Math.min(selfSize[1], size[1]);
+        size[2] = Math.max(selfSize[2], size[2]);
+        size[3] = Math.min(selfSize[3], size[3]);
+        size[4] = Math.max(selfSize[4], size[4]);
+        return size;
+    }
+}, webix.ui.view);
