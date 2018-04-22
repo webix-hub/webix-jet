@@ -64,38 +64,9 @@ webix.protoUI({
     $init: function (cfg) {
         this.$app = new this.app(cfg);
         var id = webix.uid().toString();
-        this.setBody({ id: id });
+        cfg.body = { id: id };
         this.$ready.push(function () {
-            var _this = this;
-            this.$app.render(webix.$$(id)).then(function (view) {
-                _this.setBody(view);
-            });
+            this.$app.render(webix.$$(id));
         });
-    },
-    getChildViews: function () {
-        return [this._body_cell];
-    },
-    getBody: function () {
-        return this._body_cell;
-    },
-    setBody: function (view) {
-        if (!view.config) {
-            view = webix.ui(view, this.$view);
-        }
-        this._body_cell = view;
-    },
-    $setSize: function (x, y) {
-        webix.ui.view.prototype.$setSize.call(this, x, y);
-        this._body_cell.$setSize(this.$width, this.$height);
-    },
-    $getSize: function (dx, dy) {
-        var selfSize = webix.ui.view.prototype.$getSize.call(this, dx, dy);
-        var size = this.getBody().$getSize(dx, dy);
-        size[0] = Math.max(selfSize[0], size[0]);
-        size[1] = Math.min(selfSize[1], size[1]);
-        size[2] = Math.max(selfSize[2], size[2]);
-        size[3] = Math.min(selfSize[3], size[3]);
-        size[4] = Math.max(selfSize[4], size[4]);
-        return size;
     }
-}, webix.ui.view);
+}, webix.ui.proxy);
