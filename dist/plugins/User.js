@@ -31,7 +31,7 @@ export function User(app, _view, config) {
         },
         logout: function () {
             user = null;
-            return model.logout.then(function (res) {
+            return model.logout().then(function (res) {
                 app.callEvent("app:user:logout", []);
                 return res;
             });

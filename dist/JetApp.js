@@ -63,7 +63,7 @@ var JetApp = (function (_super) {
                 point = { $subview: point };
             }
             if (point && typeof point === "object" &&
-                !(point instanceof webix.DataCollection)) {
+                !(point instanceof webix.DataCollection) && !(point instanceof RegExp)) {
                 if (point instanceof Date) {
                     target[method] = new Date(point);
                 }
