@@ -37,7 +37,7 @@ export function User(app: IJetApp, _view: IJetView, config: any){
 		},
 		logout(){
 			user = null;
-			return model.logout.then(res => {
+			return model.logout().then(res => {
 				app.callEvent("app:user:logout",[]);
 				return res;
 			});
