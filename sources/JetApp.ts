@@ -80,7 +80,7 @@ export class JetApp extends JetBase implements IJetApp {
 			}
 
 			if (point && typeof point === "object" &&
-				!(point instanceof webix.DataCollection)) {
+				!(point instanceof webix.DataCollection) && !(point instanceof RegExp)) {
 				if (point instanceof Date) {
 					target[method] = new Date(point);
 				} else {
