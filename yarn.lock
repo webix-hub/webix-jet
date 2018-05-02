@@ -3063,9 +3063,9 @@ webix-routie@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/webix-routie/-/webix-routie-0.4.0.tgz#6693986e1b082d3880cc95f94eb5dd328c081a90"
 
-webix@>=5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/webix/-/webix-5.1.1.tgz#04b611000670af89960555926b6ba7b59caf654d"
+webix@>=5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/webix/-/webix-5.3.0.tgz#63c7a86746bbdc43de454c01ea804d20975b96dd"
 
 webpack-dev-middleware@^1.11.0:
   version "1.12.0"

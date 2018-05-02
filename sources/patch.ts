@@ -76,3 +76,10 @@ webix.protoUI({
 		});
 	}
 }, (webix.ui as any).proxy);
+
+declare namespace webix {
+	namespace ui { 
+		class jetapp extends webix.ui.view{
+		}
+	}
+}
