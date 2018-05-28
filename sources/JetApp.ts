@@ -215,7 +215,7 @@ export class JetApp extends JetBase implements IJetApp {
 	// show view path
 	show(name: string) : Promise<any> {
 		if (this.$router.get() !== name) {
-			this._render(name);
+			return this._render(name);
 		} else {
 			return Promise.resolve(true);
 		}
@@ -233,7 +233,7 @@ export class JetApp extends JetBase implements IJetApp {
 			return Promise.reject("");
 		}
 
-		return obj.confirm.then(() => obj.redirect);
+		return obj.confirm.catch(() => obj.redirect = null).then(() => obj.redirect);
 	}
 
 	destructor() {
@@ -296,9 +296,12 @@ export class JetApp extends JetBase implements IJetApp {
 		const strUrl = typeof url === "string" ? url : url2str(url);
 
 		return this.canNavigate(strUrl).then(newurl => {
-			this.$router.set(newurl, { silent:true });
-			return this._render_stage(newurl);
-		}).catch(() => null);
+			if (newurl !== null){
+				this.$router.set(newurl, { silent:true });
+				return this._render_stage(newurl);
+			}
+			return null;
+		});
 	}
 
 	protected _render_stage(url): Promise<IJetView>{

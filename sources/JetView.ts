@@ -119,13 +119,16 @@ export class JetView extends JetBase{
 				const urlstr = url2str(url);
 
 				return this.app.canNavigate(urlstr, this).then(redirect => {
-					if (urlstr !== redirect){
-						// url was blocked and redirected
-						return this.app.show(redirect);
-					} else {
-						return this._finishShow(url, redirect);
+					if (redirect !== null){
+						if (urlstr !== redirect){
+							// url was blocked and redirected
+							return this.app.show(redirect);
+						} else {
+							return this._finishShow(url, redirect);
+						}
 					}
-				}).catch(() => false);
+					return null;
+				});
 			} else {
 				return this._finishShow(newChunk, "");
 			}

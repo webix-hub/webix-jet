@@ -186,7 +186,7 @@ var JetApp = (function (_super) {
     // show view path
     JetApp.prototype.show = function (name) {
         if (this.$router.get() !== name) {
-            this._render(name);
+            return this._render(name);
         }
         else {
             return Promise.resolve(true);
@@ -202,7 +202,7 @@ var JetApp = (function (_super) {
         if (!res) {
             return Promise.reject("");
         }
-        return obj.confirm.then(function () { return obj.redirect; });
+        return obj.confirm.catch(function () { return obj.redirect = null; }).then(function () { return obj.redirect; });
     };
     JetApp.prototype.destructor = function () {
         this._view.destructor();
@@ -266,9 +266,12 @@ var JetApp = (function (_super) {
         }
         var strUrl = typeof url === "string" ? url : url2str(url);
         return this.canNavigate(strUrl).then(function (newurl) {
-            _this.$router.set(newurl, { silent: true });
-            return _this._render_stage(newurl);
-        }).catch(function () { return null; });
+            if (newurl !== null) {
+                _this.$router.set(newurl, { silent: true });
+                return _this._render_stage(newurl);
+            }
+            return null;
+        });
     };
     JetApp.prototype._render_stage = function (url) {
         var _this = this;

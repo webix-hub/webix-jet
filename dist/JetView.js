@@ -106,14 +106,17 @@ var JetView = (function (_super) {
                 }
                 var urlstr_1 = url2str(url_1);
                 return this.app.canNavigate(urlstr_1, this).then(function (redirect) {
-                    if (urlstr_1 !== redirect) {
-                        // url was blocked and redirected
-                        return _this.app.show(redirect);
+                    if (redirect !== null) {
+                        if (urlstr_1 !== redirect) {
+                            // url was blocked and redirected
+                            return _this.app.show(redirect);
+                        }
+                        else {
+                            return _this._finishShow(url_1, redirect);
+                        }
                     }
-                    else {
-                        return _this._finishShow(url_1, redirect);
-                    }
-                }).catch(function () { return false; });
+                    return null;
+                });
             }
             else {
                 return this._finishShow(newChunk, "");
