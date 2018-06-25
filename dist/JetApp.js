@@ -125,11 +125,7 @@ var JetApp = (function (_super) {
             }
             if (!result) {
                 url = url.replace(/\./g, "/");
-                var view = require("jet-views/" + url);
-                if (view.__esModule) {
-                    view = view.default;
-                }
-                result = view;
+                result = require("jet-views/" + url);
             }
         }
         catch (e) {
@@ -140,7 +136,9 @@ var JetApp = (function (_super) {
             result = Promise.resolve(result);
         }
         // set error handler
-        result = result.catch(function (err) { return _this._loadError(url, err); });
+        result = result
+            .then(function (module) { return module.__esModule ? module.default : module; })
+            .catch(function (err) { return _this._loadError(url, err); });
         return result;
     };
     JetApp.prototype.createFromURL = function (url, now) {

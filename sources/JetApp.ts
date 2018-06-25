@@ -151,11 +151,7 @@ export class JetApp extends JetBase implements IJetApp {
 
 			if (!result){
 				url = url.replace(/\./g, "/");
-				let view = require("jet-views/"+url);
-				if (view.__esModule) {
-					view = view.default;
-				}
-				result = view;
+				result = require("jet-views/"+url);
 			}
 		} catch(e){
 			result = this._loadError(url, e);
@@ -167,7 +163,9 @@ export class JetApp extends JetBase implements IJetApp {
 		}
 
 		// set error handler
-		result = result.catch(err => this._loadError(url, err));
+		result = result
+			.then(module => module.__esModule ? module.default : module)
+			.catch(err => this._loadError(url, err));
 
 		return result;
 	}
