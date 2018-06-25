@@ -140,21 +140,25 @@ var JetView = (function (_super) {
     };
     JetView.prototype.destructor = function () {
         this.destroy();
-        // destroy child views
-        var uis = this._children;
-        for (var i = uis.length - 1; i >= 0; i--) {
-            if (uis[i] && uis[i].destructor) {
-                uis[i].destructor();
-            }
-        }
+        this._destroyKids();
         // reset vars for better GC processing
-        this.app = this._children = null;
+        this.app = this._parentFrame = null;
         // destroy actual UI
         this._root.destructor();
         _super.prototype.destructor.call(this);
     };
     JetView.prototype.use = function (plugin, config) {
         plugin(this.app, this, config);
+    };
+    JetView.prototype.refresh = function () {
+        var _this = this;
+        this._destroyKids();
+        var url = [];
+        if (this._index > 1)
+            url = parse(this.app.getRouter().get()).slice(this._index - 1);
+        this._render(url).then(function () {
+            _this._parentFrame.id = _this.getRoot().config.id;
+        });
     };
     JetView.prototype._render = function (url) {
         var _this = this;
@@ -262,6 +266,9 @@ var JetView = (function (_super) {
             // save info about a new view
             sub.view = view;
             sub.id = ui.config.id;
+            if (view instanceof JetView) {
+                view._parentFrame = sub;
+            }
             return ui;
         });
     };
@@ -281,6 +288,17 @@ var JetView = (function (_super) {
     JetView.prototype._renderPartial = function (url) {
         this._init_url_data(url);
         return this._urlChange(url);
+    };
+    JetView.prototype._destroyKids = function () {
+        // destroy child views
+        var uis = this._children;
+        for (var i = uis.length - 1; i >= 0; i--) {
+            if (uis[i] && uis[i].destructor) {
+                uis[i].destructor();
+            }
+        }
+        // reset vars for better GC processing
+        this._children = [];
     };
     return JetView;
 }(JetBase));

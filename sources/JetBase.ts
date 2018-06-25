@@ -157,6 +157,7 @@ export abstract class JetBase implements IJetView{
 		return this._name;
 	}
 
+	public abstract refresh();
 	public abstract show(path:any, config?:any);
 	protected abstract _render(url: IJetURL) : Promise<any>;
 	protected abstract _urlChange(url: IJetURL) : Promise<any>;

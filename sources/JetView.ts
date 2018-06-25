@@ -11,6 +11,7 @@ interface IDestructable{
 
 export class JetView extends JetBase{
 	private _children:IDestructable[];
+	private _parentFrame:ISubView;
 
 	constructor(app : IJetApp, name : string){
 		super();
@@ -154,17 +155,10 @@ export class JetView extends JetBase{
 
 	destructor(){
 		this.destroy();
-
-		// destroy child views
-		const uis = this._children;
-		for (let i = uis.length - 1; i >= 0; i--){
-			if (uis[i] && uis[i].destructor){
-				uis[i].destructor();
-			}
-		}
+		this._destroyKids();
 
 		// reset vars for better GC processing
-		this.app = this._children = null;
+		this.app = this._parentFrame = null;
 
 		// destroy actual UI
 		this._root.destructor();
@@ -173,6 +167,16 @@ export class JetView extends JetBase{
 
 	use(plugin, config){
 		plugin(this.app, this, config);
+	}
+
+	refresh(){
+		this._destroyKids();
+		let url = [];
+		if (this._index > 1)
+			url = parse(this.app.getRouter().get()).slice(this._index-1);
+		this._render(url).then(() => {
+			this._parentFrame.id = this.getRoot().config.id as string;
+		});
 	}
 
 	protected _render(url:IJetURL):Promise<any>{
@@ -294,6 +298,11 @@ export class JetView extends JetBase{
 			// save info about a new view
 			sub.view = view;
 			sub.id = ui.config.id as string;
+
+			if (view instanceof JetView){
+				view._parentFrame = sub;
+			}
+
 			return ui;
 		});
 	}
@@ -314,5 +323,18 @@ export class JetView extends JetBase{
 	private _renderPartial(url:IJetURL){
 		this._init_url_data(url);
 		return this._urlChange(url);
+	}
+
+	private _destroyKids(){
+		// destroy child views
+		const uis = this._children;
+		for (let i = uis.length - 1; i >= 0; i--){
+			if (uis[i] && uis[i].destructor){
+				uis[i].destructor();
+			}
+		}
+
+		// reset vars for better GC processing
+		this._children = [];
 	}
 }
