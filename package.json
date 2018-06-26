@@ -1,6 +1,6 @@
 {
   "name": "webix-jet",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "Webix Jet microframework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
