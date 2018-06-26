@@ -284,10 +284,6 @@ var JetApp = (function (_super) {
                 _this._view = view;
                 // render url state for the root
                 return view.render(_this._container, parsed, _this._parent).then(function (root) {
-                    // destroy and detack old view
-                    if (oldview && oldview !== _this._view) {
-                        oldview.destructor();
-                    }
                     if (_this._view.getRoot().getParentView()) {
                         _this._container = root;
                     }

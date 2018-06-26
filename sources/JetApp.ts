@@ -316,11 +316,6 @@ export class JetApp extends JetBase implements IJetApp {
 
 				// render url state for the root
 				return view.render(this._container, parsed, this._parent).then(root => {
-
-					// destroy and detack old view
-					if (oldview && oldview !== this._view) {
-						oldview.destructor();
-					}
 					if (this._view.getRoot().getParentView()){
 						this._container = root;
 					}

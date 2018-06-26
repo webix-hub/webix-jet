@@ -186,7 +186,12 @@ var JetView = (function (_super) {
                     result.ui.id = prev.config.id;
                 }
             }
+            var oldScope = this._container.$scope;
             this._root = this.app.webix.ui(result.ui, this._container);
+            // check, if some other view need to be destroyed
+            if (oldScope && oldScope !== this && oldScope.getRoot && oldScope.getRoot().$destructed) {
+                oldScope.destructor();
+            }
             if (this._root.getParentView()) {
                 this._container = this._root;
             }
@@ -255,10 +260,6 @@ var JetView = (function (_super) {
     JetView.prototype._renderSubView = function (sub, view, suburl) {
         var cell = this.app.webix.$$(sub.id);
         return view.render(cell, suburl, this).then(function (ui) {
-            // destroy old view
-            if (sub.view && sub.view !== view) {
-                sub.view.destructor();
-            }
             // save info about a new view
             sub.view = view;
             sub.id = ui.config.id;

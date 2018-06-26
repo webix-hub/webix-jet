@@ -207,7 +207,13 @@ export class JetView extends JetBase{
 				}
 			}
 
+			const oldScope = (this._container as any).$scope;
 			this._root = this.app.webix.ui(result.ui, this._container);
+			// check, if some other view need to be destroyed
+			if (oldScope && oldScope !== this && oldScope.getRoot && oldScope.getRoot().$destructed){
+				oldScope.destructor();
+			}
+
 			if (this._root.getParentView()){
 				this._container = this._root;
 			}
@@ -286,11 +292,6 @@ export class JetView extends JetBase{
 					suburl:IJetURL):Promise<webix.ui.baseview>{
 		const cell = this.app.webix.$$(sub.id);
 		return view.render(cell, suburl, this).then(ui => {
-			// destroy old view
-			if (sub.view && sub.view !== view){
-				sub.view.destructor();
-			}
-
 			// save info about a new view
 			sub.view = view;
 			sub.id = ui.config.id as string;
