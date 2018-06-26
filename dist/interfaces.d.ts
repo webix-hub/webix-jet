@@ -48,6 +48,7 @@ export interface IJetView {
     getParam(id: string, parent: boolean): any;
     getUrl(): IJetURL;
     getParentView(): IJetView;
+    refresh(): any;
     render(area: webix.ui.baseview | string | HTMLElement, url?: IJetURL, parent?: IJetView): Promise<webix.ui.baseview>;
     destructor(): any;
     on(obj: any, name: string, code: any): any;

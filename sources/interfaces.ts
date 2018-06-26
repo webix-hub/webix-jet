@@ -53,6 +53,7 @@ export interface IJetView{
 	getParam(id:string, parent:boolean):any;
 	getUrl():IJetURL;
 	getParentView() : IJetView;
+	refresh();
 	render(
 		area: webix.ui.baseview|string|HTMLElement,
 		url? : IJetURL,

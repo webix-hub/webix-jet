@@ -33,6 +33,7 @@ export declare abstract class JetBase implements IJetView {
     getSubView(name?: string): IJetView;
     getSubViewInfo(name?: string): ISubViewInfo;
     getName(): string;
+    abstract refresh(): any;
     abstract show(path: any, config?: any): any;
     protected abstract _render(url: IJetURL): Promise<any>;
     protected abstract _urlChange(url: IJetURL): Promise<any>;

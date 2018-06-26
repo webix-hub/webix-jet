@@ -2,6 +2,7 @@ import { JetBase } from "./JetBase";
 import { IJetApp, IJetURL, IJetView, IJetViewFactory, ISubView, IUIConfig } from "./interfaces";
 export declare class JetView extends JetBase {
     private _children;
+    private _parentFrame;
     constructor(app: IJetApp, name: string);
     ui(ui: webix.ui.viewConfig | IJetViewFactory, config?: IUIConfig): webix.ui.baseview | IJetView;
     show(path: any, config?: any): Promise<any>;
@@ -12,6 +13,7 @@ export declare class JetView extends JetBase {
     destroy(): void;
     destructor(): void;
     use(plugin: any, config: any): void;
+    refresh(): void;
     protected _render(url: IJetURL): Promise<any>;
     protected _render_final(config: any, url: IJetURL): Promise<any>;
     protected _init(view: webix.ui.baseview, url: IJetURL): void;
@@ -22,4 +24,5 @@ export declare class JetView extends JetBase {
     private _renderSubView(sub, view, suburl);
     private _finishShow(url, path);
     private _renderPartial(url);
+    private _destroyKids();
 }
