@@ -1,4 +1,4 @@
-import Polyglot from "node-polyglot/build/polyglot";
+import Polyglot from "webix-polyglot";
 export function Locale(app, _view, config) {
     config = config || {};
     var storage = config.storage;

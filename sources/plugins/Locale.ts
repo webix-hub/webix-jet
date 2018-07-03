@@ -1,4 +1,4 @@
-import Polyglot from "node-polyglot/build/polyglot";
+import Polyglot from "webix-polyglot";
 import {IJetApp, IJetView} from "../interfaces";
 
 declare function require(name:string):any;

@@ -37,7 +37,7 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
-    "node-polyglot": "^2.2.2",
+    "webix-polyglot": "^2.3.0",
     "webix-routie": "^0.4.0"
   },
   "author": "Maksim Kozhukh",
