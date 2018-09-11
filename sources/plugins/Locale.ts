@@ -20,7 +20,12 @@ export function Locale(app: IJetApp, _view: IJetView, config: any){
 				data = data.default;
 			}
 
-			const poly = service.polyglot = new Polyglot({ phrases:data });
+			const pconfig = { phrases:data };
+			if (config.polyglot){
+				webix.extend(pconfig, config.polyglot);
+			}
+
+			const poly = service.polyglot = new Polyglot(pconfig);
 			poly.locale(name);
 
 			service._ = webix.bind(poly.t, poly);
