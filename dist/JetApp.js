@@ -266,7 +266,7 @@ var JetApp = (function (_super) {
         return this.canNavigate(strUrl).then(function (newurl) {
             if (newurl !== null) {
                 _this.$router.set(newurl, { silent: true });
-                return _this._render_stage(newurl);
+                return _this._render_stage(_this.$router.get());
             }
             return null;
         });

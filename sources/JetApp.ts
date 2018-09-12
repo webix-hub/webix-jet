@@ -296,7 +296,7 @@ export class JetApp extends JetBase implements IJetApp {
 		return this.canNavigate(strUrl).then(newurl => {
 			if (newurl !== null){
 				this.$router.set(newurl, { silent:true });
-				return this._render_stage(newurl);
+				return this._render_stage(this.$router.get());
 			}
 			return null;
 		});

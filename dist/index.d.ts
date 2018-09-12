@@ -6,6 +6,7 @@ export { HashRouter } from "./routers/HashRouter";
 export { StoreRouter } from "./routers/StoreRouter";
 export { UrlRouter } from "./routers/UrlRouter";
 export { EmptyRouter } from "./routers/EmptyRouter";
+export { SubRouter } from "./routers/SubRouter";
 export declare const plugins: {
     UnloadGuard: (app: IJetApp, view: IJetView, config: any) => void;
     Locale: (app: IJetApp, _view: IJetView, config: any) => void;

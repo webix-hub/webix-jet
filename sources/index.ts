@@ -8,6 +8,7 @@ export { HashRouter } 	from "./routers/HashRouter";
 export { StoreRouter }	from "./routers/StoreRouter";
 export { UrlRouter } 	from "./routers/UrlRouter";
 export { EmptyRouter } 	from "./routers/EmptyRouter";
+export { SubRouter } 	from "./routers/SubRouter";
 
 import {UnloadGuard} 	from "./plugins/Guard";
 import {Locale} 		from "./plugins/Locale";
