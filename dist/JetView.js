@@ -190,7 +190,12 @@ var JetView = (function (_super) {
             this._root = this.app.webix.ui(result.ui, this._container);
             // check, if some other view need to be destroyed
             if (oldScope && oldScope !== this && oldScope.getRoot && oldScope.getRoot().$destructed) {
-                oldScope.destructor();
+                if (oldScope.app !== this.app && oldScope.app.getRoot().$destructed) {
+                    oldScope.app.destructor();
+                }
+                else {
+                    oldScope.destructor();
+                }
             }
             if (this._root.getParentView()) {
                 this._container = this._root;
