@@ -41,6 +41,7 @@ export type IJetURL = IJetURLChunk[];
 
 export interface IJetView{
 	app: IJetApp;
+	_name: string;
 	$$(name:string):webix.ui.baseview;
 	contains(view: IJetView):boolean;
 	getName():string;

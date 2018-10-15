@@ -5,12 +5,13 @@ import { IJetApp, IJetURL, IJetView,
 export abstract class JetBase implements IJetView{
 	public app: IJetApp;
 	public webixJet = true;
+	//temporary workaround for app.refresh, next var must be private
+	public _name: string;
 	protected _parent: IJetView;
 	protected _index: number;
 	protected _container: HTMLElement | webix.ui.baseview;
 	protected _root: webix.ui.baseview;
 	protected _id: number;
-	protected _name: string;
 	protected _events:{ id:string, obj: any }[];
 	protected _subs:{[name:string]:ISubView};
 	private _data:{[name:string]:any};

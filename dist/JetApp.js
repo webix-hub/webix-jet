@@ -97,8 +97,9 @@ var JetApp = (function (_super) {
     };
     JetApp.prototype.refresh = function () {
         var temp = this._container;
-        this._view.destructor();
-        this._view = this._container = null;
+        //enforce view recreation
+        this._view._name = webix.uid() + "";
+        this._container = null;
         this.render(temp, parse(this.getRouter().get()), this._parent);
     };
     JetApp.prototype.loadView = function (url) {
@@ -282,7 +283,7 @@ var JetApp = (function (_super) {
                 _this._view = view;
                 // render url state for the root
                 return view.render(_this._container, parsed, _this._parent).then(function (root) {
-                    // destroy and detack old view
+                    // destroy and detach old view
                     if (oldview && oldview !== _this._view) {
                         oldview.destructor();
                     }

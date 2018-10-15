@@ -119,8 +119,9 @@ export class JetApp extends JetBase implements IJetApp {
 
 	refresh(){
 		const temp = this._container;
-		this._view.destructor();
-		this._view = this._container = null;
+		//enforce view recreation
+		this._view._name = webix.uid()+"";
+		this._container = null;
 		this.render(temp, parse(this.getRouter().get()), this._parent);
 	}
 
@@ -314,11 +315,11 @@ export class JetApp extends JetBase implements IJetApp {
 
 				// render url state for the root
 				return view.render(this._container, parsed, this._parent).then(root => {
-
-					// destroy and detack old view
+					// destroy and detach old view
 					if (oldview && oldview !== this._view) {
 						oldview.destructor();
 					}
+
 					if (this._view.getRoot().getParentView()){
 						this._container = root;
 					}
