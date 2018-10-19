@@ -153,11 +153,15 @@ var JetView = (function (_super) {
     JetView.prototype.refresh = function () {
         var _this = this;
         this._destroyKids();
+        this._destroySubs();
+        if (this._container.tagName)
+            this._root.destructor();
         var url = [];
-        if (this._index > 1)
+        if (this._index)
             url = parse(this.app.getRouter().get()).slice(this._index - 1);
         this._render(url).then(function () {
-            _this._parentFrame.id = _this.getRoot().config.id;
+            if (_this._parentFrame)
+                _this._parentFrame.id = _this.getRoot().config.id;
         });
     };
     JetView.prototype._render = function (url) {

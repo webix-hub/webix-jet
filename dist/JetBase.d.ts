@@ -37,5 +37,6 @@ export declare abstract class JetBase implements IJetView {
     abstract show(path: any, config?: any): any;
     protected abstract _render(url: IJetURL): Promise<any>;
     protected abstract _urlChange(url: IJetURL): Promise<any>;
+    protected _destroySubs(): void;
     protected _init_url_data(url: IJetURL): void;
 }

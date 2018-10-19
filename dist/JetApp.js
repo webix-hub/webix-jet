@@ -96,11 +96,7 @@ var JetApp = (function (_super) {
         }
     };
     JetApp.prototype.refresh = function () {
-        var temp = this._container;
-        //enforce view recreation
-        this._view._name = webix.uid() + "";
-        this._container = null;
-        this.render(temp, parse(this.getRouter().get()), this._parent);
+        this._view.refresh();
     };
     JetApp.prototype.loadView = function (url) {
         var _this = this;

@@ -36,16 +36,7 @@ export abstract class JetBase implements IJetView{
 			events[i].obj.detachEvent(events[i].id);
 		}
 
-		// destroy sub views
-		for (const key in this._subs){
-			const subView = this._subs[key].view;
-			// it possible that subview was not loaded with any content yet
-			// so check on null
-			if (subView){
-				subView.destructor();
-			}
-		}
-
+		this._destroySubs();
 		this._events = this._container = this.app = this._parent = null;
 	}
 	setParam(id:string, value:any, url?:boolean){
@@ -162,6 +153,21 @@ export abstract class JetBase implements IJetView{
 	public abstract show(path:any, config?:any);
 	protected abstract _render(url: IJetURL) : Promise<any>;
 	protected abstract _urlChange(url: IJetURL) : Promise<any>;
+
+	protected _destroySubs(){
+		// destroy sub views
+		for (const key in this._subs){
+			const subView = this._subs[key].view;
+			// it possible that subview was not loaded with any content yet
+			// so check on null
+			if (subView){
+				subView.destructor();
+			}
+		}
+
+		//reset to prevent memory leaks
+		this._subs = {};
+	}
 	protected _init_url_data(url:IJetURL){
 		if (url && url[0]){
 			this._data = {};

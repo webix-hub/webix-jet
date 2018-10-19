@@ -14,15 +14,7 @@ var JetBase = (function () {
         for (var i = events.length - 1; i >= 0; i--) {
             events[i].obj.detachEvent(events[i].id);
         }
-        // destroy sub views
-        for (var key in this._subs) {
-            var subView = this._subs[key].view;
-            // it possible that subview was not loaded with any content yet
-            // so check on null
-            if (subView) {
-                subView.destructor();
-            }
-        }
+        this._destroySubs();
         this._events = this._container = this.app = this._parent = null;
     };
     JetBase.prototype.setParam = function (id, value, url) {
@@ -119,6 +111,19 @@ var JetBase = (function () {
     };
     JetBase.prototype.getName = function () {
         return this._name;
+    };
+    JetBase.prototype._destroySubs = function () {
+        // destroy sub views
+        for (var key in this._subs) {
+            var subView = this._subs[key].view;
+            // it possible that subview was not loaded with any content yet
+            // so check on null
+            if (subView) {
+                subView.destructor();
+            }
+        }
+        //reset to prevent memory leaks
+        this._subs = {};
     };
     JetBase.prototype._init_url_data = function (url) {
         if (url && url[0]) {
