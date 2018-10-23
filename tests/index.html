@@ -2,12 +2,13 @@
 <html>
     <head>
       <meta charset="utf-8">
-      <link rel="stylesheet" href="../node_modules/mocha/mocha.css"/>
     </head>
     <body>
       <div id="mocha"></div>
       <script src="../node_modules/mocha/mocha.js"></script>
+      <script src="../node_modules/chai/chai.js"></script>
       <script>
+        window.expect = chai.expect;
         mocha.ui('bdd')
       </script>
       <script type="text/javascript" src="http://cdn.webix.com/5.0/webix.js"></script>
@@ -16,11 +17,18 @@
           window.Promise = webix.promise;
         }
       </script>
-      <script src="../codebase/tests.js"></script>
+      <script src="../codebase/jet.js"></script>
+      <script>
+        window.JetApp = webix.jet.JetApp;
+      </script>
+      <script src="./basic_app.js"></script>
   
       <div id='sandbox'></div>
   
       <script>
+        mocha.setup({
+          reporter:"spec"
+        });
         mocha.run()
       </script>
     </body>
