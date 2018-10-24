@@ -178,7 +178,8 @@ export class JetView extends JetBase{
 		let url = [];
 		if (this._index)
 			url = parse(this.app.getRouter().get()).slice(this._index-1);
-		this._render(url).then(() => {
+
+		return this._render(url).then(() => {
 			if (this._parentFrame)
 				this._parentFrame.id = this.getRoot().config.id as string;
 		});

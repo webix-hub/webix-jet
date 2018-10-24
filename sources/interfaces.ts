@@ -25,7 +25,7 @@ export interface IJetApp{
 	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
 	show(path:any);
 	createView(obj:any, name?:string):IJetView;
-	refresh();
+	refresh():Promise<void>;
 	error(name:string, data:any[]);
 	copyConfig(source:any, target:any, config?:IViewConfig);
 	getRouter(): IJetRouter;
@@ -53,7 +53,7 @@ export interface IJetView{
 	getParam(id:string, parent:boolean):any;
 	getUrl():IJetURL;
 	getParentView() : IJetView;
-	refresh();
+	refresh():Promise<void>;
 	render(
 		area: webix.ui.baseview|string|HTMLElement,
 		url? : IJetURL,

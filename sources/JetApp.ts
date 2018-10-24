@@ -118,7 +118,7 @@ export class JetApp extends JetBase implements IJetApp {
 	}
 
 	refresh(){
-		this._view.refresh();
+		return this._view.refresh();
 	}
 
 	loadView(url): Promise<any> {
