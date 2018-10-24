@@ -9,7 +9,10 @@
       <script src="../node_modules/chai/chai.js"></script>
       <script>
         window.expect = chai.expect;
-        mocha.ui('bdd')
+        mocha.setup({
+          ui:"bdd",
+          reporter:"spec"
+        });
       </script>
       <script type="text/javascript" src="http://cdn.webix.com/5.0/webix.js"></script>
       <script>
@@ -17,18 +20,12 @@
           window.Promise = webix.promise;
         }
       </script>
-      <script src="../codebase/jet.js"></script>
-      <script>
-        window.JetApp = webix.jet.JetApp;
-      </script>
-      <script src="./basic_app.js"></script>
-  
+      <script src="../dist/libs/jet.js"></script>
       <div id='sandbox'></div>
-  
+
+      <script src="./basic_app.js"></script>
+      <script src="./view_stages.js"></script>
       <script>
-        mocha.setup({
-          reporter:"spec"
-        });
         mocha.run()
       </script>
     </body>

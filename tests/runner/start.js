@@ -50,9 +50,8 @@ async function runner(cmd){
 }
 
 function error(err){  	
-	console.log(chalk.red("Page error: " + err.toString())); 
-	if (typeof err === "object")
-		console.log(err);
+    console.log(chalk.red("Page error: " + err.toString())); 
+    console.log(err.code, err.message);
 }
 
 function timeout(time){

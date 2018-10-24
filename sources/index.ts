@@ -1,3 +1,8 @@
+/*
+MIT License
+Copyright (c) 2018 XB Software
+*/
+
 import { IJetApp, IJetView } from "./interfaces";
 export { IJetApp, IJetView };
 

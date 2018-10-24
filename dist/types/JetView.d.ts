@@ -1,0 +1,28 @@
+import { JetBase } from "./JetBase";
+import { IJetApp, IJetURL, IJetView, IJetViewFactory, ISubView, IUIConfig } from "./interfaces";
+export declare class JetView extends JetBase {
+    private _children;
+    private _parentFrame;
+    constructor(app: IJetApp, name: string);
+    ui(ui: webix.ui.viewConfig | IJetViewFactory, config?: IUIConfig): webix.ui.baseview | IJetView;
+    show(path: any, config?: any): Promise<any>;
+    init(_$view: webix.ui.baseview, _$url: IJetURL): void;
+    ready(_$view: webix.ui.baseview, _$url: IJetURL): void;
+    config(): any;
+    urlChange(_$view: webix.ui.baseview, _$url: IJetURL): void;
+    destroy(): void;
+    destructor(): void;
+    use(plugin: any, config: any): void;
+    refresh(): void;
+    protected _render(url: IJetURL): Promise<any>;
+    protected _render_final(config: any, url: IJetURL): Promise<any>;
+    protected _init(view: webix.ui.baseview, url: IJetURL): void;
+    protected _urlChange(url: IJetURL): Promise<any>;
+    protected _renderFrame(key: string, frame: ISubView, url: IJetURL): Promise<any>;
+    private _initError;
+    private _createSubView;
+    private _renderSubView;
+    private _finishShow;
+    private _renderPartial;
+    private _destroyKids;
+}

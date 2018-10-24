@@ -78,7 +78,7 @@ export interface IJetConfig{
 	container:HTMLElement | string;
 	animation:boolean;
 	router: IJetRouterFactory;
-	views: ((url:string) => any) | IHash;
+	views: Function | IHash;
 }
 
 export interface IJetRouterOptions{

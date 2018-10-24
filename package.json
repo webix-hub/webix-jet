@@ -2,14 +2,15 @@
   "name": "webix-jet",
   "version": "1.6.2",
   "description": "Webix Jet microframework",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/libs/jet.js",
+  "module": "dist/libs/jet.es6.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
-    "test": "webpack && node tests/runner/start.js",
+    "test": "node tests/runner/start.js",
     "lint": "tslint --project tsconfig.json sources/**/*.ts",
-    "dist": "tsc -p ./tsconfig.es5.json",
-    "es5": "webpack --config ./webpack.es5.config.js",
-    "watch": "watch \"yarn dist\" ./sources/"
+    "dist": "rollup -c rollup.config.js",
+    "watch": "rollup -cw rollup.config.js",
+    "watch-test": "watch 'yarn test' ./dist/libs ./tests"
   },
   "repository": {
     "type": "git",
@@ -23,20 +24,16 @@
     "ui"
   ],
   "devDependencies": {
-    "@types/chai": "^4.0.3",
-    "@types/mocha": "^2.2.41",
-    "chai": "^3.5.0",
-    "mocha": "^3.5.0",
-    "mocha-phantomjs-core": "^2.1.2",
-    "ts-loader": "^3.2.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "rollup": "^0.66.6",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-typescript2": "^0.17.2",
     "tslint": "^5.7.0",
-    "typescript": "^2.0.0",
+    "typescript": "^3.1.3",
     "watch": "^1.0.2",
     "webix": ">=5.3.0",
-    "webpack": "^3.5.4",
-    "webpack-dev-server": "^2.7.1"
-  },
-  "dependencies": {
     "webix-polyglot": "^2.3.0",
     "webix-routie": "^0.4.0"
   },
