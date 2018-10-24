@@ -118,11 +118,7 @@ export class JetApp extends JetBase implements IJetApp {
 	}
 
 	refresh(){
-		const temp = this._container;
-		//enforce view recreation
-		this._view._name = webix.uid()+"";
-		this._container = null;
-		this.render(temp, parse(this.getRouter().get()), this._parent);
+		this._view.refresh();
 	}
 
 	loadView(url): Promise<any> {

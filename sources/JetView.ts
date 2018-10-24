@@ -171,11 +171,16 @@ export class JetView extends JetBase{
 
 	refresh(){
 		this._destroyKids();
+		this._destroySubs();
+		if ((this._container as any).tagName)
+			this._root.destructor();
+
 		let url = [];
-		if (this._index > 1)
+		if (this._index)
 			url = parse(this.app.getRouter().get()).slice(this._index-1);
 		this._render(url).then(() => {
-			this._parentFrame.id = this.getRoot().config.id as string;
+			if (this._parentFrame)
+				this._parentFrame.id = this.getRoot().config.id as string;
 		});
 	}
 
