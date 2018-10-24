@@ -8,12 +8,12 @@
 		"semicolon" : [true, "always"],
 		"quotemark" : [true, "double"],
 		"no-var-keyword" : true,
-		"no-unused-variable" :[ true, "check-parameters", {"ignore-pattern": "^_\\$"}],
 		"no-trailing-whitespace":true,
 		"no-consecutive-blank-lines":false,
+		"no-implicit-dependencies":false,
 		"object-literal-sort-keys": false,
 		"no-bitwise":true,
-		"max-line-length":[true, 80],
+		"max-line-length":[true, 100],
 		"eofline" : false,
 		"trailing-comma" : [ true, "never"],
 		"curly":true,
@@ -34,7 +34,7 @@
 		],
 		"member-access":false,
 		"only-arrow-functions": false,
-		"no-submodule-imports": [true, "node-polyglot", "webix-routie"],
+		"no-submodule-imports": [true],
 		"prefer-for-of":false
 	},
 	"rulesDirectory": []

@@ -11,7 +11,7 @@ describe("JetApp", () => {
 		try{ app.destructor(); } catch(e){}
 	});
 
-	it("create/destory views on addView / removeView calls", () => {
+	it("create/destory views on addView / removeView calls", async () => {
         events = [];
        
 		app = new jet.JetApp({
@@ -27,25 +27,25 @@ describe("JetApp", () => {
 
 		view = new SubView2(app, "");
 
-		return app.render("sandbox")
-		.then( _ => {
-			events = [];
-			app.getRoot().addView(view);
-		})
-		.then(_ => waitTime(20))	//addView doesn't return promise, so need to wait
-		.then(_ => {
-			expect(events, "after addView").deep.equal([ 
-				"sub2-config", "sub2-init", "sub2-urlChange", "sub2-ready"
-			]);
-			expect(app.getSubView().contains(view)).to.be.true
+		await app.render("sandbox")
 
-			events = [];
-			view.getRoot().getParentView().removeView(view.getRoot());
-		})
-		.then(_ => {
-			expect(events, "after removeView").deep.equal(["sub2-destroy"]);
-			expect(app.getSubView().contains(view)).to.be.false
-		});
+		events = [];
+		app.getRoot().addView(view);
+
+		await waitTime(20);	//addView doesn't return promise, so need to wait
+
+		expect(events, "after addView").deep.equal([ 
+			"sub2-config", "sub2-init", "sub2-urlChange", "sub2-ready"
+		]);
+		expect(app.getSubView().contains(view)).to.be.true
+
+		events = [];
+		view.getRoot().getParentView().removeView(view.getRoot());
+
+		await waitTime(20);
+
+		expect(events, "after removeView").deep.equal(["sub2-destroy"]);
+		expect(app.getSubView().contains(view)).to.be.false
 	});
 
 });

@@ -5,8 +5,8 @@ import typescript from 'rollup-plugin-typescript2';
 module.exports = function(cli){
 	const pkg = require("./package.json");
     const plugins = [
-        typescript({ useTsconfigDeclarationDir: true }),
         resolve(),
+        typescript({ useTsconfigDeclarationDir: true }),
         commonjs()
     ];
 
@@ -15,7 +15,6 @@ module.exports = function(cli){
 		input: "sources/index.ts",
 		plugins,
         output: [
-            { file: pkg.main, name: "jet", format: 'umd', sourcemap: true },
             { file: pkg.module, format: 'es', sourcemap: true }
         ],
 		watch:{

@@ -1,52 +1,45 @@
-import { IJetApp, IJetURL, IJetView,
-	ISubView, ISubViewInfo } from "./interfaces";
-
+import { IBaseView, IJetApp, IJetURL, IJetView,
+	IRoute, ISubView, ISubViewInfo, IWebixFacade } from "./interfaces";
 
 export abstract class JetBase implements IJetView{
 	public app: IJetApp;
+	public webix: IWebixFacade;
 	public webixJet = true;
-	//temporary workaround for app.refresh, next var must be private
-	public _name: string;
+
+	protected _name: string;
 	protected _parent: IJetView;
-	protected _index: number;
-	protected _container: HTMLElement | webix.ui.baseview;
-	protected _root: webix.ui.baseview;
-	protected _id: number;
+	protected _container: HTMLElement | ISubView;
+	protected _root: IBaseView;
 	protected _events:{ id:string, obj: any }[];
 	protected _subs:{[name:string]:ISubView};
+	protected _initUrl:IJetURL;
+	protected _segment: IRoute;
+
 	private _data:{[name:string]:any};
-	private _url:IJetURL;
+	
 
-
-	constructor(){
-		this._id = webix.uid() as number;
-
+	constructor(webix:IWebixFacade){
+		this.webix = webix;
 		this._events = [];
 		this._subs = {};
 		this._data = {};
 	}
 
-	getRoot(): webix.ui.baseview {
+	getRoot(): IBaseView {
 		return this._root;
 	}
 
 	destructor() {
-		const events = this._events;
-		for (let i = events.length - 1; i >= 0; i--){
-			events[i].obj.detachEvent(events[i].id);
-		}
-
+		this._detachEvents();
 		this._destroySubs();
-		this._events = this._container = this.app = this._parent = null;
+		this._events = this._container = this.app = this._parent = this._root = null;
 	}
-	setParam(id:string, value:any, url?:boolean){
+	setParam(id:string, value:any, url?:boolean):void|Promise<any>{
 		if (this._data[id] !== value){
 			this._data[id] = value;
-			if (this.app.callEvent("app:paramchange", [this, id, value, url])){
-				if (url){
-					// changing in the url
-					this.show({[id]:value});
-				}
+			this._segment.update(id, value, 0);
+			if (url){
+				this.show("");
 			}
 		}
 	}
@@ -62,41 +55,17 @@ export abstract class JetBase implements IJetView{
 		}
 	}
 	getUrl():IJetURL{
-		return this._url;
+		return this._segment.suburl();
 	}
-	render(
-		root?: string | HTMLElement | webix.ui.baseview,
-		url?: IJetURL, parent?: IJetView): Promise<webix.ui.baseview> {
-
-		this._parent = parent;
-		if (url) {
-			this._index = url[0].index;
-		}
-		this._init_url_data(url);
-
-		root = root || document.body;
-		const _container = (typeof root === "string") ? webix.toNode(root) : root;
-
-		if (this._container !== _container) {
-			this._container = _container;
-			return this._render(url).then(() => this.getRoot());
-		} else {
-
-			return this._urlChange(url).then(() => this.getRoot());
-		}
+	getUrlString():string{
+		return this._segment.toString();
 	}
 
-	getIndex():number{
-		return this._index;
-	}
-	getId():number{
-		return this._id;
-	}
 	getParentView() : IJetView{
 		return this._parent;
 	}
 
-	$$(id:string | webix.ui.baseview):webix.ui.baseview{
+	$$(id:string | IBaseView):IBaseView{
 		if (typeof id === "string"){
 			const root = this.getRoot() as any;
 			return root.queryView(
@@ -138,6 +107,11 @@ export abstract class JetBase implements IJetView{
 			return { subview:sub, parent:this };
 		}
 
+		if (name === "_top"){
+			this._subs[name] = { url:"", id:null, popup:true };
+			return this.getSubViewInfo(name);
+		}
+
 		// when called from a child view, searches for nearest parent with subview
 		if (this._parent){
 			return this._parent.getSubViewInfo(name);
@@ -145,15 +119,18 @@ export abstract class JetBase implements IJetView{
 		return null;
 	}
 
-	getName():string{
-		return this._name;
-	}
-
 	public abstract refresh();
 	public abstract show(path:any, config?:any);
-	protected abstract _render(url: IJetURL) : Promise<any>;
-	protected abstract _urlChange(url: IJetURL) : Promise<any>;
+	public abstract render(
+		root?: string | HTMLElement | ISubView,
+		url?: IRoute, parent?: IJetView): Promise<IBaseView>;
 
+	protected _detachEvents(){
+		const events = this._events;
+		for (let i = events.length - 1; i >= 0; i--){
+			events[i].obj.detachEvent(events[i].id);
+		}
+	}
 	protected _destroySubs(){
 		// destroy sub views
 		for (const key in this._subs){
@@ -165,14 +142,43 @@ export abstract class JetBase implements IJetView{
 			}
 		}
 
-		//reset to prevent memory leaks
+		// reset to prevent memory leaks
 		this._subs = {};
 	}
-	protected _init_url_data(url:IJetURL){
-		if (url && url[0]){
-			this._data = {};
-			webix.extend(this._data, url[0].params, true);
-		}
-		this._url = url;
+	protected _init_url_data(){
+		const url = this._segment.current();
+		this._data = {};
+		this.webix.extend(this._data, url.params, true);
 	}
+
+	protected _getDefaultSub(){
+		if (this._subs.default){
+			return this._subs.default;
+		}
+		for (const key in this._subs){
+			const sub = this._subs[key];
+			if (!sub.branch && sub.view && key !== "_top"){
+				const child = (sub.view as JetBase)._getDefaultSub();
+				if (child){
+					return child;
+				}
+			}
+		}
+	}
+
+	protected _routed_view() {
+		const parent = this.getParentView() as JetBase;
+		if (!parent){
+			return true;
+		}
+
+		const sub = parent._getDefaultSub();
+		if (!sub && sub !== this){
+			return false;
+		}
+
+		return parent._routed_view();
+	}
+
+	
 }

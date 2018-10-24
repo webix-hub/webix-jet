@@ -56,3 +56,52 @@ class SubView2 extends jet.JetView {
         events.push("sub2-destroy");
     }
 }
+
+class MenuView extends jet.JetView {
+    init(){
+        this.use(jet.plugins.Menu, "s1");
+    }
+    config(){
+        return { rows:[{ view:"segmented", id:"s1", options:["one", "two", "three"] }, { $subview:true }] };
+    }
+}
+
+class TopMenuView extends jet.JetView {
+    config(){
+        return { rows:[{ $subview:SubMenuView }, { $subview:true }] };
+    }
+}
+
+class SubMenuView extends jet.JetView {
+    init(){
+        this.use(jet.plugins.Menu, "s1");
+    }
+    config(){
+        return { view:"segmented", id:"s1", options:["one", "two", "three"] };
+    }
+}
+
+class UrlParamsView extends jet.JetView {
+    init(){
+        this.use(jet.plugins.UrlParam, ["mode", "id"]);
+    }
+    config(){
+        return { rows:[ { template:"Now" }, { $subview:true } ]};
+    }
+}
+
+class SubApp extends jet.JetApp {
+    constructor(config){
+        config.views = {
+            top:{ row:[{ template:"Header" }, { $subview:true }] },
+            body:{ template:"Body"}
+        };
+        config.start = config.start || "/top/body";
+        config.views = {
+            "top" : { id:"sb-tp", rows:[ {$subview: true} ] },
+            "body2": { template:"body 2" },
+            "body": { template:"body" }
+        };
+        super(config);
+    }
+}

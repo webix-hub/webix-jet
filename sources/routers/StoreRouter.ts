@@ -1,20 +1,22 @@
-import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
+import {IJetApp, IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
 export class StoreRouter implements IJetRouter{
 	private name:string;
+	private storage: any;
 	private cb: IJetRouterCallback;
 
-	constructor(cb: IJetRouterCallback, config:any){
+	constructor(cb: IJetRouterCallback, config:any, app: IJetApp){
+		this.storage = config.storage || app.webix.storage.session;
 		this.name = (config.storeName || config.id+":route");
 		this.cb = cb;
 	}
 	set(path:string, config?:IJetRouterOptions){
-		webix.storage.session.put(this.name, path);
+		this.storage.put(this.name, path);
 		if (!config || !config.silent){
 			setTimeout(() => this.cb(path), 1);
 		}
 	}
 	get(){
-		return webix.storage.session.get(this.name);
+		return this.storage.get(this.name);
 	}
 }

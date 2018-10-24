@@ -1,15 +1,15 @@
 {
   "name": "webix-jet",
-  "version": "1.6.2",
-  "description": "Webix Jet microframework",
-  "main": "dist/libs/jet.js",
-  "module": "dist/libs/jet.es6.js",
+  "version": "2.0.0",
+  "description": "Webix Jet micro-framework",
+  "main": "dist/es5/jet.js",
+  "module": "dist/es6/jet.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
     "test": "node tests/runner/start.js",
     "lint": "tslint --project tsconfig.json sources/**/*.ts",
-    "dist": "rollup -c rollup.config.js",
-    "watch": "rollup -cw rollup.config.js",
+    "dist": "rm -rf ./dist && rollup -c rollup.es6.js && rollup -c rollup.es5.js",
+    "watch": "rollup -c rollup.es6.js -w",
     "watch-test": "watch --wait 2 'yarn test' ./dist/libs ./tests"
   },
   "repository": {
@@ -25,17 +25,15 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "rollup": "^0.66.6",
+    "mocha": "^6.0.0",
+    "rollup": "^1.2.2",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-typescript2": "^0.17.2",
-    "tslint": "^5.7.0",
-    "typescript": "^3.1.3",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3",
     "watch": "^1.0.2",
-    "webix": ">=5.3.0",
-    "webix-polyglot": "^2.3.0",
-    "webix-routie": "^0.4.0"
+    "webix-polyglot": "^2.3.0"
   },
   "author": "Maksim Kozhukh",
   "license": "MIT",

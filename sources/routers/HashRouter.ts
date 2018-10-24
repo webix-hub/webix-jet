@@ -1,30 +1,18 @@
-import routie from "webix-routie/lib/routie";
-
 import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
 
-
-
 export class HashRouter implements IJetRouter{
-	private config:any;
-	private _lastUrl:string;
-	private _prefix:string;
+	protected config:any;
+	protected prefix:string;
+	protected sufix:string;
+	private cb: IJetRouterCallback;
 
 	constructor(cb: IJetRouterCallback, config:any){
 		this.config = config || {};
-		this._prefix = this.config.routerPrefix;
-
-		// use "#!" for backward compatibility
-		if (typeof this._prefix === "undefined"){
-			this._prefix = "!";
-		}
-
-		let rcb = function(_$a){ /* stub */ };
-		routie(this._prefix+"*", () => {
-			this._lastUrl = "";
-			return rcb(this.get());
-		});
-		rcb = cb;
+		this._detectPrefix();
+		this.cb = cb;
+		window.onpopstate = () => this.cb(this.get());
 	}
+
 	set(path:string, config?:IJetRouterOptions){
 		if (this.config.routes){
 			const compare = path.split("?",2);
@@ -36,12 +24,16 @@ export class HashRouter implements IJetRouter{
 			}
 		}
 
-		this._lastUrl = path;
-		(routie as any).navigate(this._prefix+path, config);
+		if (this.get() !== path){
+			window.history.pushState(null, null, this.prefix + this.sufix + path);
+		}
+		if (!config || !config.silent){
+			setTimeout(() => this.cb(path), 1);
+		}
 	}
 	get(){
-		let path =  this._lastUrl ||
-					(window.location.hash || "").replace("#"+this._prefix,"");
+		let path = this._getRaw().replace(this.prefix, "").replace(this.sufix, "");
+		path = path !== "/" ? path : "";
 
 		if (this.config.routes){
 			const compare = path.split("?",2);
@@ -51,5 +43,16 @@ export class HashRouter implements IJetRouter{
 			}
 		}
 		return path;
+	}
+	protected _detectPrefix(){
+		// use "#!" for backward compatibility
+		const sufix = this.config.routerPrefix;
+		this.sufix = "#" + ((typeof sufix === "undefined") ? "!" : sufix);
+
+		this.prefix = document.location.href.split("#", 2)[0];
+	}
+
+	protected _getRaw(){
+		return document.location.href;
 	}
 }

@@ -1,24 +1,12 @@
 import {IJetRouter, IJetRouterCallback, IJetRouterOptions} from "../interfaces";
+import { HashRouter } from "./HashRouter";
 
-export class UrlRouter implements IJetRouter{
-	private cb: IJetRouterCallback;
-	private prefix:string;
-	constructor(cb: IJetRouterCallback, config:any){
-		this.cb = cb;
-
-		window.onpopstate = () => this.cb(this.get());
-		this.prefix = config.routerPrefix || "";
+export class UrlRouter extends HashRouter implements IJetRouter{
+	protected _detectPrefix(){
+		this.prefix = "";
+		this.sufix = this.config.routerPrefix || "";
 	}
-	set(path:string, config?:IJetRouterOptions){
-		if (this.get() !== path){
-			window.history.pushState(null, null, this.prefix + path);
-		}
-		if (!config || !config.silent){
-			setTimeout(() => this.cb(path), 1);
-		}
-	}
-	get():string{
-		const path = window.location.pathname.replace(this.prefix, "");
-		return path !== "/" ? path : "";
+	protected _getRaw(){
+		return document.location.pathname;
 	}
 }

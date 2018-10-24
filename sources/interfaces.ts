@@ -1,66 +1,92 @@
+export interface IBaseView {
+	config: IBaseConfig;
+	name:string;
+	getParentView():IBaseView;
+	destructor():void;
+}
+
+export interface IWebixHTMLHelper{
+	addCss(node:HTMLElement, css:string):void;
+	removeCss(node:HTMLElement, css:string):void;
+}
+export interface IBaseConfig {
+	id?:string;
+	container?: string|HTMLElement;
+}
+
 export interface IWebixFacade{
-	$$(id: string):webix.ui.baseview;
+	storage:any;
+	html: IWebixHTMLHelper;
+	EventSystem: any;
+	DataCollection: any;
+
+	$$(id: string):IBaseView;
+	isArray(input:any):boolean;
+	uid():number;
 	ui(
 		config: any,
-		cont?: string|HTMLElement|webix.ui.baseview) : webix.ui.baseview;
+		cont?: string|HTMLElement|IBaseView) : IBaseView;
 	bind(handler:any, master:any);
-	message(text:string);
+	message(text:any);
+	dp(id:string):any;
 	toNode(id:string):HTMLElement;
-	uid():string;
-	extend(a: any, b: any, force:boolean):any;
+	extend(a: any, b: any, force?:boolean):any;
+	attachEvent(name: string, handler:any):string;
 }
 
 export interface IUIConfig{
 	container? : string|HTMLElement;
 }
 
-export interface IJetApp{
+export interface IJetApp extends IJetView{
 	webix: IWebixFacade;
 	config: IJetConfig;
-	canNavigate(name: string, view?:IJetView):Promise<string>;
+	app: IJetApp;
+	getUrl():IJetURL;
 	getService(name:string):any;
 	setService(name:string, obj: any):void;
 	callEvent(name:string, parameters:any[]):boolean;
 	attachEvent(name:string, handler:any):void;
-	createFromURL(url:IJetURLChunk[], now?: IJetView) : Promise<IJetView>;
-	show(path:any);
+	createFromURL(chunk:IJetURLChunk, now: IJetView) : Promise<IJetView>;
+	show(path:any):Promise<void>;
 	createView(obj:any, name?:string):IJetView;
-	refresh():Promise<void>;
+	refresh():Promise<IBaseView>;
 	error(name:string, data:any[]);
 	copyConfig(source:any, target:any, config?:IViewConfig);
 	getRouter(): IJetRouter;
+	destructor(): void;
 }
 
 export interface IJetURLChunk{
-	index: number;
 	page:string;
 	params:{ [name:string]:string };
+
+	view?:IJetView;
+	isNew?:boolean;
 }
 
 export type IJetURL = IJetURLChunk[];
 
 export interface IJetView{
 	app: IJetApp;
-	$$(name:string):webix.ui.baseview;
+	$$(name:string):IBaseView;
 	contains(view: IJetView):boolean;
-	getName():string;
-	getIndex():number;
-	getId():number;
 	getSubView(name?:string):IJetView;
 	getSubViewInfo(name?:string):ISubViewInfo;
-	getRoot() : webix.ui.baseview;
+	getRoot() : IBaseView;
 	setParam(id:string, value:any, url?:boolean);
 	getParam(id:string, parent:boolean):any;
 	getUrl():IJetURL;
+	getUrlString():string;
 	getParentView() : IJetView;
-	refresh():Promise<void>;
+	refresh():Promise<IBaseView>;
 	render(
-		area: webix.ui.baseview|string|HTMLElement,
-		url? : IJetURL,
-		parent?: IJetView) : Promise<webix.ui.baseview>;
+		area: ISubView|string|HTMLElement,
+		url? : IRoute,
+		parent?: IJetView) : Promise<IBaseView>;
 	destructor();
 	on(obj:any, name:string, code:any);
-	show(path:any, config?:any);
+	show(path:any, config?:any):Promise<void>;
 }
 
 export interface IHash{
@@ -69,7 +95,7 @@ export interface IHash{
 
 export interface IJetConfig{
 	debug?:boolean;
-	jet1xMode?:boolean;
+	app?: IJetApp;
 	name?:string;
 	version?:string;
 	start?:string;
@@ -85,7 +111,7 @@ export interface IJetRouterOptions{
 }
 
 export interface IJetRouterFactory{
-	new (cb:IJetRouterCallback, config?:any);
+	new (cb:IJetRouterCallback, config:any, app:IJetApp);
 }
 export interface IJetViewFactory{
 	new (app:IJetApp, name:string);
@@ -103,12 +129,41 @@ export interface IViewConfig{
 
 export interface ISubView{
 	view?: IJetView;
-	url: string | IJetViewFactory | IJetApp;
+	url: string | IJetViewFactory;
 	name?: string;
+	popup?: boolean;
 	id: string;
+	branch?: IRoute;
 }
 
 export interface ISubViewInfo{
 	subview: ISubView;
 	parent: IJetView;
+}
+
+export interface IPath{
+	path: string;
+	url: IJetURL;
+	linkRouter?: boolean
+}
+
+export interface IRoute{
+	route: IPath;
+
+	current():IJetURLChunk;
+	next():IJetURLChunk;
+
+	suburl():IJetURL;
+	shift():IRoute;
+	show(url:string, view:IJetView, kids?: boolean):Promise<void>;
+	refresh():void;
+	size(n:number);
+	update(name: string, value: string, index?:number);
+	split():IRoute;
+	append(path:string):string;
+	toString():string;
+}
+
+export interface IDestructable{
+	destructor():void;
 }

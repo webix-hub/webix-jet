@@ -1,6 +1,6 @@
-var app;
-
 describe("JetApp", () => {
+	var app;
+
 	it("process init, config, ready, destroy in the correct order", () => {
         events = [];
        
@@ -51,5 +51,4 @@ describe("JetApp", () => {
 			throw err;
 		});
 	});
-
 });

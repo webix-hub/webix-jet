@@ -7,3 +7,4 @@ codebase/**/*.js
 *.tgz
 *.log
 .vscode
+dist
