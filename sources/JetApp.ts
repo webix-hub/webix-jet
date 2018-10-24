@@ -118,7 +118,7 @@ export class JetApp extends JetBase implements IJetApp {
 	}
 
 	refresh(){
-		return this._view.refresh();
+		return this.getSubView().refresh();
 	}
 
 	loadView(url): Promise<any> {
@@ -223,16 +223,12 @@ export class JetApp extends JetBase implements IJetApp {
 			confirm: Promise.resolve(true)
 		};
 
-		const res = this.callEvent("app:guard", [url, (view || this._view), obj]);
+		const res = this.callEvent("app:guard", [url, (view || this.getSubView()), obj]);
 		if (!res){
 			return Promise.reject("");
 		}
 
 		return obj.confirm.catch(() => obj.redirect = null).then(() => obj.redirect);
-	}
-
-	destructor() {
-		this._view.destructor();
 	}
 
 	// event helpers
@@ -304,14 +300,13 @@ export class JetApp extends JetBase implements IJetApp {
 
 		// block resizing while rendering parts of UI
 		return (webix.ui as any).freeze(() =>
-			this.createFromURL(parsed, this._view).then(view => {
+			this.createFromURL(parsed, this.getSubView()).then(view => {
 				// save reference for old and new views
-				const oldview = this._view;
-				this._view = view;
+				this._subs.default = { view, url:"", id:webix.uid()+"" };
 
 				// render url state for the root
 				return view.render(this._container, parsed, this._parent).then(root => {
-					if (this._view.getRoot().getParentView()){
+					if (view.getRoot().getParentView()){
 						this._container = root;
 					}
 

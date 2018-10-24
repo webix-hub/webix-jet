@@ -49,8 +49,11 @@ const config = {
 		baseRemove.apply(this, arguments);
 		if (this.$scope && this.$scope.webixJet){
 			const subs = this.$scope._subs;
+			//check all sub-views, destroy and clean the removed one
 			for(const key in subs){
-				if (!webix.$$(subs[key].id)){
+				const test = subs[key];
+				if (!webix.$$(test.id)){
+					test.view.destructor();
 					delete subs[key];
 				}
 			}

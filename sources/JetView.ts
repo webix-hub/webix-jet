@@ -170,8 +170,10 @@ export class JetView extends JetBase{
 	}
 
 	refresh(){
+		this.destroy();
 		this._destroyKids();
 		this._destroySubs();
+
 		if ((this._container as any).tagName)
 			this._root.destructor();
 

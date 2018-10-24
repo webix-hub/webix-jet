@@ -10,7 +10,7 @@
     "lint": "tslint --project tsconfig.json sources/**/*.ts",
     "dist": "rollup -c rollup.config.js",
     "watch": "rollup -cw rollup.config.js",
-    "watch-test": "watch 'yarn test' ./dist/libs ./tests"
+    "watch-test": "watch --wait 2 'yarn test' ./dist/libs ./tests"
   },
   "repository": {
     "type": "git",
