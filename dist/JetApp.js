@@ -100,6 +100,10 @@ var JetApp = (function (_super) {
         //enforce view recreation
         this._view._name = webix.uid() + "";
         this._container = null;
+        if (temp.tagName && this._view) {
+            this._view.destructor();
+            this._view = null;
+        }
         this.render(temp, parse(this.getRouter().get()), this._parent);
     };
     JetApp.prototype.loadView = function (url) {

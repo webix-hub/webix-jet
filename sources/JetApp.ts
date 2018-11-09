@@ -122,6 +122,10 @@ export class JetApp extends JetBase implements IJetApp {
 		//enforce view recreation
 		this._view._name = webix.uid()+"";
 		this._container = null;
+		if ((temp as HTMLElement).tagName && this._view){
+			this._view.destructor();
+			this._view = null;
+		}
 		this.render(temp, parse(this.getRouter().get()), this._parent);
 	}
 
