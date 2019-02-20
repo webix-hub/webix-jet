@@ -1,4 +1,4 @@
-import {IJetApp, IJetView} from "../interfaces";
+import {IJetApp, IJetView, IWebixFacade} from "../interfaces";
 
 export function Theme(app: IJetApp, _view: IJetView, config: any){
 	config = config || {};
@@ -25,11 +25,11 @@ export function Theme(app: IJetApp, _view: IJetView, config: any){
 				}
 			}
 
-			(webix as any).skin.set(parts[0]);
+			(app.webix as any).skin.set(parts[0]);
 			// remove old css
-			webix.html.removeCss(document.body, "theme-"+theme);
+			app.webix.html.removeCss(document.body, "theme-"+theme);
 			// add new css
-			webix.html.addCss(document.body, "theme-"+name);
+			app.webix.html.addCss(document.body, "theme-"+name);
 
 			theme = name;
 			if (storage){

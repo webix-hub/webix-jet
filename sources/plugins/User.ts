@@ -56,6 +56,10 @@ export function User(app: IJetApp, _view: IJetView, config: any){
 	app.setService("user", service);
 
 	app.attachEvent(`app:guard`, function(url: string, _$root: any, obj:any){
+		if (config.public && config.public(url)){
+			return true;
+		}
+
 		if (typeof user === "undefined"){
 			obj.confirm = service.getStatus(true).then(() => canNavigate(url, obj));
 		}

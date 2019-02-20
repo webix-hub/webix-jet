@@ -1,38 +1,34 @@
 import {JetBase} from "./JetBase";
 
-import {parse, url2str} from "./helpers";
 import {
-	IJetApp, IJetURL,
-	IJetView, IJetViewFactory, ISubView, IUIConfig} from "./interfaces";
+	IBaseConfig, IBaseView, IJetApp, IJetURL,
+	IJetView, IJetViewFactory, ISubView, IUIConfig, IRoute } from "./interfaces";
+import { Route } from "./Route";
 
-interface IDestructable{
-	destructor():void;
-}
 
 export class JetView extends JetBase{
-	private _children:IDestructable[];
-	private _parentFrame:ISubView;
+	private _children:IJetView[];
 
-	constructor(app : IJetApp, name : string){
-		super();
+	constructor(app : IJetApp, config : any){
+		super(app.webix);
 
 		this.app = app;
+		//this.$config = config;
 
-		this._name = name;
 		this._children = [];
 	}
 
 	ui(
-		ui:webix.ui.viewConfig|IJetViewFactory,
+		ui:IBaseConfig|IJetViewFactory,
 		config?: IUIConfig
-	) : webix.ui.baseview | IJetView{
+	) : IBaseView | IJetView{
 		config = config || {};
-		const container = config.container || (ui as webix.ui.viewConfig).container;
+		const container = config.container || (ui as IBaseConfig).container;
 
 		const jetview = this.app.createView(ui);
 		this._children.push(jetview);
 
-		jetview.render(container, null, this);
+		jetview.render(container, this._segment, this);
 
 		if (typeof ui !== "object" || (ui instanceof JetBase)){
 			// raw webix UI
@@ -45,107 +41,75 @@ export class JetView extends JetBase{
 	show(path:any, config?:any):Promise<any>{
 		config = config || {};
 
-		// detect the related view
-		if (typeof path === "string"){
-			// root path
+		// convert parameters object to url
+		if (typeof path === "object"){
+			for (const key in path){
+				this.setParam(key, path[key]);
+			}
+			path = null;
+		} else {
+
+			// deligate to app in case of root prefix
 			if (path.substr(0,1) === "/"){
 				return this.app.show(path);
 			}
-			// parent path, call parent view
-			if (path.indexOf("../") === 0){
-				const parent = this.getParentView();
-				if (parent){
-					parent.show("./"+path.substr(3), config);
-				} else {
-					this.app.show("/"+path.substr(3));
-				}
-				return;
-			}
+
 			// local path, do nothing
 			if (path.indexOf("./") === 0){
 				path = path.substr(2);
 			}
 
+			// parent path, call parent view
+			if (path.indexOf("../") === 0){
+				const parent = this.getParentView();
+				if (parent){
+					return parent.show(path.substr(3), config);
+				} else {
+					return this.app.show("/"+path.substr(3));
+				}
+			}
+
 			const sub = this.getSubViewInfo(config.target);
-			if (!sub){
-				return this.app.show("/"+path);
-			}
-			if (sub.parent !== this){
-				return sub.parent.show(path, config);
-			}
-		}
-
-		const currentUrl = parse(this.app.getRouter().get());
-
-		// convert parameters to url
-		if (typeof path === "object"){
-			if (webix.isArray(path)){
-				const argIndex = this._index+path[0];
-				if (!currentUrl[argIndex]){
-					currentUrl[argIndex] = {} as any;
+			if (sub){
+				if (sub.parent !== this){
+					return sub.parent.show(path, config);
+				} else if (config.target && config.target !== "default"){
+					sub.subview.url = path;
+					return this._renderFrame(config.target, sub.subview)
 				}
-				currentUrl[argIndex].page=path[1];
-				path = "";
 			} else {
-				const temp = [];
-				for (const key in path){
-					temp.push(encodeURIComponent(key)+"="+encodeURIComponent(path[key]));
-				}
-				path = "?"+temp.join("&");
+				if (path){
+					return this.app.show("/"+path);
+				} 
 			}
+
 		}
 
-		// process url
-		if (typeof path === "string"){
-			// parameters only
-			if (path.substr(0, 1) === "?") {
-				const next = path.indexOf("/");
-				let params = path;
-				if (next > -1){
-					params = path.substr(0, next);
-				}
-				const chunk = parse(params);
-				webix.extend(currentUrl[this._index-1].params, chunk[0].params, true);
-				path = next > -1 ? path.substr(next+1) : "";
-			}
-
-			const newChunk = path === "" ? currentUrl.slice(this._index) : parse(path);
-			let url: IJetURL = null;
-			if (this._index){
-				url = currentUrl.slice(0, this._index).concat(newChunk);
-				for	(let i=0; i<url.length; i++){
-					url[i].index = i+1;
-				}
-
-				const urlstr = url2str(url);
-
-				return this.app.canNavigate(urlstr, this).then(redirect => {
-					if (redirect !== null){
-						if (urlstr !== redirect){
-							// url was blocked and redirected
-							return this.app.show(redirect);
-						} else {
-							return this._finishShow(url, redirect);
-						}
-					}
-					return null;
-				});
-			} else {
-				return this._finishShow(newChunk, "");
-			}
-		}
+		return this._show(this._segment, path, this);
 	}
 
-	init(_$view:webix.ui.baseview, _$url: IJetURL){
+	_show(segment:IRoute, path:string, view:IJetView){
+		return segment.show(path, view, true).then(() => {
+			this._init_url_data();
+			return this._urlChange();
+		}).then(() => {
+			if (segment.route.linkRouter){
+				this.app.getRouter().set(segment.route.path, { silent: true });
+				this.app.callEvent("app:route", [segment.route.path]);
+			}
+		});
+	}
+
+	init(_$view:IBaseView, _$: IJetURL){
 		// stub
 	}
-	ready(_$view:webix.ui.baseview, _$url: IJetURL){
+	ready(_$view:IBaseView, _$url: IJetURL){
 		// stub
 	}
 	config() : any {
 		this.app.webix.message("View:Config is not implemented");
 	}
-	urlChange(_$view: webix.ui.baseview, _$url : IJetURL){
+	urlChange(_$view: IBaseView, _$url : IJetURL){
 		// stub
 	}
 
@@ -157,9 +121,6 @@ export class JetView extends JetBase{
 		this.destroy();
 		this._destroyKids();
 
-		// reset vars for better GC processing
-		this.app = this._parentFrame = null;
-
 		// destroy actual UI
 		this._root.destructor();
 		super.destructor();
@@ -170,16 +131,45 @@ export class JetView extends JetBase{
 	}
 
 	refresh(){
+		const url = this.getUrl();
+		this.destroy();
 		this._destroyKids();
-		let url = [];
-		if (this._index > 1)
-			url = parse(this.app.getRouter().get()).slice(this._index-1);
-		this._render(url).then(() => {
-			this._parentFrame.id = this.getRoot().config.id as string;
-		});
+		this._destroySubs();
+		this._detachEvents();
+
+		if ((this._container as any).tagName){
+			this._root.destructor();
+		}
+
+		this._segment.refresh();
+		return this._render(this._segment);
 	}
 
-	protected _render(url:IJetURL):Promise<any>{
+	render(
+		root: string | HTMLElement | ISubView,
+		url: IRoute, parent?: IJetView): Promise<IBaseView> {
+
+		if (typeof url === "string"){
+			url = new Route(url, 0);
+		}
+
+		this._segment = url;
+
+		this._parent = parent;
+		this._init_url_data();
+
+		root = root || document.body;
+		const _container = (typeof root === "string") ? this.webix.toNode(root) : root;
+
+		if (this._container !== _container) {
+			this._container = _container;
+			return this._render(url);
+		} else {
+			return this._urlChange().then(() => this.getRoot());
+		}
+	}
+
+	protected _render(url: IRoute):Promise<IBaseView>{
 		const config = this.config();
 		if (config.then){
 			return config.then(cfg => this._render_final(cfg, url));
@@ -188,13 +178,30 @@ export class JetView extends JetBase{
 		}
 	}
 
-	protected _render_final(config:any, url:IJetURL):Promise<any>{
-		const prev = this._container as webix.ui.baseview;
-		if (prev && (prev as any).$destructed){
-			return Promise.reject("Container destroyed");
+	protected _render_final(config:any, url:IRoute):Promise<any>{
+		// get previous view in the same slot
+		let slot:ISubView = null;
+		let container:string|HTMLElement|IBaseView = null;
+		let show = false;
+		if (!(this._container as HTMLElement).tagName){
+			slot = (this._container as ISubView);
+			if (slot.popup){
+				container = document.body;
+				show = true;
+			} else {
+				container = this.webix.$$(slot.id);
+			}
+		} else {
+			container = this._container as HTMLElement;
+		}
+
+		// view already destroyed
+		if (!this.app || !container){
+			return Promise.reject(null);
 		}
 
 		let response:Promise<any>;
+		const current = this._segment.current();
 
 		// using wrapper object, so ui can be changed from app:render event
 		const result:any = { ui: {} };
@@ -202,23 +209,52 @@ export class JetView extends JetBase{
 		this.app.callEvent("app:render", [this, url, result]);
 		result.ui.$scope = this;
 
+		/* destroy old HTML attached views before creating new one */
+		if (!slot && current.isNew && current.view){
+			current.view.destructor();
+		}
+
 		try {
 			// special handling for adding inside of multiview - preserve old id
-			if (prev && prev.getParentView){
-				const parent = prev.getParentView();
+			if (slot && !show){
+				const oldui = container as IBaseView;
+				const parent = oldui.getParentView();
 				if (parent && parent.name === "multiview" && !result.ui.id){
-					result.ui.id = prev.config.id;
+					result.ui.id = oldui.config.id;
 				}
 			}
 
-			this._root = this.app.webix.ui(result.ui, this._container);
-			if (this._root.getParentView()){
-				this._container = this._root;
+			this._root = this.app.webix.ui(result.ui, container);
+			const asWin = this._root as any;
+			// check for url added to ignore this.ui calls
+			if (show && asWin.setPosition && !asWin.isVisible()){
+				asWin.show();
 			}
 
-			this._init(this._root, url);
-			response = this._urlChange(url).then(() => {
-				return this.ready(this._root, url);
+			// check, if we are replacing some older view
+			if (slot){
+				if (slot.view && slot.view !== this && slot.view !== this.app){
+					slot.view.destructor();
+				}
+
+				slot.id = this._root.config.id as string;
+				if (this.getParentView())
+					slot.view = this;
+				else {
+					slot.view = this.app as any;
+				}
+			}
+
+			if (current.isNew){
+				current.view = this;
+				current.isNew = false;
+			}
+
+			response = Promise.resolve(this._init(this._root, url)).then(() => {
+				return this._urlChange().then(() => {
+					this._initUrl = null;
+					return this.ready(this._root, url.suburl());
+				});
 			});
 		} catch(e){
 			response = Promise.reject(e);
@@ -227,102 +263,81 @@ export class JetView extends JetBase{
 		return response.catch(err => this._initError(this, err));
 	}
 
-	protected _init(view:webix.ui.baseview, url: IJetURL){
-		return this.init(view, url);
+	protected _init(view:IBaseView, url: IRoute){
+		return this.init(view, url.suburl());
 	}
 
-	protected _urlChange(url:IJetURL):Promise<any>{
-		this.app.callEvent("app:urlchange", [this, url, this._index]);
+	protected _urlChange():Promise<any>{
+		this.app.callEvent("app:urlchange", [this, this._segment]);
 
 		const waits = [];
 		for (const key in this._subs){
-			const wait = this._renderFrame(key, this._subs[key], url);
-			if (wait){
-				waits.push(wait);
+			const frame = this._subs[key];
+			if (!frame.branch){
+				const wait = this._renderFrame(key, frame);
+				if (wait){
+					waits.push(wait);
+				}
 			}
 		}
 
 		return Promise.all(waits).then(() => {
-			this.urlChange(this._root, url);
+			return this.urlChange(this._root, this._segment.suburl());
 		});
 	}
 
-	protected _renderFrame(key:string, frame:ISubView, url:IJetURL):Promise<any>{
-		if (frame.url){
+	protected _renderFrame(key:string, frame:ISubView):Promise<any>{
+		if (key === "default"){
+			if (this._segment.next()){
+				// we have an url and subview for it
+				return this._createSubView(frame, this._segment.shift());
+			} else if (frame.view && frame.popup) {
+				frame.view.destructor();
+				frame.view = null;
+			}
+		}
+
+		let view = frame.view;
+		if (frame.branch){
+			return this._show(frame.branch, frame.url as string, frame.view);
+		}
+
+		if (!view && frame.url){
 			// we have fixed subview url
 			if (typeof frame.url === "string"){
-				const parsed = parse(frame.url);
-				parsed.map(a => { a.index = 0; });
-				return this._createSubView(frame, parsed);
+				frame.branch = new Route(frame.url, 0);
+				return this._createSubView(frame, frame.branch);
 			} else {
-				let view = frame.view;
 				if (typeof frame.url === "function" && !(view instanceof frame.url)){
 					view = new frame.url(this.app, "");
 				}
 				if (!view){
 					view = frame.url as any;
 				}
-				return this._renderSubView(frame, view, url);
 			}
-		} else if (key === "default" && url && url.length > 1){
-			// we have an url and subview for it
-			const suburl = url.slice(1);
-			return this._createSubView(frame, suburl);
+		}
+
+		if (view){
+			return view.render(frame, this._segment, this);
 		}
 	}
 
 	private _initError(view: any, err: any){
-		this.app.error("app:error:initview", [err, view]);
+		/*
+			if view is destroyed, ignore any view related errors
+		*/
+		if (this.app){
+			this.app.error("app:error:initview", [err, view]);
+		}
 		return true;
 	}
 
 	private _createSubView(
 					sub:ISubView,
-					suburl:IJetURL):Promise<webix.ui.baseview>{
-		return this.app.createFromURL(suburl, sub.view).then(view => {
-			return this._renderSubView(sub, view, suburl);
+					suburl:IRoute):Promise<IBaseView>{
+		return this.app.createFromURL(suburl.current(), sub.view).then(view => {
+			return view.render(sub, suburl, this);
 		});
-	}
-
-	private _renderSubView(
-					sub:ISubView,
-					view:IJetView,
-					suburl:IJetURL):Promise<webix.ui.baseview>{
-		const cell = this.app.webix.$$(sub.id);
-		return view.render(cell, suburl, this).then(ui => {
-			// destroy old view
-			if (sub.view && sub.view !== view){
-				sub.view.destructor();
-			}
-
-			// save info about a new view
-			sub.view = view;
-			sub.id = ui.config.id as string;
-
-			if (view instanceof JetView){
-				view._parentFrame = sub;
-			}
-
-			return ui;
-		});
-	}
-
-	private _finishShow(url:IJetURL, path:string) : Promise<any>{
-		let next;
-		if (this._index){
-			next = this._renderPartial(url.slice(this._index-1));
-			this.app.getRouter().set(path, { silent: true });
-			this.app.callEvent("app:route", [url]);
-		} else {
-			url.map(a => a.index = 0);
-			next = this._renderPartial([null, ...url]);
-		}
-		return next;
-	}
-
-	private _renderPartial(url:IJetURL){
-		this._init_url_data(url);
-		return this._urlChange(url);
 	}
 
 	private _destroyKids(){

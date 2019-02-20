@@ -1,4 +1,4 @@
-import {IJetApp, IJetView} from "../interfaces";
+import {IJetApp, IJetView, IWebixFacade} from "../interfaces";
 
 const baseicons = {
 	good:	"check",
@@ -37,7 +37,7 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 					"'><span class='webix_icon fa-" +
 					icons[status] + "'></span> " + texts[status] + "</div>";
 			}
-			(area as webix.ui.template).setHTML(content);
+			(area as any).setHTML(content);
 		}
 	}
 	function success(){
@@ -88,7 +88,7 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 		}
 	}
 	function track(data){
-		const dp = webix.dp(data);
+		const dp = app.webix.dp(data);
 		if (dp){
 			view.on(dp, "onAfterDataSend", start);
 			view.on(dp, "onAfterSaveError", (_id, _obj, response) => fail(response));
@@ -103,11 +103,11 @@ export function Status(app: IJetApp, view: IJetView, config: any){
 	});
 
 	if (config.remote){
-		view.on(webix, "onRemoteCall", start);
+		view.on(app.webix, "onRemoteCall", start);
 	}
 
 	if (config.ajax){
-		view.on(webix, "onBeforeAjax",
+		view.on(app.webix, "onBeforeAjax",
 			(_mode, _url, _data, _request, _headers, _files, promise) => {
 				start(promise);
 		});

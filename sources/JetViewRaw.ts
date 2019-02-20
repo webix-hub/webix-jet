@@ -6,9 +6,9 @@ import {JetView} from "./JetView";
 export class JetViewRaw extends JetView{
 	private _ui:any;
 
-	constructor(app:IJetApp, name:string, ui: any){
-		super(app, name);
-		this._ui = ui;
+	constructor(app:IJetApp, config:any){
+		super(app, config);
+		this._ui = config.ui;
 	}
 
 	config(){

@@ -1,27 +1,5 @@
 import {IJetURLChunk} from "./interfaces";
 
-export function diff(oUrl, nUrl){
-	let i = 0;
-	for (i; i<nUrl.length; i++){
-		const left = oUrl[i];
-		const right = nUrl[i];
-
-		if (!left){
-			break;
-		}
-		if (left.page !== right.page){
-			break;
-		}
-
-		for (const key in left.params){
-			if (left.params[key] !== right.params[key]){
-				break;
-			}
-		}
-	}
-
-	return i;
-}
 
 export function parse(url:string):IJetURLChunk[]{
 	// remove starting /
@@ -58,7 +36,8 @@ export function parse(url:string):IJetURLChunk[]{
 		// store parsed values
 		chunks[i] = {
 			page: (pos > -1 ? test.substr(0, pos) : test),
-			params:result, index:i+1
+			params:result,
+			isNew:true
 		};
 	}
 
