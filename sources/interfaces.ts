@@ -134,6 +134,7 @@ export interface ISubView{
 	popup?: boolean;
 	id: string;
 	branch?: IRoute;
+	lock?: Promise<any>;
 }
 
 export interface ISubViewInfo{

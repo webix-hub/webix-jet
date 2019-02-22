@@ -74,8 +74,7 @@ export class JetView extends JetBase{
 				if (sub.parent !== this){
 					return sub.parent.show(path, config);
 				} else if (config.target && config.target !== "default"){
-					sub.subview.url = path;
-					return this._renderFrame(config.target, sub.subview)
+					return this._renderFrameLock(config.target, sub.subview, path);
 				}
 			} else {
 				if (path){
@@ -274,7 +273,7 @@ export class JetView extends JetBase{
 		for (const key in this._subs){
 			const frame = this._subs[key];
 			if (!frame.branch){
-				const wait = this._renderFrame(key, frame);
+				const wait = this._renderFrameLock(key, frame, null);
 				if (wait){
 					waits.push(wait);
 				}
@@ -286,28 +285,56 @@ export class JetView extends JetBase{
 		});
 	}
 
-	protected _renderFrame(key:string, frame:ISubView):Promise<any>{
+	protected  _renderFrameLock(key:string, frame:ISubView, path: string):Promise<any>{
+		// if subview is not occupied by some rendering yet
+		if (!frame.lock) {
+			// retreive and store rendering end promise
+			const lock =  this._renderFrame(key, frame, path);
+			if (lock){
+				frame.lock = lock.finally(() => {
+					// clear lock after frame rendering
+					frame.lock = null
+				});
+			}
+		}
+
+		// return rendering end promise
+		return frame.lock;
+	}
+
+	protected _renderFrame(key:string, frame:ISubView, path: string):Promise<any>{
+		//default route
 		if (key === "default"){
 			if (this._segment.next()){
-				// we have an url and subview for it
+				// we have a next segment in url, render it
 				return this._createSubView(frame, this._segment.shift());
 			} else if (frame.view && frame.popup) {
+				// there is no next segment, delete the existing sub-view
 				frame.view.destructor();
 				frame.view = null;
 			}
 		}
-
-		let view = frame.view;
+		
+		// we have isolated sub-view 
 		if (frame.branch){
-			return this._show(frame.branch, frame.url as string, frame.view);
+			// and new path for it
+			if (path != null){
+				return this._show(frame.branch, frame.url as string, frame.view);
+			} else {
+				// do not trigger onChange for isolated sub-views
+				return;
+			}
 		}
 
+		let view = frame.view;
+		// if view doesn't exists yet, init it
 		if (!view && frame.url){
-			// we have fixed subview url
 			if (typeof frame.url === "string"){
+				// string, so we have isolated subview url
 				frame.branch = new Route(frame.url, 0);
 				return this._createSubView(frame, frame.branch);
 			} else {
+				// object, so we have an embeded subview
 				if (typeof frame.url === "function" && !(view instanceof frame.url)){
 					view = new frame.url(this.app, "");
 				}
@@ -317,6 +344,7 @@ export class JetView extends JetBase{
 			}
 		}
 
+		// trigger onChange for already existed view
 		if (view){
 			return view.render(frame, this._segment, this);
 		}
