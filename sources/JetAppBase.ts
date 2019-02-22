@@ -334,11 +334,11 @@ export class JetAppBase extends JetBase implements IJetView {
 		return new JetView(this, {});
 	}
 
-	private _first_start(segment: IRoute) : IRoute{
-		this._segment = segment;
+	private _first_start(route: IRoute) : IRoute{
+		this._segment = route;
 
 		const cb = (a:string) => setTimeout(() => {
-			(this as JetAppBase).show(a);
+			(this as JetAppBase).show(a||this.config.start);
 		},1);
 		this.$router = new (this.config.router)(cb, this.config, this);
 
@@ -352,24 +352,24 @@ export class JetAppBase extends JetBase implements IJetView {
 			}, 10);
 		}
 
-		if (!segment){ // [FX]  || url.length === (this.app ? 1 : 0)
+		if (!route){
+			// if no url defined, check router first
 			let urlString = this.$router.get();
-			// if no url defined, apply this.config.start
 			if (!urlString){
 				urlString = this.config.start;
 				this.$router.set(urlString, { silent: true });
 			}
-			segment = new Route(urlString, 0);
+			route = new Route(urlString, 0);
 		} else {
-			segment.current().view = this;
-			if (segment.next()){
-				segment = segment.split();
+			route.current().view = this;
+			if (route.next()){
+				route = route.split();
 			} else {
-				segment = new Route(this.config.start, 0);
+				route = new Route(this.config.start, 0);
 			}
 		}
 
-		return segment;
+		return route;
 	}
 
 	// error during view resolving
