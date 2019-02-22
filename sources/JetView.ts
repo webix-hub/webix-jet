@@ -318,14 +318,17 @@ export class JetView extends JetBase{
 			frame.url = path;
 		}
 
-		// in case of isolated sub-view
-		if (frame.branch){
+		// in case of routed sub-view
+		if (frame.route){
 			// we have a new path for sub-view
 			if (path !== null){
-				return this._show(frame.branch, frame.url as string, frame.view);
+				return this._show(frame.route, frame.url as string, frame.view);
 			}
+
 			// do not trigger onChange for isolated sub-views
-			return;
+			if (frame.branch){
+				return;
+			}
 		}
 
 		let view = frame.view;
@@ -333,8 +336,8 @@ export class JetView extends JetBase{
 		if (!view && frame.url){
 			if (typeof frame.url === "string"){
 				// string, so we have isolated subview url
-				frame.branch = new Route(frame.url, 0);
-				return this._createSubView(frame, frame.branch);
+				frame.route = new Route(frame.url, 0);
+				return this._createSubView(frame, frame.route);
 			} else {
 				// object, so we have an embeded subview
 				if (typeof frame.url === "function" && !(view instanceof frame.url)){
@@ -348,7 +351,7 @@ export class JetView extends JetBase{
 
 		// trigger onChange for already existed view
 		if (view){
-			return view.render(frame, this._segment, this);
+			return view.render(frame, (frame.route || this._segment), this);
 		}
 	}
 

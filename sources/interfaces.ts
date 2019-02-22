@@ -133,7 +133,8 @@ export interface ISubView{
 	name?: string;
 	popup?: boolean;
 	id: string;
-	branch?: IRoute;
+	branch?: boolean;
+	route?: IRoute;
 	lock?: Promise<any>;
 }
 

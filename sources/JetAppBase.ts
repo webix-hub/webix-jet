@@ -386,6 +386,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		const view : ISubView = config[name] = {
 			id: target.id,
 			url,
+			branch: obj.branch,
 			popup: obj.popup
 		};
 
