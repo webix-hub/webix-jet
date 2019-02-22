@@ -272,11 +272,9 @@ export class JetView extends JetBase{
 		const waits = [];
 		for (const key in this._subs){
 			const frame = this._subs[key];
-			if (!frame.branch){
-				const wait = this._renderFrameLock(key, frame, null);
-				if (wait){
-					waits.push(wait);
-				}
+			const wait = this._renderFrameLock(key, frame, null);
+			if (wait){
+				waits.push(wait);
 			}
 		}
 
@@ -315,15 +313,19 @@ export class JetView extends JetBase{
 			}
 		}
 		
-		// we have isolated sub-view 
+		//if new path provided, set it to the frame
+		if (path !== null){
+			frame.url = path;
+		}
+
+		// in case of isolated sub-view
 		if (frame.branch){
-			// and new path for it
-			if (path != null){
+			// we have a new path for sub-view
+			if (path !== null){
 				return this._show(frame.branch, frame.url as string, frame.view);
-			} else {
-				// do not trigger onChange for isolated sub-views
-				return;
 			}
+			// do not trigger onChange for isolated sub-views
+			return;
 		}
 
 		let view = frame.view;
