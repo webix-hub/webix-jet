@@ -39,7 +39,7 @@ export abstract class JetBase implements IJetView{
 			this._data[id] = value;
 			this._segment.update(id, value, 0);
 			if (url){
-				this.show("");
+				this.show(null);
 			}
 		}
 	}

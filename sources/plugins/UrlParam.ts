@@ -27,7 +27,7 @@ export function UrlParam(app: IJetApp, view: IJetView, config: any){
 			data[name] = value;
 			this._segment.update("", value, index+1);
 			if (show){
-				return view.show("");
+				return view.show(null);
 			}
 		} else {
 			return os.call(this, name, value, show);
