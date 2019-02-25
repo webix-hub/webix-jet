@@ -45,7 +45,7 @@ export default function patch(w: any){
 				baseAdd.apply(this, [view, index]);
 
 				for (const key in subs){
-					jview._renderFrame(key, subs[key]).then(() => {
+					jview._renderFrame(key, subs[key], null).then(() => {
 						jview._subs[key] = subs[key];
 					});
 				}
