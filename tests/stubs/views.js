@@ -66,6 +66,24 @@ class MenuView extends jet.JetView {
     }
 }
 
+class ChangeRouteFromInit extends jet.JetView{
+    config(){
+        return { rows:[{$subview:true}] };
+    }
+    init(){
+        this.show("./Other")
+    }
+}
+
+class ChangeRouteFromUrlChange extends jet.JetView{
+    config(){
+        return { rows:[{$subview:true}] };
+    }
+    urlChange(){
+        this.show("../Other")
+    }
+}
+
 class TopMenuView extends jet.JetView {
     config(){
         return { rows:[{ $subview:SubMenuView }, { $subview:true }] };

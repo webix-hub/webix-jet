@@ -75,4 +75,12 @@ describe("UrlParams plugin", ()=>{
         expect(params.getUrlString()).to.equal("params/two/14");
         expect(app.getUrlString()).to.equal("some/params/two/14");
     });
+
+    it("must correctly process force-show flag", async () => {
+        await app.show("/some/params/two/14")
+        expect(app.getUrlString()).to.equal("some/params/two/14");
+
+        await app.getSubView().getSubView().setParam("mode", "five", true);
+        expect(app.getUrlString()).to.equal("some/params/five/14");
+    });
 });

@@ -14,7 +14,7 @@ describe("App in App", () => {
                 "SubApp" : SubApp
 			}
 		});
-        return app.render("sandbox");
+        return app.render("sandbox", "Demo/SubApp");
     })
 
 	after(function(){

@@ -10,6 +10,7 @@
     "lint": "tslint --project tsconfig.json sources/**/*.ts",
     "dist": "rm -rf ./dist && rollup -c rollup.es6.js && rollup -c rollup.es5.js",
     "watch": "rollup -c rollup.es6.js -w",
+    "watch-es5": "rollup -c rollup.es5.js -w",
     "watch-test": "watch --wait 2 'yarn test' ./dist/libs ./tests"
   },
   "repository": {
