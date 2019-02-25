@@ -289,10 +289,10 @@ export class JetView extends JetBase{
 			// retreive and store rendering end promise
 			const lock =  this._renderFrame(key, frame, path);
 			if (lock){
-				frame.lock = lock.finally(() => {
-					// clear lock after frame rendering
-					frame.lock = null
-				});
+				// clear lock after frame rendering
+				// as promise.finally is not supported by  Webix lesser than 6.2
+				// using a more verbose notation
+				frame.lock = lock.then(() => frame.lock = null, () => frame.lock = null)
 			}
 		}
 
