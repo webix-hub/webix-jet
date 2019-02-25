@@ -237,7 +237,7 @@ export class JetAppBase extends JetBase implements IJetView {
 
 	// show view path
 	show(url: string) : Promise<any> {
-		return this._subSegment.show(url, this.getSubView()).then(() => {
+		return this._subSegment.show((url||this.config.start), this.getSubView()).then(() => {
 			return this.render(this._container, this._subSegment);
 		});
 	}
@@ -338,7 +338,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		this._segment = route;
 
 		const cb = (a:string) => setTimeout(() => {
-			(this as JetAppBase).show(a||this.config.start);
+			(this as JetAppBase).show(a);
 		},1);
 		this.$router = new (this.config.router)(cb, this.config, this);
 
@@ -360,7 +360,7 @@ export class JetAppBase extends JetBase implements IJetView {
 				this.$router.set(urlString, { silent: true });
 			}
 			route = new Route(urlString, 0);
-		} else {
+		} else if (this.app) {
 			route.current().view = this;
 			if (route.next()){
 				route = route.split();
