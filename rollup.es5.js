@@ -23,7 +23,7 @@ module.exports = function(cli){
 		input: "sources/index.ts",
 		plugins,
         output: [
-            { file: pkg.main, name: "jet", format: 'umd', sourcemap: true }
+            { file: pkg.main, name: "webix.jet", format: 'umd', sourcemap: true }
         ],
 		watch:{
 			include: "sources/**/*.ts"
