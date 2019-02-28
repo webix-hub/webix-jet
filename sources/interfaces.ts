@@ -16,6 +16,7 @@ export interface IBaseConfig {
 
 export interface IWebixFacade{
 	storage:any;
+	i18n: any;
 	html: IWebixHTMLHelper;
 	EventSystem: any;
 	DataCollection: any;

@@ -20,7 +20,7 @@
                 }
             });
 
-            app.use(jet.plugins.Locale, { path:false });
+            app.use(jet.plugins.Locale, { path:false, webix:{ en:"en-US", es:"es-ES" } });
             app.getService("locale").setLangData("en", { test:"Test" });
 
             return app.render("sandbox")
@@ -40,6 +40,16 @@
                 expect($$("b1").getValue()).to.equal("Тест");
             });
         });
+
+        it("must work with webix.i18n", () => {
+            const locale = app.getService("locale");
+            locale.setLangData("en", { test:"" });
+            expect(app.webix.i18n.calendar.hours).to.eq("Hours");
+            locale.setLangData("es", { test:"" });
+            expect(app.webix.i18n.calendar.hours).to.eq("Horas");
+            locale.setLangData("fr", { test:"" });
+            expect(app.webix.i18n.calendar.hours).to.eq("Horas");
+        })
     });
     
 })();

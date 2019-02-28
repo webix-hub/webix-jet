@@ -31,7 +31,7 @@ export function Locale(app: IJetApp, _view: IJetView, config: any){
 		if (config.webix){
 			const locName = config.webix[name];
 			if (locName){
-				this.webix.i18n.setLocale(locName);
+				app.webix.i18n.setLocale(locName);
 			}
 		}
 
