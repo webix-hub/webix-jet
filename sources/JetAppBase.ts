@@ -6,7 +6,7 @@ import {SubRouter} from "./routers/SubRouter";
 import {
 	IBaseView, IJetApp, IJetConfig, IJetRouter,
 	IJetURL, IJetURLChunk,
-	IJetView, IRoute, ISubView, IViewConfig, IWebixFacade } from "./interfaces";
+	IJetView, IRoute, ISubView, IViewConfig } from "./interfaces";
 
 import { Route } from "./Route";
 
@@ -15,6 +15,7 @@ let _once = true;
 export class JetAppBase extends JetBase implements IJetView {
 	public config: IJetConfig;
 	public app: IJetApp;
+	public ready: Promise<any>;
 
 	callEvent: (name: string, parameters: any[]) => boolean;
 	attachEvent: (name: string, handler: any) => void;
@@ -35,6 +36,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		}, config, true);
 
 		this.app = this.config.app;
+		this.ready = Promise.resolve();
 		this._services = {};
 
 		this.webix.extend(this, this.webix.EventSystem);
@@ -321,7 +323,7 @@ export class JetAppBase extends JetBase implements IJetView {
 
 		const top = this.getSubView();
 		const segment = this._subSegment;
-		return segment.show(path, top)
+		const ready = segment.show(path, top)
 			.then(() => this.createFromURL(segment.current(), top))
 			.then(view => view.render(root, segment))
 			.then(base => {
@@ -329,6 +331,9 @@ export class JetAppBase extends JetBase implements IJetView {
 				this.callEvent("app:route", [this.getUrl()]);
 				return base;
 			});
+
+		this.ready = this.ready.then(() => ready);
+		return ready;
 	}
 
 	getSubView():IJetView{
