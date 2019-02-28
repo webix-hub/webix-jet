@@ -237,9 +237,11 @@ export class JetView extends JetBase{
 				}
 
 				slot.id = this._root.config.id as string;
-				if (this.getParentView())
+				if (this.getParentView() || !this.app.app)
 					slot.view = this;
 				else {
+					// when we have subapp, set whole app as a view
+					// so on destruction, the whole app will be destroyed
 					slot.view = this.app as any;
 				}
 			}
