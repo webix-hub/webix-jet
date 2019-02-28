@@ -224,7 +224,7 @@ export class JetAppBase extends JetBase implements IJetView {
 				return new ui(this, { name });
 			} else {
 				// UI factory functions
-				ui = ui();
+				ui = ui(this);
 			}
 		}
 
