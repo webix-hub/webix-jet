@@ -237,9 +237,7 @@ export class JetAppBase extends JetBase implements IJetView {
 
 	// show view path
 	show(url: string) : Promise<any> {
-		return this._subSegment.show((url||this.config.start), this.getSubView()).then(() => {
-			return this.render(this._container, this._subSegment);
-		});
+		return this.render(this._container, (url||this.config.start));
 	}
 
 	// event helpers
@@ -290,11 +288,7 @@ export class JetAppBase extends JetBase implements IJetView {
 	// renders top view
 	render(
 		root?: string | HTMLElement | ISubView,
-		url?: IRoute, parent?: IJetView): Promise<IBaseView> {
-
-		if (typeof url === "string"){
-			url = new Route(url, 0);
-		}
+		url?: IRoute | string, parent?: IJetView): Promise<IBaseView> {
 
 		this._container = (typeof root === "string") ?
 			this.webix.toNode(root):
@@ -307,21 +301,31 @@ export class JetAppBase extends JetBase implements IJetView {
 				this.webix.attachEvent("onClick", e => this.clickHandler(e));
 				_once = false;
 			}
-			url = this._first_start(url);
-		} else if (this.app) {
-			path = url.split().route.path;
-			url = this._subSegment;
+
+			if (typeof url === "string"){
+				url = new Route(url, 0);
+			}
+			this._subSegment = this._first_start(url);
+			this._subSegment.route.linkRouter = true;
+		} else {
+			if (typeof url === "string"){
+				path = url;
+			} else {
+				if (this.app){
+					path = url.split().route.path;
+				} else {
+					path = url.toString();
+				}
+			}
 		}
 
 		const top = this.getSubView();
-		url.route.linkRouter = true;
-		this._subSegment = url;
-
-		return this._subSegment.show(path, top)
-			.then(() => this.createFromURL(url.current(), top))
-			.then(view => view.render(root, url))
+		const segment = this._subSegment;
+		return segment.show(path, top)
+			.then(() => this.createFromURL(segment.current(), top))
+			.then(view => view.render(root, segment))
 			.then(base => {
-				this.$router.set(url.route.path, { silent:true });
+				this.$router.set(segment.route.path, { silent:true });
 				this.callEvent("app:route", [this.getUrl()]);
 				return base;
 			});
