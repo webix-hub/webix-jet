@@ -324,7 +324,9 @@ export class JetView extends JetBase{
 		if (frame.route){
 			// we have a new path for sub-view
 			if (path !== null){
-				return this._show(frame.route, frame.url as string, frame.view);
+				return frame.route.show(path, frame.view).then(() => {
+					return this._createSubView(frame, frame.route);
+				});
 			}
 
 			// do not trigger onChange for isolated sub-views

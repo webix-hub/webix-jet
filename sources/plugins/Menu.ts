@@ -1,4 +1,4 @@
-import {IJetApp, IJetURL, IJetView} from "../interfaces";
+import {IJetApp, IJetView} from "../interfaces";
 
 function show(view, config, value){
 	if (config.urls){
