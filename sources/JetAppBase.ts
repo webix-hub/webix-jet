@@ -168,6 +168,8 @@ export class JetAppBase extends JetBase implements IJetView {
 			if (!result){
 				if (url === "_blank"){
 					result = {};
+				} else if (url === "_hidden") {
+					result = { hidden:true };
 				} else {
 					result = this._loadViewDynamic(url);
 				}
