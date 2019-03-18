@@ -128,6 +128,8 @@ export interface IViewConfig{
 	[name:string]:ISubView;
 }
 
+type URLResolver = (IJetView) => string
+
 export interface ISubView{
 	view?: IJetView;
 	url: string | IJetViewFactory;
@@ -137,6 +139,7 @@ export interface ISubView{
 	branch?: boolean;
 	route?: IRoute;
 	lock?: Promise<any>;
+	condition?: URLResolver;
 }
 
 export interface ISubViewInfo{

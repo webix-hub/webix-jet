@@ -388,7 +388,15 @@ export class JetAppBase extends JetBase implements IJetView {
 	}
 
 	private addSubView(obj, target, config:IViewConfig) : ISubView {
-		const url = obj.$subview !== true ? obj.$subview : null;
+		let url = obj.$subview !== true ? obj.$subview : null;
+		let condition = null;
+		if (obj.url){
+			if (typeof obj.url === "function"){
+				condition = obj.url;
+			} else {
+				url = url || obj.url;
+			}
+		}
 		const name: string = obj.name || (url ? this.webix.uid() : "default");
 		target.id = obj.id || "s" + this.webix.uid();
 
@@ -396,7 +404,8 @@ export class JetAppBase extends JetBase implements IJetView {
 			id: target.id,
 			url,
 			branch: obj.branch,
-			popup: obj.popup
+			popup: obj.popup,
+			condition
 		};
 
 		return view.popup ? null : target;

@@ -315,6 +315,13 @@ export class JetView extends JetBase{
 			}
 		}
 		
+		if (frame.condition){
+			const test = frame.condition(this);
+			if (test !== frame.url){
+				path = test;
+			}
+		}
+
 		//if new path provided, set it to the frame
 		if (path !== null){
 			frame.url = path;
