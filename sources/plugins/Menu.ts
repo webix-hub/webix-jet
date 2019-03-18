@@ -10,7 +10,7 @@ function show(view, config, value){
 	view.show(value);
 }
 export function Menu(app: IJetApp, view: IJetView, config: any){
-	const frame = view.getSubViewInfo().parent;
+	const frame = view.getUrl()[0].view;
 	const ui = view.$$(config.id || config) as any;
 	let silent = false;
 
