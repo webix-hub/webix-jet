@@ -338,7 +338,9 @@ export class JetAppBase extends JetBase implements IJetView {
 
 	getSubView():IJetView{
 		if (this._subSegment){
-			return this._subSegment.current().view;
+			const view = this._subSegment.current().view;
+			if (view)
+				return view;
 		}
 		return new JetView(this, {});
 	}
