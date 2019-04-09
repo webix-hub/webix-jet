@@ -226,8 +226,15 @@ export class JetView extends JetBase{
 			this._root = this.app.webix.ui(result.ui, container);
 			const asWin = this._root as any;
 			// check for url added to ignore this.ui calls
-			if (show && asWin.setPosition && !asWin.isVisible()){
-				asWin.show();
+			if (show){
+				if (asWin.setPosition && !asWin.isVisible()){
+					asWin.show();
+				} else {
+					const style = (this._root as any).$view.style;
+					style.position = "absolute";
+					style.top = style.left = "0px";
+					style.zIndex = 1;
+				}
 			}
 
 			// check, if we are replacing some older view
