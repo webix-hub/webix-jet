@@ -19,6 +19,15 @@ export function Menu(app: IJetApp, view: IJetView, config: any){
 			show(frame, config, this.getValue());
 		}
 	});
+
+	// allow ulr refreshing on clicking the already selected item
+	if (ui.getSelectedId){
+		ui.attachEvent("onitemclick", function(id){
+			if (id == this.getSelectedId())
+				show(frame, config, id);
+		});
+	}
+
 	ui.attachEvent("onafterselect", function(){
 		if (!silent){
 			let id = null;
