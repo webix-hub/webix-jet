@@ -314,7 +314,7 @@ export class JetAppBase extends JetBase implements IJetView {
 				path = url;
 			} else {
 				if (this.app){
-					path = url.split().route.path;
+					path = url.split().route.path || this.config.start;
 				} else {
 					path = url.toString();
 				}
