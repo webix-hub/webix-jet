@@ -37,7 +37,9 @@ export default function patch(w: any){
 
 	const config = {
 		addView(view, index){
-			if (this.$scope && this.$scope.webixJet){
+			// trigger logic only for widgets inside of jet-view
+			// ignore case when addView used with already initialized widget
+			if (this.$scope && this.$scope.webixJet && !view.queryView){
 				const jview = this.$scope;
 				const subs = {};
 
