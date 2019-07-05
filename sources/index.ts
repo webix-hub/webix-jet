@@ -6,6 +6,8 @@ Copyright (c) 2019 XB Software
 import { IJetApp, IJetView } from "./interfaces";
 export { IJetApp, IJetView };
 
+import {NavigationBlocked} from "./errors";
+
 export { JetApp } 		from "./JetApp";
 export { JetView } 		from "./JetView";
 
@@ -32,6 +34,8 @@ if (webix){
 export const plugins = {
 	UnloadGuard, Locale, Menu, Theme, User, Status, UrlParam
 };
+
+export const errors = { NavigationBlocked };
 
 const w = window as any;
 if (!w.Promise){

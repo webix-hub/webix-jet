@@ -1,4 +1,5 @@
 import { IJetURL, IJetView, IPath, IRoute, IJetURLChunk } from "./interfaces";
+import {NavigationBlocked} from "./errors";
 
 import {parse, url2str} from "./helpers";
 
@@ -91,20 +92,21 @@ export class Route implements IRoute{
 			if (app){
 				const result = app.callEvent("app:guard", [obj.redirect, view, obj]);
 				if (!result){
-					rej();
+					rej(new NavigationBlocked());
 					return;
 				}
 			}
 
-			obj.confirm.catch(() => obj.redirect = null).then(() => {
+			let err;
+			obj.confirm.catch(err => rej(err)).then(() => {
 				if (obj.redirect === null){
-					rej();
+					rej(new NavigationBlocked());
 					return;
 				}
 
 				if (obj.redirect !== redirect){
 					app.show(obj.redirect);
-					rej();
+					rej(new NavigationBlocked());
 					return;
 				}
 

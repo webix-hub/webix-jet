@@ -2,6 +2,7 @@ import { JetBase } from "./JetBase";
 import { JetViewRaw } from "./JetViewRaw";
 import { JetView } from "./JetView";
 import {SubRouter} from "./routers/SubRouter";
+import {NavigationBlocked} from "./errors";
 
 import {
 	IBaseView, IJetApp, IJetConfig, IJetRouter,
@@ -349,7 +350,10 @@ export class JetAppBase extends JetBase implements IJetView {
 		this._segment = route;
 
 		const cb = (a:string) => setTimeout(() => {
-			(this as JetAppBase).show(a);
+			(this as JetAppBase).show(a).catch(e => {
+				if (!(e instanceof NavigationBlocked))
+					throw e;
+			});
 		},1);
 		this.$router = new (this.config.router)(cb, this.config, this);
 

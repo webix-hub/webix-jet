@@ -31,7 +31,7 @@ async function runner(cmd){
                     data[0] = chalk.yellow(data[0]);
                     break;
                 default:
-                    if (data[0].indexOf("✓") !== -1)
+                    if (data[0].toString().indexOf("✓") !== -1)
                         data[0] = chalk.green(data[0]);
                     break;
             }
@@ -50,6 +50,8 @@ async function runner(cmd){
 }
 
 function error(err){  	
+    if (err.toString() === "NavigationBlocked") return;
+
     console.log(chalk.red("Page error: " + err.toString())); 
     console.log(err.code, err.message);
 }
