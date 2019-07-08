@@ -110,19 +110,28 @@ export class JetAppBase extends JetBase implements IJetView {
 		return this.$router;
 	}
 
-	clickHandler(e: Event) {
+	clickHandler(e: Event, target?: HTMLElement) {
 		if (e) {
-			const target: HTMLElement = (e.target || e.srcElement) as HTMLElement;
+			target = target || (e.target || e.srcElement) as HTMLElement;
 			if (target && target.getAttribute) {
 				const trigger: string = target.getAttribute("trigger");
 				if (trigger) {
 					this._forView(target, view => view.app.trigger(trigger));
+					e.cancelBubble = true;
+					return e.preventDefault();
 				}
 				const route: string = target.getAttribute("route");
 				if (route) {
 					this._forView(target, view => view.show(route));
+					e.cancelBubble = true;
+					return e.preventDefault();
 				}
 			}
+		}
+
+		const parent = target.parentNode as HTMLElement;
+		if (parent){
+			this.clickHandler(e, parent);
 		}
 	}
 
@@ -300,8 +309,8 @@ export class JetAppBase extends JetBase implements IJetView {
 		const firstInit = !this.$router;
 		let path:string = null;
 		if (firstInit){
-			if (_once){
-				this.webix.attachEvent("onClick", e => this.clickHandler(e));
+			if (_once && "tagName" in this._container){
+				this.webix.event(document.body, "click", e => this.clickHandler(e));
 				_once = false;
 			}
 

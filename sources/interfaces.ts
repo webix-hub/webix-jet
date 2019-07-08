@@ -23,6 +23,7 @@ export interface IWebixFacade{
 
 	$$(id: string):IBaseView;
 	isArray(input:any):boolean;
+	event(node:HTMLElement, name:string, handler:any);
 	uid():number;
 	ui(
 		config: any,

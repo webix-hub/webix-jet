@@ -1,5 +1,5 @@
-import {IJetApp, IJetURL, IJetView} from "../interfaces";
 import {NavigationBlocked} from "../errors";
+import {IJetApp, IJetURL, IJetView} from "../interfaces";
 
 export function UnloadGuard(app: IJetApp, view: IJetView, config: any){
 	view.on(app, `app:guard`, function(_$url:IJetURL, point:IJetView, promise:any){
