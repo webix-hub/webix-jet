@@ -34,8 +34,6 @@ describe("Events", ()=>{
             error = e;
         }));
 
-        console.log(text)
-
         expect(error).instanceof(jet.errors.NavigationBlocked);
     });
 });
