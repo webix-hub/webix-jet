@@ -7,6 +7,6 @@ export class UrlRouter extends HashRouter implements IJetRouter{
 		this.sufix = this.config.routerPrefix || "";
 	}
 	protected _getRaw(){
-		return document.location.pathname;
+		return document.location.pathname + (document.location.search||"");
 	}
 }
