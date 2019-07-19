@@ -33,7 +33,7 @@ export class HashRouter implements IJetRouter{
 	}
 	get(){
 		let path = this._getRaw().replace(this.prefix, "").replace(this.sufix, "");
-		path = path !== "/" ? path : "";
+		path = (path !== "/" && path !== "#") ? path : "";
 
 		if (this.config.routes){
 			const compare = path.split("?",2);
