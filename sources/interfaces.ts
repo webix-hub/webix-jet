@@ -49,7 +49,7 @@ export interface IJetApp extends IJetView{
 	setService(name:string, obj: any):void;
 	callEvent(name:string, parameters:any[]):boolean;
 	attachEvent(name:string, handler:any):void;
-	createFromURL(chunk:IJetURLChunk, now: IJetView) : Promise<IJetView>;
+	createFromURL(chunk:IJetURLChunk) : Promise<IJetView>;
 	show(path:any):Promise<void>;
 	createView(obj:any, name?:string):IJetView;
 	refresh():Promise<IBaseView>;

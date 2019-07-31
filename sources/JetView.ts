@@ -372,7 +372,7 @@ export class JetView extends JetBase{
 	private _createSubView(
 					sub:ISubView,
 					suburl:IRoute):Promise<IBaseView>{
-		return this.app.createFromURL(suburl.current(), sub.view).then(view => {
+		return this.app.createFromURL(suburl.current()).then(view => {
 			return view.render(sub, suburl, this);
 		});
 	}

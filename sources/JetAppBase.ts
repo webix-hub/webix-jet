@@ -210,7 +210,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		return null;
 	}
 
-	createFromURL(chunk: IJetURLChunk, now?: IJetView): Promise<IJetView> {
+	createFromURL(chunk: IJetURLChunk): Promise<IJetView> {
 		let view:Promise<IJetView>;
 
 		if (chunk.isNew || !chunk.view) {
@@ -334,7 +334,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		const top = this.getSubView();
 		const segment = this._subSegment;
 		const ready = segment.show(path, top)
-			.then(() => this.createFromURL(segment.current(), top))
+			.then(() => this.createFromURL(segment.current()))
 			.then(view => view.render(root, segment))
 			.then(base => {
 				this.$router.set(segment.route.path, { silent:true });
@@ -387,6 +387,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		} else if (this.app) {
 			route.current().view = this;
 			if (route.next()){
+				route.refresh();
 				route = route.split();
 			} else {
 				route = new Route(this.config.start, 0);
