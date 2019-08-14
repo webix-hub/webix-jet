@@ -43,7 +43,7 @@ export default function patch(w: any){
 			const subs = {};
 
 			view = jview.app.copyConfig(view, {}, subs);
-			baseAdd.call(base, view, index);
+			const id = baseAdd.call(base, view, index);
 
 			let ready;
 			for (const key in subs){
@@ -53,7 +53,7 @@ export default function patch(w: any){
 				});
 			}
 
-			return ready;
+			return view.jetTemp ? ready : id;
 		} else {
 			return baseAdd.call(base, view, index);
 		}

@@ -407,6 +407,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		const url = obj.$subview !== true ? obj.$subview : null;
 		const name: string = obj.name || (url ? this.webix.uid() : "default");
 		target.id = obj.id || "s" + this.webix.uid();
+		target.jetTemp = true;
 
 		const view : ISubView = config[name] = {
 			id: target.id,

@@ -64,6 +64,29 @@ describe("JetApp", () => {
 		let id = await app.getRoot().addViewAsync(FixedIdView);
 		expect(id).to.equal("v123");
 	});
+
+	it("get view id after adding custom view with JetViews", async () => {
+        app = new jet.JetApp({
+			start:"/Top/Sub1", router: jet.EmptyRouter,
+			debug: true,
+			version: 2,
+			views:{
+				"Top":TopView,
+				"Sub1":SubView1,
+				"Sub2":SubView2
+			}
+		});
+
+    	await app.render("sandbox")
+		let id1 = await app.getRoot().addViewAsync({ id: "v1", view:"list" });
+		expect(id1).to.equal("v1");
+
+		let id2 = await app.getRoot().addViewAsync({ id: "v2", rows:[ SubView1 ] });
+		expect(id2).to.equal("v2");
+
+		let id3 = await app.getRoot().addViewAsync({ id: "v3", rows:[ SubView1, SubView2 ] });
+		expect(id3).to.equal("v3");
+	});
 })
 
 })();
