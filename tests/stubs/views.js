@@ -90,6 +90,13 @@ class TopMenuView extends jet.JetView {
     }
 }
 
+class FixedIdView extends jet.JetView {
+    config(){
+        //forced async 
+        return webix.promise.resolve({ id:"v123" });
+    }
+}
+
 class SubMenuView extends jet.JetView {
     init(){
         this.use(jet.plugins.Menu, "s1");

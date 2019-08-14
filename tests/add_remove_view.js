@@ -4,7 +4,7 @@ var app;
 var view;
 const waitTime = function(time){ 
 	return new Promise(res => setTimeout(res, time));
-}
+};
 
 describe("JetApp", () => {
 	afterEach(function(){
@@ -48,6 +48,22 @@ describe("JetApp", () => {
 		expect(app.getSubView().contains(view)).to.be.false
 	});
 
-});
+	it("get view id after adding JetView", async () => {
+        app = new jet.JetApp({
+			start:"/Top/Sub1", router: jet.EmptyRouter,
+			debug: true,
+			version: 2,
+			views:{
+				"Top":TopView,
+				"Sub1":SubView1,
+				"Sub2":SubView2
+			}
+		});
+
+    	await app.render("sandbox")
+		let id = await app.getRoot().addViewAsync(FixedIdView);
+		expect(id).to.equal("v123");
+	});
+})
 
 })();

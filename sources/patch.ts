@@ -35,27 +35,38 @@ export default function patch(w: any){
 	const baseAdd = w.ui.baselayout.prototype.addView as any;
 	const baseRemove = w.ui.baselayout.prototype.removeView as any;
 
-	const config = {
-		addView(view, index){
-			// trigger logic only for widgets inside of jet-view
-			// ignore case when addView used with already initialized widget
-			if (this.$scope && this.$scope.webixJet && !view.queryView){
-				const jview = this.$scope;
-				const subs = {};
+	function addViewCommon(base, view, index){
+		// trigger logic only for widgets inside of jet-view
+		// ignore case when addView used with already initialized widget
+		if (base.$scope && base.$scope.webixJet && !view.queryView){
+			const jview = base.$scope;
+			const subs = {};
 
-				view = jview.app.copyConfig(view, {}, subs);
-				baseAdd.apply(this, [view, index]);
+			view = jview.app.copyConfig(view, {}, subs);
+			baseAdd.call(base, view, index);
 
-				for (const key in subs){
-					jview._renderFrame(key, subs[key], null).then(() => {
-						jview._subs[key] = subs[key];
-					});
-				}
-
-				return view.id;
-			} else {
-				return baseAdd.apply(this, arguments);
+			let ready;
+			for (const key in subs){
+				ready = jview._renderFrame(key, subs[key], null).then(() => {
+					jview._subs[key] = subs[key];
+					return subs[key].view.getRoot().config.id;
+				});
 			}
+
+			return ready;
+		} else {
+			return baseAdd.call(base, view, index);
+		}
+	}
+
+	const config = {
+		addViewAsync(view, index){
+			const res = addViewCommon(this, view, index);
+			return w.promise.resolve(res);
+		},
+		addView(view, index){
+			const res = addViewCommon(this, view, index);
+			return (res && res.then) ? w.uid() : res;
 		},
 		removeView(){
 			baseRemove.apply(this, arguments);
