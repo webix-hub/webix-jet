@@ -87,6 +87,7 @@ export default function patch(w: any){
 			cfg.body = { id };
 
 			this.$ready.push(function(){
+				this.callEvent("onInit", [this.$app]);
 				this.$app.render({ id });
 			});
 
