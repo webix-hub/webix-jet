@@ -91,12 +91,13 @@ export default function patch(w: any){
 				this.$app.render({ id });
 			});
 
-			for (var key in this.$app){
-				var origin = this.$app[key];
+			const source = this.app.prototype;
+			for (var key in source){
+				var origin = source[key];
 				if (typeof origin === "function" && !this[key]){
 					this[key] = origin.bind(this.$app);
 				}
 			}
 		}
-	}, (w.ui as any).proxy);
+	}, (w.ui as any).proxy, w.EventSystem);
 }

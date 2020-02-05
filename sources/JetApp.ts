@@ -16,8 +16,7 @@ export class JetApp extends JetAppBase implements IJetApp {
 		super(config);
 		patch(this.webix);
 	}
-	_loadViewDynamic(url){
-		url = url.replace(/\./g, "/");
-		return require("jet-views/"+url);
+	require(type:string, url:string){
+		return require(type+"/"+url);
 	}
 }

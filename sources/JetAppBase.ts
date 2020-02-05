@@ -179,7 +179,8 @@ export class JetAppBase extends JetBase implements IJetView {
 				if (url === "_blank"){
 					result = {};
 				} else {
-					result = this._loadViewDynamic(url);
+					url = url.replace(/\./g, "/");
+					result = this.require("jet-views", url);
 				}
 			}
 		} catch(e){
@@ -367,6 +368,8 @@ export class JetAppBase extends JetBase implements IJetView {
 		}
 		return new JetView(this, {});
 	}
+
+	require(type:string, url:string):any{ return null; }
 
 	private _first_start(route: IRoute) : IRoute{
 		this._segment = route;

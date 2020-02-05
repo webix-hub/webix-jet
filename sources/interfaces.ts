@@ -45,6 +45,7 @@ export interface IJetApp extends IJetView{
 	config: IJetConfig;
 	app: IJetApp;
 	getUrl():IJetURL;
+	require(type:string, url:string):any;
 	getService(name:string):any;
 	setService(name:string, obj: any):void;
 	callEvent(name:string, parameters:any[]):boolean;
