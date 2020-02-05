@@ -1,5 +1,5 @@
 import { IBaseView, IJetApp, IJetURL, IJetView,
-	IRoute, ISubView, ISubViewInfo, IWebixFacade } from "./interfaces";
+	IRoute, ISubView, ISubViewInfo, IWebixFacade, IHash } from "./interfaces";
 
 export abstract class JetBase implements IJetView{
 	public app: IJetApp;
@@ -18,11 +18,14 @@ export abstract class JetBase implements IJetView{
 	private _data:{[name:string]:any};
 	
 
-	constructor(webix:IWebixFacade){
+	constructor(webix:IWebixFacade, config?:any){
 		this.webix = webix;
 		this._events = [];
 		this._subs = {};
 		this._data = {};
+
+		if (config && config.params) 
+			webix.extend(this._data, config.params);
 	}
 
 	getRoot(): IBaseView {

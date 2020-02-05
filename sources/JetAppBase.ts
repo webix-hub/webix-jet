@@ -6,7 +6,7 @@ import {NavigationBlocked} from "./errors";
 
 import {
 	IBaseView, IJetApp, IJetConfig, IJetRouter,
-	IJetURL, IJetURLChunk,
+	IJetURL, IJetURLChunk, IHash,
 	IJetView, IRoute, ISubView, IViewConfig } from "./interfaces";
 
 import { Route } from "./Route";
@@ -27,15 +27,15 @@ export class JetAppBase extends JetBase implements IJetView {
 
 	constructor(config?: any) {
 		const webix = (config || {}).webix || (window as any).webix;
-		super(webix);
-
-		// init config
-		this.config = this.webix.extend({
+		config = webix.extend({
 			name: "App",
 			version: "1.0",
 			start: "/home"
 		}, config, true);
 
+		super(webix, config);
+
+		this.config = config;
 		this.app = this.config.app;
 		this.ready = Promise.resolve();
 		this._services = {};
@@ -215,7 +215,7 @@ export class JetAppBase extends JetBase implements IJetView {
 
 		if (chunk.isNew || !chunk.view) {
 			view = this.loadView(chunk.page)
-				.then(ui => this.createView(ui, name));
+				.then(ui => this.createView(ui, name, chunk.params));
 		} else {
 			view = Promise.resolve(chunk.view);
 		}
@@ -223,15 +223,22 @@ export class JetAppBase extends JetBase implements IJetView {
 		return view;
 	}
 
-	createView(ui:any, name?:string){
+	_override(ui) {
+		const over = this.config.override;
+		if (over) ui = over.get(ui) || ui;
+		return ui;
+	}
+	createView(ui:any, name?:string, params?:IHash){
+		ui = this._override(ui);
+
 		let obj;
 		if (typeof ui === "function") {
 			if (ui.prototype instanceof JetAppBase) {
 				// UI class
-				return new ui({ app: this, name, router:SubRouter });
+				return new ui({ app: this, name, params, router:SubRouter });
 			} else if (ui.prototype instanceof JetBase) {
 				// UI class
-				return new ui(this, { name });
+				return new ui(this, { name, params });
 			} else {
 				// UI factory functions
 				ui = ui(this);
@@ -248,8 +255,11 @@ export class JetAppBase extends JetBase implements IJetView {
 	}
 
 	// show view path
-	show(url: string) : Promise<any> {
-		return this.render(this._container, (url||this.config.start));
+	show(url: string, config?:any) : Promise<any> {
+		if (url && this.app && url.indexOf("//") == 0)
+			return this.app.show(url.substr(1), config);
+
+		return this.render(this._container, url || this.config.start, config);
 	}
 
 	// event helpers
@@ -300,7 +310,8 @@ export class JetAppBase extends JetBase implements IJetView {
 	// renders top view
 	render(
 		root?: string | HTMLElement | ISubView,
-		url?: IRoute | string, parent?: IJetView): Promise<IBaseView> {
+		url?: IRoute | string,
+		config?:any): Promise<IBaseView> {
 
 		this._container = (typeof root === "string") ?
 			this.webix.toNode(root):
@@ -331,9 +342,11 @@ export class JetAppBase extends JetBase implements IJetView {
 			}
 		}
 
+		const params = config ? config.params : this.config.params || null;
 		const top = this.getSubView();
 		const segment = this._subSegment;
-		const ready = segment.show(path, top)
+		const ready = segment
+			.show({ url: path, params }, top)
 			.then(() => this.createFromURL(segment.current()))
 			.then(view => view.render(root, segment))
 			.then(base => {
@@ -385,6 +398,7 @@ export class JetAppBase extends JetBase implements IJetView {
 			}
 			route = new Route(urlString, 0);
 		} else if (this.app) {
+			const now = route.current().view;
 			route.current().view = this;
 			if (route.next()){
 				route.refresh();
@@ -392,6 +406,7 @@ export class JetAppBase extends JetBase implements IJetView {
 			} else {
 				route = new Route(this.config.start, 0);
 			}
+			route.current().view = now;
 		}
 
 		return route;
@@ -412,7 +427,8 @@ export class JetAppBase extends JetBase implements IJetView {
 			id: target.id,
 			url,
 			branch: obj.branch,
-			popup: obj.popup
+			popup: obj.popup,
+			params: obj.params
 		};
 
 		return view.popup ? null : target;

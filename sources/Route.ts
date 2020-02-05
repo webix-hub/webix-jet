@@ -1,4 +1,4 @@
-import { IJetURL, IJetView, IPath, IRoute, IJetURLChunk } from "./interfaces";
+import { IJetURL, IJetView, IPath, IRoute, IJetURLChunk, IJetUrlTarget } from "./interfaces";
 import {NavigationBlocked} from "./errors";
 
 import {parse, url2str} from "./helpers";
@@ -30,8 +30,16 @@ export class Route implements IRoute{
 	suburl():IJetURL{
 		return this.route.url.slice(this.index);
 	}
-	shift():IRoute{
-		return new Route(this.route, this.index + this._next);
+	shift(params) {
+		const route = new Route(this.route, this.index + this._next);
+		route.setParams(route.route.url, params, route.index);
+		return route;
+	}
+	setParams(url, params, index) {
+		if (params) {
+			const old = url[index].params;
+			for (var key in params) old[key] = params[key];
+		}
 	}
 	refresh(){
 		const url = this.route.url;
@@ -50,6 +58,7 @@ export class Route implements IRoute{
 		}
 
 		const old = this.route.url;
+		let reset = true;
 		url = old.slice(0, this.index+(kids?this._next:0));
 		if (path){
 			url = url.concat(parse(path));
@@ -58,8 +67,11 @@ export class Route implements IRoute{
 				if (old[i]){
 					url[i].view = old[i].view;
 				}
-				if (old[i] && url[i].page === old[i].page){
+				if (reset && old[i] && url[i].page === old[i].page) {
 					url[i].isNew = false;
+				} else if (url[i].isNew) {
+					// if some segment was marked as new, all subsegments must be updated as well
+					reset = false;
 				}
 			}
 		}
@@ -75,8 +87,10 @@ export class Route implements IRoute{
 		return this.route.path;
 	}
 
-	show(path:string, view:IJetView, kids?: boolean):Promise<void>{
-		const url = this._join(path, kids);
+	show(path:IJetUrlTarget, view:IJetView, kids?: boolean):Promise<void>{
+		const url = this._join(path.url, kids);
+		this.setParams(url, path.params, this.index + (kids ? this._next : 0));
+		
 
 		return new Promise((res, rej) => {
 			const redirect = url2str(url);

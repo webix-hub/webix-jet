@@ -2,7 +2,7 @@ import {JetBase} from "./JetBase";
 
 import {
 	IBaseConfig, IBaseView, IJetApp, IJetURL,
-	IJetView, IJetViewFactory, ISubView, IUIConfig, IRoute } from "./interfaces";
+	IJetView, IJetViewFactory, ISubView, IUIConfig, IRoute, IJetUrlTarget } from "./interfaces";
 import { Route } from "./Route";
 
 
@@ -51,7 +51,7 @@ export class JetView extends JetBase{
 
 			// deligate to app in case of root prefix
 			if (path.substr(0,1) === "/"){
-				return this.app.show(path);
+				return this.app.show(path, config);
 			}
 
 			// local path, do nothing
@@ -74,20 +74,27 @@ export class JetView extends JetBase{
 				if (sub.parent !== this){
 					return sub.parent.show(path, config);
 				} else if (config.target && config.target !== "default"){
-					return this._renderFrameLock(config.target, sub.subview, path);
+					return this._renderFrameLock(config.target, sub.subview, {
+						url: path,
+						params: config.params,
+					});
 				}
 			} else {
 				if (path){
-					return this.app.show("/"+path);
+					return this.app.show("/" + path, config);
 				} 
 			}
 
 		}
 
-		return this._show(this._segment, path, this);
+		return this._show(
+			this._segment,
+			{ url: path, params: config.params },
+			this
+		);
 	}
 
-	_show(segment:IRoute, path:string, view:IJetView){
+	_show(segment:IRoute, path:IJetUrlTarget, view:IJetView){
 		return segment.show(path, view, true).then(() => {
 			this._init_url_data();
 			return this._urlChange();
@@ -121,8 +128,10 @@ export class JetView extends JetBase{
 		this._destroyKids();
 
 		// destroy actual UI
-		this._root.destructor();
-		super.destructor();
+		if (this._root) {
+			this._root.destructor();
+			super.destructor();
+		}
 	}
 
 	use(plugin, config){
@@ -285,7 +294,7 @@ export class JetView extends JetBase{
 		});
 	}
 
-	protected  _renderFrameLock(key:string, frame:ISubView, path: string):Promise<any>{
+	protected  _renderFrameLock(key:string, frame:ISubView, path: IJetUrlTarget):Promise<any>{
 		// if subview is not occupied by some rendering yet
 		if (!frame.lock) {
 			// retreive and store rendering end promise
@@ -302,12 +311,16 @@ export class JetView extends JetBase{
 		return frame.lock;
 	}
 
-	protected _renderFrame(key:string, frame:ISubView, path: string):Promise<any>{
+	protected _renderFrame(key:string, frame:ISubView, path: IJetUrlTarget):Promise<any>{
 		//default route
 		if (key === "default"){
 			if (this._segment.next()){
 				// we have a next segment in url, render it
-				return this._createSubView(frame, this._segment.shift());
+				let params = path ? path.params : null;
+				if (frame.params) {
+					params = this.webix.extend(params || {}, frame.params);
+				}
+				return this._createSubView(frame, this._segment.shift(params));
 			} else if (frame.view && frame.popup) {
 				// there is no next segment, delete the existing sub-view
 				frame.view.destructor();
@@ -317,7 +330,10 @@ export class JetView extends JetBase{
 		
 		//if new path provided, set it to the frame
 		if (path !== null){
-			frame.url = path;
+			frame.url = path.url;
+			if (frame.params) {
+				path.params = this.webix.extend(path.params || {}, frame.params);
+			}
 		}
 
 		// in case of routed sub-view
@@ -341,11 +357,14 @@ export class JetView extends JetBase{
 			if (typeof frame.url === "string"){
 				// string, so we have isolated subview url
 				frame.route = new Route(frame.url, 0);
+				if (path) frame.route.setParams(frame.route.route.url, path.params, 0);
+				if (frame.params)
+					frame.route.setParams(frame.route.route.url, frame.params, 0);
 				return this._createSubView(frame, frame.route);
 			} else {
 				// object, so we have an embeded subview
 				if (typeof frame.url === "function" && !(view instanceof frame.url)){
-					view = new frame.url(this.app, "");
+					view = new ((this.app as any)._override(frame.url))(this.app, "");
 				}
 				if (!view){
 					view = frame.url as any;
