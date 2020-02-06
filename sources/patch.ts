@@ -90,14 +90,6 @@ export default function patch(w: any){
 				this.callEvent("onInit", [this.$app]);
 				this.$app.render({ id });
 			});
-
-			const source = this.app.prototype;
-			for (var key in source){
-				var origin = source[key];
-				if (typeof origin === "function" && !this[key]){
-					this[key] = origin.bind(this.$app);
-				}
-			}
 		}
 	}, (w.ui as any).proxy, w.EventSystem);
 }
