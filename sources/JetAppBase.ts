@@ -76,7 +76,8 @@ export class JetAppBase extends JetBase implements IJetView {
 		}
 
 		// process sub-properties
-		target = target || (obj instanceof Array ? [] : {});
+		const isArray = obj instanceof Array;
+		target = target || (isArray ? [] : {});
 		for (const method in obj) {
 			let point = obj[method];
 
@@ -95,7 +96,8 @@ export class JetAppBase extends JetBase implements IJetView {
 						(point instanceof Array ? [] : {}),
 						config);
 					if (copy !== null){
-						target[method] = copy;
+						if (isArray) target.push(copy);
+						else target[method] = copy;
 					}
 				}
 			} else {
