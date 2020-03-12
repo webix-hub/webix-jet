@@ -86,7 +86,7 @@ export class JetAppBase extends JetBase implements IJetView {
 			}
 
 			if (point && typeof point === "object" &&
-				!(point instanceof this.webix.DataCollection) && !(point instanceof RegExp)) {
+				!(point instanceof this.webix.DataCollection) && !(point instanceof RegExp) && !(point instanceof Map)) {
 				if (point instanceof Date) {
 					target[method] = new Date(point);
 				} else {
