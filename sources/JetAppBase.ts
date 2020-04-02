@@ -178,7 +178,9 @@ export class JetAppBase extends JetBase implements IJetView {
 			}
 
 			if (!result){
-				if (url === "_blank"){
+				if (url === "_hidden"){
+					result = { hidden:true };
+				} else if (url === "_blank"){
 					result = {};
 				} else {
 					url = url.replace(/\./g, "/");
