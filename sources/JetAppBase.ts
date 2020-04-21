@@ -230,15 +230,15 @@ export class JetAppBase extends JetBase implements IJetView {
 
 	_override(ui) {
 		const over = this.config.override;
-			if (over){
-				let dv;
-				while(ui){
-					dv = ui;
-					ui = over.get(ui);
-				}
-				return dv;
+		if (over){
+			let dv;
+			while(ui){
+				dv = ui;
+				ui = over.get(ui);
 			}
-			return ui;
+			return dv;
+		}
+		return ui;
 	}
 	createView(ui:any, name?:string, params?:IHash){
 		ui = this._override(ui);
