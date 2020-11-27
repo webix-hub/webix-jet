@@ -87,15 +87,9 @@ export default function patch(w: any){
 			cfg.body = { id };
 
 			this.$ready.push(function(){
+				this.callEvent("onInit", [this.$app]);
 				this.$app.render({ id });
 			});
-
-			for (var key in this.$app){
-				var origin = this.$app[key];
-				if (typeof origin === "function" && !this[key]){
-					this[key] = origin.bind(this.$app);
-				}
-			}
 		}
-	}, (w.ui as any).proxy);
+	}, (w.ui as any).proxy, w.EventSystem);
 }

@@ -45,13 +45,14 @@ export interface IJetApp extends IJetView{
 	config: IJetConfig;
 	app: IJetApp;
 	getUrl():IJetURL;
+	require(type:string, url:string):any;
 	getService(name:string):any;
 	setService(name:string, obj: any):void;
 	callEvent(name:string, parameters:any[]):boolean;
 	attachEvent(name:string, handler:any):void;
 	createFromURL(chunk:IJetURLChunk) : Promise<IJetView>;
-	show(path:any):Promise<void>;
-	createView(obj:any, name?:string):IJetView;
+	show(path:any, config?:any):Promise<void>;
+	createView(obj:any, name?:string, params?:IHash):IJetView;
 	refresh():Promise<IBaseView>;
 	error(name:string, data:any[]);
 	copyConfig(source:any, target:any, config?:IViewConfig);
@@ -65,6 +66,11 @@ export interface IJetURLChunk{
 
 	view?:IJetView;
 	isNew?:boolean;
+}
+
+export interface IJetUrlTarget{
+	url:string;
+	params?:IHash;
 }
 
 export type IJetURL = IJetURLChunk[];
@@ -106,6 +112,8 @@ export interface IJetConfig{
 	animation:boolean;
 	router: IJetRouterFactory;
 	views: Function | IHash;
+	params: IHash;
+	override: IHash;
 }
 
 export interface IJetRouterOptions{
@@ -138,6 +146,7 @@ export interface ISubView{
 	branch?: boolean;
 	route?: IRoute;
 	lock?: Promise<any>;
+	params?: IHash;
 }
 
 export interface ISubViewInfo{
@@ -158,8 +167,9 @@ export interface IRoute{
 	next():IJetURLChunk;
 
 	suburl():IJetURL;
-	shift():IRoute;
-	show(url:string, view:IJetView, kids?: boolean):Promise<void>;
+	shift(IHash):IRoute;
+	setParams(url, params:IHash, index:number);
+	show(url:IJetUrlTarget, view:IJetView, kids?: boolean):Promise<void>;
 	refresh():void;
 	size(n:number);
 	update(name: string, value: string, index?:number);
