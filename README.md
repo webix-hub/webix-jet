@@ -8,7 +8,7 @@ Micro-framework for Webix UIMicro-framework for [Webix UI](https://webix.com)
 
 ### Useful links
 
-- Documentation: https://www.gitbook.com/book/webix/webix-jet/details
+- Documentation: https://webix.gitbook.io/webix-jet/
 - Support Forum: https://forum.webix.com
 - Demos
 	- Starter app - https://github.com/webix-hub/jet-start
