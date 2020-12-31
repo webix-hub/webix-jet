@@ -4,9 +4,9 @@ export function Theme(app: IJetApp, _view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
 	let theme = storage ?
-		(storage.get("theme")||"flat-default")
+		(storage.get("theme")||"material-default")
 		:
-		(config.theme || "flat-default");
+		(config.theme || "material-default");
 
 	const service = {
 		getTheme(){ return theme; },
