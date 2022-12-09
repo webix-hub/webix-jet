@@ -385,6 +385,9 @@ export class JetAppBase extends JetBase implements IJetView {
 			}
 			route = new Route(urlString, 0);
 		} else if (this.app) {
+			const oldRoute = route;
+			const oldView = route.current().view;
+
 			route.current().view = this;
 			if (route.next()){
 				route.refresh();
@@ -392,6 +395,7 @@ export class JetAppBase extends JetBase implements IJetView {
 			} else {
 				route = new Route(this.config.start, 0);
 			}
+			oldRoute.current().view = oldView || this;
 		}
 
 		return route;
