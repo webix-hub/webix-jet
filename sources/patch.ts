@@ -77,19 +77,40 @@ export default function patch(w: any){
 	w.extend(w.ui.baselayout.prototype, config, true);
 
 	// wrapper for using Jet Apps as views
+	const ignoreList = { 
+		width:1, height:1, gravity:1,
+		minWidth:1, minHeight:1,
+		maxWidth:1, maxHeight:1,
+		id:1, view:1, _inner:1,  body:1
+	};
 
 	w.protoUI({
 		name:"jetapp",
 		$init(cfg){
-			this.$app = new this.app(cfg);
+			this._app_create(cfg);
+			
+			cfg.body = {};
+			this.$ready.push(() => this._app_ready());
+		},
+		refresh(){
+			const old = this.$app;
+			this._app_create(this.config);
+			this._app_ready().then(() => old.destructor());
+		},
+		_app_create(cfg){
+			const appCfg = {};
+			const copy = (Object as any).getOwnPropertyDescriptors;
+			const keys = copy ? copy(cfg) : cfg;
+			for (var key in keys){
+				if (!ignoreList[key]) 
+					appCfg[key] = cfg[key];
+			}
 
-			const id = w.uid().toString();
-			cfg.body = { id };
-
-			this.$ready.push(function(){
-				this.callEvent("onInit", [this.$app]);
-				this.$app.render({ id });
-			});
+			this.$app = new this.app(appCfg);
+		},
+		_app_ready(){
+			this.callEvent("onInit", [this.$app]);
+			return this.$app.render({ id:this.getChildViews()[0].config.id });
 		}
 	}, (w.ui as any).proxy, w.EventSystem);
 }
