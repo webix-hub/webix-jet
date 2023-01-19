@@ -1,6 +1,6 @@
 {
   "name": "webix-jet",
-  "version": "2.1.4",
+  "version": "2.1.6",
   "description": "Webix Jet micro-framework",
   "main": "dist/es5/jet.js",
   "module": "dist/es6/jet.js",
