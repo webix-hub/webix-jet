@@ -1,8 +1,8 @@
 export interface IBaseView {
-	config: IBaseConfig;
-	name:string;
-	getParentView():IBaseView;
-	destructor():void;
+	config?: IBaseConfig;
+	name?:string;
+	getParentView?():IBaseView;
+	destructor?():void;
 }
 
 export interface IWebixHTMLHelper{
