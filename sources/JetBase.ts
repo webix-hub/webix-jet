@@ -65,7 +65,7 @@ export abstract class JetBase implements IJetView{
 		return this._parent;
 	}
 
-	$$(id:string | IBaseView):IBaseView{
+	$$<T extends IBaseView>(id:string | IBaseView):T{
 		if (typeof id === "string"){
 			const root = this.getRoot() as any;
 			return root.queryView(
@@ -74,7 +74,7 @@ export abstract class JetBase implements IJetView{
 				),
 				"self");
 		} else {
-			return id;
+			return id as undefined as T;
 		}
 	}
 

@@ -10,7 +10,7 @@ export interface IWebixHTMLHelper{
 	removeCss(node:HTMLElement, css:string):void;
 }
 export interface IBaseConfig {
-	id?:string;
+	id?:string | number;
 	container?: string|HTMLElement;
 }
 
@@ -71,7 +71,7 @@ export type IJetURL = IJetURLChunk[];
 
 export interface IJetView{
 	app: IJetApp;
-	$$(name:string):IBaseView;
+	$$<T extends IBaseView>(name:string):T;
 	contains(view: IJetView):boolean;
 	getSubView(name?:string):IJetView;
 	getSubViewInfo(name?:string):ISubViewInfo;
