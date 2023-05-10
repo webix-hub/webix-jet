@@ -62,6 +62,7 @@ export function url2str(stack:IJetURLChunk[]):string{
 function obj2str(obj){
 	const str = [];
 	for (const key in obj){
+		if (typeof obj[key] === "object") continue;
 		if (str.length){
 			str.push("&");
 		}

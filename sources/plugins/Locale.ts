@@ -1,8 +1,6 @@
 import Polyglot from "webix-polyglot";
 import {IJetApp, IJetView} from "../interfaces";
 
-declare function require(name:string):any;
-
 export function Locale(app: IJetApp, _view: IJetView, config: any){
 	config = config || {};
 	const storage = config.storage;
@@ -49,7 +47,7 @@ export function Locale(app: IJetApp, _view: IJetView, config: any){
 		}
 
 		const path = (config.path ? config.path + "/" : "") + name;
-		const data = require("jet-locales/"+path);
+		const data = app.require("jet-locales",path);
 
 		setLangData(name, data, silent);
 	}
