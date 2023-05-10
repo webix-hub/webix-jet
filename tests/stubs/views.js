@@ -1,6 +1,15 @@
-var events = [];
+import { JetView, JetApp, plugins } from "../../sources/index";
 
-class TopView extends jet.JetView {
+let events = [];
+export function getEvents(){
+    return events;
+}
+export function resetEvents(){
+    events = [];
+}
+
+
+export class TopView extends JetView {
     init(){
         events.push("top-init");
     }
@@ -19,7 +28,7 @@ class TopView extends jet.JetView {
     }
 }
 
-class SubView1 extends jet.JetView {
+export class SubView1 extends JetView {
     init(){
         events.push("sub1-init");
     }
@@ -38,7 +47,7 @@ class SubView1 extends jet.JetView {
     }
 }
 
-class SubView2 extends jet.JetView {
+export class SubView2 extends JetView {
     init(){
         events.push("sub2-init");
     }
@@ -57,16 +66,16 @@ class SubView2 extends jet.JetView {
     }
 }
 
-class MenuView extends jet.JetView {
+export class MenuView extends JetView {
     init(){
-        this.use(jet.plugins.Menu, "s1");
+        this.use(plugins.Menu, "s1");
     }
     config(){
         return { rows:[{ view:"segmented", id:"s1", options:["one", "two", "three"] }, { $subview:true }] };
     }
 }
 
-class ChangeRouteFromInit extends jet.JetView{
+export class ChangeRouteFromInit extends JetView{
     config(){
         return { rows:[{$subview:true}] };
     }
@@ -75,7 +84,7 @@ class ChangeRouteFromInit extends jet.JetView{
     }
 }
 
-class ChangeRouteFromUrlChange extends jet.JetView{
+export class ChangeRouteFromUrlChange extends JetView{
     config(){
         return { rows:[{$subview:true}] };
     }
@@ -84,31 +93,31 @@ class ChangeRouteFromUrlChange extends jet.JetView{
     }
 }
 
-class TopMenuView extends jet.JetView {
+export class TopMenuView extends JetView {
     config(){
         return { rows:[{ $subview:SubMenuView }, { $subview:true }] };
     }
 }
 
-class SubMenuView extends jet.JetView {
+export class SubMenuView extends JetView {
     init(){
-        this.use(jet.plugins.Menu, "s1");
+        this.use(plugins.Menu, "s1");
     }
     config(){
         return { view:"segmented", id:"s1", options:["one", "two", "three"] };
     }
 }
 
-class UrlParamsView extends jet.JetView {
+export class UrlParamsView extends JetView {
     init(){
-        this.use(jet.plugins.UrlParam, ["mode", "id"]);
+        this.use(plugins.UrlParam, ["mode", "id"]);
     }
     config(){
         return { rows:[ { template:"Now" }, { $subview:true } ]};
     }
 }
 
-class SubApp extends jet.JetApp {
+export class SubApp extends JetApp {
     constructor(config){
         config.views = {
             top:{ row:[{ template:"Header" }, { $subview:true }] },

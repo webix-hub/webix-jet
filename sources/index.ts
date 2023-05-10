@@ -3,7 +3,7 @@ MIT License
 Copyright (c) 2019 XB Software
 */
 
-import { IJetApp, IJetView } from "./interfaces";
+import type { IJetApp, IJetView } from "./interfaces";
 export { IJetApp, IJetView };
 
 import {NavigationBlocked} from "./errors";
@@ -30,6 +30,7 @@ let webix = (window as any).webix;
 if (webix){
 	patch(webix);
 }
+export { patch };
 
 export const plugins = {
 	UnloadGuard, Locale, Menu, Theme, User, Status, UrlParam
