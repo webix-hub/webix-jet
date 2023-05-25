@@ -45,6 +45,11 @@ export function Locale(app: IJetApp, _view: IJetView, config: any){
 		if (config.path === false){
 			return;
 		}
+		
+		if (typeof config.path === "function"){
+			config.path(name).then(data => setLangData(name, data, silent));
+			return;
+		}
 
 		const path = (config.path ? config.path + "/" : "") + name;
 		const data = app.require("jet-locales",path);

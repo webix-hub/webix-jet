@@ -1,14 +1,14 @@
 {
   "name": "webix-jet",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Webix Jet micro-framework",
   "main": "dist/jet.umd.js",
   "module": "dist/jet.mjs",
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/jet.umd.js",
-      "require": "./dist/jet.mjs"
+      "import": "./dist/jet.mjs",
+      "require": "./dist/jet.umd.js"
     },
     "./package.json": "./package.json"
   },
