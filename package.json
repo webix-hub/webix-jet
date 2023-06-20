@@ -1,6 +1,6 @@
 {
   "name": "webix-jet",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Webix Jet micro-framework",
   "main": "dist/jet.umd.js",
   "module": "dist/jet.mjs",

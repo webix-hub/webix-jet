@@ -1,4 +1,5 @@
 import {JetBase} from "./JetBase";
+import {JetAppBase} from "./JetAppBase";
 
 import {
 	IBaseConfig, IBaseView, IJetApp, IJetURL,
@@ -364,7 +365,12 @@ export class JetView extends JetBase{
 			} else {
 				// object, so we have an embeded subview
 				if (typeof frame.url === "function" && !(view instanceof frame.url)){
-					view = new ((this.app as any)._override(frame.url))(this.app, "");
+					const rview = (this.app as any)._override(frame.url);
+					if (rview.prototype instanceof JetAppBase) {
+						view = new rview({ app: this.app });
+					} else {
+						view = new rview(this.app, "");
+					}
 				}
 				if (!view){
 					view = frame.url as any;
