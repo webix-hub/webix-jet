@@ -7,8 +7,14 @@
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/jet.mjs",
-      "require": "./dist/jet.umd.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/jet.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/jet.umd.js"
+      }
     },
     "./package.json": "./package.json"
   },
