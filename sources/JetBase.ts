@@ -90,7 +90,7 @@ export abstract class JetBase implements IJetView{
 	contains(view: IJetView){
 		for (const key in this._subs){
 			const kid = this._subs[key].view;
-			if (kid === view || kid.contains(view)){
+			if (kid && (kid === view || kid.contains(view))){
 				return true;
 			}
 		}
