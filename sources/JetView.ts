@@ -223,6 +223,10 @@ export class JetView extends JetBase{
 			current.view.destructor();
 		}
 
+		if (slot && slot.popup) {
+            result.ui.hidden = true;
+        }
+
 		try {
 			// special handling for adding inside of multiview - preserve old id
 			if (slot && !show){
