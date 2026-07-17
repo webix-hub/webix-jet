@@ -4,6 +4,7 @@ import {
 	IBaseConfig, IBaseView, IJetApp, IJetURL,
 	IJetView, IJetViewFactory, ISubView, IUIConfig, IRoute, IJetUrlTarget } from "./interfaces";
 import { Route } from "./Route";
+import { NavigationBlocked } from "./errors";
 
 
 export class JetView extends JetBase{
@@ -28,7 +29,9 @@ export class JetView extends JetBase{
 		const jetview = this.app.createView(ui);
 		this._children.push(jetview);
 
-		jetview.render(container, this._segment, this);
+		jetview.render(container, this._segment, this).catch(e => {
+			if (!(e instanceof NavigationBlocked)) throw e;
+		});
 
 		if (typeof ui !== "object" || (ui instanceof JetBase)){
 			// raw webix UI
@@ -187,6 +190,11 @@ export class JetView extends JetBase{
 	}
 
 	protected _render_final(config:any, url:IRoute):Promise<any>{
+		// view already destroyed while rendering was in flight
+		if (!this.app || !this._container){
+			return Promise.resolve(this.getRoot());
+		}
+
 		// get previous view in the same slot
 		let slot:ISubView = null;
 		let container:string|HTMLElement|IBaseView = null;
@@ -203,9 +211,9 @@ export class JetView extends JetBase{
 			container = this._container as HTMLElement;
 		}
 
-		// view already destroyed
-		if (!this.app || !container){
-			return Promise.reject(null);
+		// slot widget already destroyed
+		if (!container){
+			return Promise.resolve(this.getRoot());
 		}
 
 		let response:Promise<any>;

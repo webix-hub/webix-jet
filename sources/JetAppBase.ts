@@ -147,7 +147,9 @@ export class JetAppBase extends JetBase implements IJetView {
 		}
 
 		return this.getSubView().refresh().then(view => {
-			this.callEvent("app:route", [this.getUrl()]);
+			if (this._container){
+				this.callEvent("app:route", [this.getUrl()]);
+			}
 			return view;
 		});
 	}
@@ -362,12 +364,17 @@ export class JetAppBase extends JetBase implements IJetView {
 			.then(() => this.createFromURL(segment.current()))
 			.then(view => view.render(root, segment))
 			.then(base => {
-				this.$router.set(segment.route.path, { silent:true });
-				this.callEvent("app:route", [this.getUrl()]);
+				// app may have been destroyed while the view was rendering
+				if (this._container){
+					this.$router.set(segment.route.path, { silent:true });
+					this.callEvent("app:route", [this.getUrl()]);
+				}
 				return base;
 			});
 
-		this.ready = this.ready.then(() => ready);
+		this.ready = this.ready.then(() => ready).catch(e => {
+			if (!(e instanceof NavigationBlocked)) throw e;
+		});
 		return ready;
 	}
 
