@@ -375,9 +375,14 @@ export class JetAppBase extends JetBase implements IJetView {
 				return base;
 			});
 
-		this.ready = this.ready.then(() => ready).catch(e => {
+		// swallow benign navigation aborts on THIS render's promise directly, so an
+		// overlapping/blocked navigation can never leak an unhandled rejection while an
+		// earlier render is still parked (real errors are rethrown so they stay observable)
+		const settled = ready.catch(e => {
 			if (!(e instanceof NavigationBlocked)) throw e;
 		});
+		// keep the public ready promise progressing across renders (never sticks on abort)
+		this.ready = this.ready.then(() => settled, () => settled);
 		return ready;
 	}
 

@@ -37,6 +37,38 @@ describe("Destroy mid-render", () => {
         expect(unhandled.length).to.equal(0);
     });
 
+    // a blocked navigation that rejects while an earlier async render is
+    // still parked must not leak — its handler has to be attached to `ready` directly, not
+    // to the queued `this.ready.then(...)` chain (which only runs after the parked one settles).
+    it("does not leak a benign rejection when a blocked navigation overlaps a parked render", async () => {
+        let release;
+        const gate = new Promise(r => { release = r; });
+
+        class Table extends jet.JetView {
+            config(){ return gate.then(() => ({ template:"t" })); }
+        }
+        app = new jet.JetApp({ router: jet.EmptyRouter, start:"/Table",
+            views:{ Table, secret:{ template:"secret" } } });
+        app.attachEvent("app:guard", url => url.indexOf("secret") === -1);
+
+        const unhandled = [];
+        const onRej = e => { unhandled.push(e.reason); e.preventDefault(); };
+        window.addEventListener("unhandledrejection", onRej);
+
+        app.render("sandbox");   // ready #1 parked on the gate
+        app.show("/secret");     // ready #2 blocked -> rejects this turn, intentionally uncaught
+
+        // keep ready #1 parked across a task boundary: with the old code ready #2's handler
+        // is queued behind it, so ready #2 is unhandled at the microtask checkpoint here
+        await new Promise(r => setTimeout(r, 50));
+        window.removeEventListener("unhandledrejection", onRej);
+
+        // pre-fix: ready #2 has no handler yet (queued behind the parked ready #1) -> unhandled
+        expect(unhandled.length).to.equal(0);
+
+        release();   // let the parked render settle before teardown
+    });
+
     // destroying a jetapp widget must tear down its app (shared destructor),
     // so the render continuation does not run router.set()/app:route on a dead app.
     it("does not touch the router after a jetapp widget is destroyed mid-render", async () => {
