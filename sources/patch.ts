@@ -91,6 +91,8 @@ export default function patch(w: any){
 				this.$app.render({ id });
 			});
 		},
+		// tear down the embedded app with the widget so it can't outlive its host;
+		// nulling its _container also stops any in-flight render from touching a dead app
 		destructor(){
 			(w.ui as any).proxy.prototype.destructor.call(this);
 			if (this.$app) this.$app.destructor();

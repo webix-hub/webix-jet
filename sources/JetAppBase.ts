@@ -150,6 +150,7 @@ export class JetAppBase extends JetBase implements IJetView {
 		}
 
 		return this.getSubView().refresh().then(view => {
+			// skip the route echo if the app was destroyed while the refresh was in flight
 			if (this._container){
 				this.callEvent("app:route", [this.getUrl()]);
 			}
@@ -367,7 +368,8 @@ export class JetAppBase extends JetBase implements IJetView {
 			.then(() => this.createFromURL(segment.current()))
 			.then(view => view.render(root, segment))
 			.then(base => {
-				// app may have been destroyed while the view was rendering
+				// app may have been destroyed mid-render: skip so a dead app can't
+				// rewrite the hash / push history via router.set()
 				if (this._container){
 					this.$router.set(segment.route.path, { silent:true });
 					this.callEvent("app:route", [this.getUrl()]);
@@ -375,13 +377,13 @@ export class JetAppBase extends JetBase implements IJetView {
 				return base;
 			});
 
-		// swallow benign navigation aborts on THIS render's promise directly, so an
-		// overlapping/blocked navigation can never leak an unhandled rejection while an
-		// earlier render is still parked (real errors are rethrown so they stay observable)
+		// attach the benign-abort handler to THIS render's promise directly: on the queued
+		// this.ready chain it would not run until an earlier parked render settled, leaving
+		// an overlapping rejection unhandled in the meantime (real errors are rethrown)
 		const settled = ready.catch(e => {
 			if (!(e instanceof NavigationBlocked)) throw e;
 		});
-		// keep the public ready promise progressing across renders (never sticks on abort)
+		// two-arg then so a prior render's failure can't leave the public ready chain stuck rejected
 		this.ready = this.ready.then(() => settled, () => settled);
 		return ready;
 	}

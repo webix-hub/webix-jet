@@ -29,6 +29,8 @@ export class JetView extends JetBase{
 		const jetview = this.app.createView(ui);
 		this._children.push(jetview);
 
+		// fire-and-forget render: swallow a benign navigation abort so it can't surface
+		// as an unhandled rejection (real errors still throw)
 		jetview.render(container, this._segment, this).catch(e => {
 			if (!(e instanceof NavigationBlocked)) throw e;
 		});
@@ -196,7 +198,8 @@ export class JetView extends JetBase{
 	}
 
 	protected _render_final(config:any, url:IRoute):Promise<any>{
-		// view already destroyed while rendering was in flight
+		// view/app torn down mid-render: resolve as a silent no-op instead of rejecting,
+		// so an in-flight render landing after destruction can't surface an uncaught error
 		if (!this.app || !this._container){
 			return Promise.resolve(this.getRoot());
 		}
@@ -217,7 +220,7 @@ export class JetView extends JetBase{
 			container = this._container as HTMLElement;
 		}
 
-		// slot widget already destroyed
+		// widget was destroyed under us (e.g. a jetapp widget torn down mid-render) -> same silent no-op
 		if (!container){
 			return Promise.resolve(this.getRoot());
 		}

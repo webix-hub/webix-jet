@@ -38,7 +38,7 @@ describe("Destroy mid-render", () => {
     });
 
     // a blocked navigation that rejects while an earlier async render is
-    // still parked must not leak — its handler has to be attached to `ready` directly, not
+    // still parked must not leak - its handler has to be attached to `ready` directly, not
     // to the queued `this.ready.then(...)` chain (which only runs after the parked one settles).
     it("does not leak a benign rejection when a blocked navigation overlaps a parked render", async () => {
         let release;
