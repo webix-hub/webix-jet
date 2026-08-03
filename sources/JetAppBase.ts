@@ -24,6 +24,7 @@ export class JetAppBase extends JetBase implements IJetView {
 	private $router: IJetRouter;
 	private _services: { [name: string]: any };
 	private _subSegment: IRoute;
+	private _destroyed: boolean;
 
 	constructor(config?: any) {
 		const webix = (config || {}).webix || (window as any).webix;
@@ -59,6 +60,8 @@ export class JetAppBase extends JetBase implements IJetView {
 		this._services[name] = handler;
 	}
 	destructor(){
+		if (this._destroyed) return;
+		this._destroyed = true;
 		this.getSubView().destructor();
 		super.destructor();
 	}
@@ -147,7 +150,10 @@ export class JetAppBase extends JetBase implements IJetView {
 		}
 
 		return this.getSubView().refresh().then(view => {
-			this.callEvent("app:route", [this.getUrl()]);
+			// skip the route echo if the app was destroyed while the refresh was in flight
+			if (this._container){
+				this.callEvent("app:route", [this.getUrl()]);
+			}
 			return view;
 		});
 	}
@@ -362,12 +368,23 @@ export class JetAppBase extends JetBase implements IJetView {
 			.then(() => this.createFromURL(segment.current()))
 			.then(view => view.render(root, segment))
 			.then(base => {
-				this.$router.set(segment.route.path, { silent:true });
-				this.callEvent("app:route", [this.getUrl()]);
+				// app may have been destroyed mid-render: skip so a dead app can't
+				// rewrite the hash / push history via router.set()
+				if (this._container){
+					this.$router.set(segment.route.path, { silent:true });
+					this.callEvent("app:route", [this.getUrl()]);
+				}
 				return base;
 			});
 
-		this.ready = this.ready.then(() => ready);
+		// attach the benign-abort handler to THIS render's promise directly: on the queued
+		// this.ready chain it would not run until an earlier parked render settled, leaving
+		// an overlapping rejection unhandled in the meantime (real errors are rethrown)
+		const settled = ready.catch(e => {
+			if (!(e instanceof NavigationBlocked)) throw e;
+		});
+		// two-arg then so a prior render's failure can't leave the public ready chain stuck rejected
+		this.ready = this.ready.then(() => settled, () => settled);
 		return ready;
 	}
 

@@ -4,6 +4,7 @@ import {
 	IBaseConfig, IBaseView, IJetApp, IJetURL,
 	IJetView, IJetViewFactory, ISubView, IUIConfig, IRoute, IJetUrlTarget } from "./interfaces";
 import { Route } from "./Route";
+import { NavigationBlocked } from "./errors";
 
 
 export class JetView extends JetBase{
@@ -28,7 +29,11 @@ export class JetView extends JetBase{
 		const jetview = this.app.createView(ui);
 		this._children.push(jetview);
 
-		jetview.render(container, this._segment, this);
+		// fire-and-forget render: swallow a benign navigation abort so it can't surface
+		// as an unhandled rejection (real errors still throw)
+		jetview.render(container, this._segment, this).catch(e => {
+			if (!(e instanceof NavigationBlocked)) throw e;
+		});
 
 		if (typeof ui !== "object" || (ui instanceof JetBase)){
 			// raw webix UI
@@ -169,6 +174,12 @@ export class JetView extends JetBase{
 		root = root || document.body;
 		const _container = (typeof root === "string") ? this.webix.toNode(root) : root;
 
+		// a string container id that does not resolve is a genuine mistake -> surface it
+		// (do not confuse with a destroyed view, where _container and app are nulled together)
+		if (!_container){
+			return Promise.reject(new Error("Webix Jet: container not found: " + root));
+		}
+
 		if (this._container !== _container) {
 			this._container = _container;
 			return this._render(url);
@@ -187,6 +198,12 @@ export class JetView extends JetBase{
 	}
 
 	protected _render_final(config:any, url:IRoute):Promise<any>{
+		// view/app torn down mid-render: resolve as a silent no-op instead of rejecting,
+		// so an in-flight render landing after destruction can't surface an uncaught error
+		if (!this.app || !this._container){
+			return Promise.resolve(this.getRoot());
+		}
+
 		// get previous view in the same slot
 		let slot:ISubView = null;
 		let container:string|HTMLElement|IBaseView = null;
@@ -203,9 +220,9 @@ export class JetView extends JetBase{
 			container = this._container as HTMLElement;
 		}
 
-		// view already destroyed
-		if (!this.app || !container){
-			return Promise.reject(null);
+		// widget was destroyed under us (e.g. a jetapp widget torn down mid-render) -> same silent no-op
+		if (!container){
+			return Promise.resolve(this.getRoot());
 		}
 
 		let response:Promise<any>;
