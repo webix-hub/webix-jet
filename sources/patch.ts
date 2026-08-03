@@ -90,6 +90,10 @@ export default function patch(w: any){
 				this.callEvent("onInit", [this.$app]);
 				this.$app.render({ id });
 			});
+		},
+		destructor(){
+			(w.ui as any).proxy.prototype.destructor.call(this);
+			if (this.$app) this.$app.destructor();
 		}
 	}, (w.ui as any).proxy, w.EventSystem);
 }

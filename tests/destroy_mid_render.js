@@ -37,4 +37,37 @@ describe("Destroy mid-render", () => {
         expect(unhandled.length).to.equal(0);
     });
 
+    // destroying a jetapp widget must tear down its app (shared destructor),
+    // so the render continuation does not run router.set()/app:route on a dead app.
+    it("does not touch the router after a jetapp widget is destroyed mid-render", async () => {
+        let release;
+        const gate = new Promise(r => { release = r; });
+
+        class Slow extends jet.JetView {
+            config(){ return gate.then(() => ({ template:"q" })); }
+        }
+        class MiniApp extends jet.JetApp {
+            constructor(cfg){
+                super(Object.assign({ router: jet.EmptyRouter, start:"/Slow", views:{ Slow } }, cfg));
+            }
+        }
+        webix.protoUI({ name:"jet_miniapp2", app: MiniApp }, webix.ui.jetapp);
+
+        const ui = webix.ui({ view:"jet_miniapp2", container:"sandbox" });
+        app = ui.$app;   // let afterEach clean up
+
+        let routeAfterDestroy = 0;
+        let destroyed = false;
+        ui.$app.attachEvent("app:route", () => { if (destroyed) routeAfterDestroy++; });
+
+        destroyed = true;
+        ui.destructor();   // shared destructor -> $app.destructor() -> app._container nulled
+        release();         // config resolves -> render continuation runs on a dead app
+
+        await new Promise(r => setTimeout(r, 50));
+
+        // pre-fix (no shared destructor): app still alive -> continuation fires app:route
+        expect(routeAfterDestroy).to.equal(0);
+    });
+
 });

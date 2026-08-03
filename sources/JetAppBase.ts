@@ -24,6 +24,7 @@ export class JetAppBase extends JetBase implements IJetView {
 	private $router: IJetRouter;
 	private _services: { [name: string]: any };
 	private _subSegment: IRoute;
+	private _destroyed: boolean;
 
 	constructor(config?: any) {
 		const webix = (config || {}).webix || (window as any).webix;
@@ -59,6 +60,8 @@ export class JetAppBase extends JetBase implements IJetView {
 		this._services[name] = handler;
 	}
 	destructor(){
+		if (this._destroyed) return;
+		this._destroyed = true;
 		this.getSubView().destructor();
 		super.destructor();
 	}
