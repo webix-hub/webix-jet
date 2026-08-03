@@ -102,4 +102,18 @@ describe("Destroy mid-render", () => {
         expect(routeAfterDestroy).to.equal(0);
     });
 
+    // an unknown string container id must surface as an explicit rejection,
+    // not silently resolve to nothing.
+    it("rejects with an explicit error when render() gets an unknown container id", async () => {
+        app = new jet.JetApp({ router: jet.EmptyRouter, start:"/x", views:{ x:{ template:"x" } } });
+
+        const pending = app.render("no-such-container-id");
+        app.ready.catch(() => {});   // the error mirrors onto the public ready chain; keep the harness quiet
+
+        let err = null;
+        await pending.catch(e => { err = e; });
+
+        expect(err instanceof Error).to.equal(true);
+    });
+
 });

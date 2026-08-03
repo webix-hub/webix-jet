@@ -172,6 +172,12 @@ export class JetView extends JetBase{
 		root = root || document.body;
 		const _container = (typeof root === "string") ? this.webix.toNode(root) : root;
 
+		// a string container id that does not resolve is a genuine mistake -> surface it
+		// (do not confuse with a destroyed view, where _container and app are nulled together)
+		if (!_container){
+			return Promise.reject(new Error("Webix Jet: container not found: " + root));
+		}
+
 		if (this._container !== _container) {
 			this._container = _container;
 			return this._render(url);
